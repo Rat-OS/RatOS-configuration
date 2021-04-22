@@ -1,0 +1,1 @@
+echo "RESTART" > /tmp/klipper

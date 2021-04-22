@@ -19,35 +19,6 @@ install_numpy()
 }
 
 
-install_mcu_detection_script()
-{
-# Create systemd service file
-    SERVICE_FILE="${SYSTEMDDIR}/vcore3.service"
-    [ -f $SERVICE_FILE ] && [ $FORCE_DEFAULTS = "n" ] && return
-    report_status "Installing vcore3 mcu detection script..."
-    sudo /bin/sh -c "cat > ${SERVICE_FILE}" << EOF
-#Systemd service file for the v-core 3 MCU detection script
-[Unit]
-Description=Automatically detects klipper MCU
-After=network.target
-Before=moonraker.service
-
-[Service]
-ExecStart=/usr/bin/env bash /home/pi/klipper_config/v-core-3/scripts/auto-detect-mcu.sh
-WorkingDirectory=/home/pi/klipper_config/v-core-3/scripts
-StandardOutput=inherit
-StandardError=inherit
-Restart=no
-User=pi
-
-[Install]
-WantedBy=multi-user.target
-EOF
-# Use systemctl to enable the vcore3 systemd service script
-	sudo systemctl enable vcore3.service
-}
-
-
 verify_ready()
 {
     if [ "$EUID" -eq 0 ]; then
@@ -61,4 +32,3 @@ set -e
 
 verify_ready
 install_numpy
-install_mcu_detection_script
