@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 CONFIG_PATH="/home/pi/klipper_config/v-core-3/mcu-detection.cfg"
 
-id="$(ls /dev/serial/by-id/usb-Klipper-* | head -n1)"
+id="$(ls /dev/serial/by-id/usb-Klipper_* | head -n1)"
 
 # Make sure the file exists so there's no include error in klipper.
 touch "$CONFIG_PATH"
