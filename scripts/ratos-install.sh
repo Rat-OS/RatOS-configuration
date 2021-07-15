@@ -42,4 +42,6 @@ verify_ready()
 set -e
 
 verify_ready
+install_printer_config
+install_udev_rules
 install_numpy
