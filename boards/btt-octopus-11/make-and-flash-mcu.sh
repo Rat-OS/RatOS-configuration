@@ -1,4 +1,13 @@
 #!/bin/bash
+# NOTE: This script ONLY WORKS if the board has already been flashed with
+# klipper via SD card PRIOR to installing the boot0 jumper.
+# The first time the board is booted after the jumper has been installed
+# the board needs to be flashed via the dfu vendor:device id. After that
+# it can be flashed via the /dev/btt-octopus-11 path, but it then fails
+# to exit dfu mode, and then one needs to flash it yet again with the
+# vendor:device id. Then it correctly exits DFU mode. Except those times
+# where it doesn't, for that we have a 3rd pass...
+
 
 MCU=/dev/btt-octopus-11
 VENDORDEVICEID=0483:df11
@@ -15,8 +24,19 @@ else
     echo "Flashing Octopus via vendor and device ids - 1st pass"
     make flash FLASH_DEVICE=$VENDORDEVICEID
 fi
-if [ -ne $MCU]; then
+sleep 5
+if [ -e $MCU ]; then
+    echo "Flashing Succesful!"
+else
     echo "Flashing Octopus via vendor and device ids - 2nd pass"
     make flash FLASH_DEVICE=$VENDORDEVICEID
+
+    sleep 5
+    if [ -e $MCU ]; then
+        echo "Flashing Succesful!"
+    else
+        echo "Flashing Octopus via vendor and device ids - 3rd pass"
+        make flash FLASH_DEVICE=$VENDORDEVICEID
+    fi
 fi
 sudo service klipper start
