@@ -21,13 +21,13 @@ install_numpy()
 install_printer_config()
 {
     report_status "Copying printer configuration"
-    cp /home/pi/klipper_config/RatOS/templates/v-core-3-printer.template.cfg /home/pi/klipper_config/printer.cfg
+    cp /home/pi/klipper_config/config/templates/v-core-3-printer.template.cfg /home/pi/klipper_config/printer.cfg
 }
 
 install_udev_rules()
 {
     report_status "Installing udev rules"
-    sudo ln -s /home/pi/klipper_config/v-core-3/boards/*/*.rules /etc/udev/rules.d/
+    sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
 }
 
 verify_ready()
