@@ -21,7 +21,7 @@ install_numpy()
 install_printer_config()
 {
     report_status "Copying printer configuration"
-    cp /home/pi/klipper_config/config/templates/v-core-3-printer.template.cfg /home/pi/klipper_config/printer.cfg
+    cp -f /home/pi/klipper_config/config/templates/v-core-3-printer.template.cfg /home/pi/klipper_config/printer.cfg
 }
 
 install_udev_rules()
