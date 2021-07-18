@@ -37,6 +37,13 @@ else
     else
         echo "Flashing Octopus via vendor and device ids - 3rd pass"
         make flash FLASH_DEVICE=$VENDORDEVICEID
+        if [$? -e 0]; then
+            echo "Flashing succesful!"
+        else
+            echo "Flashing failed :("
+            sudo service klipper start
+            exit 1
+        fi
     fi
 fi
 sudo service klipper start
