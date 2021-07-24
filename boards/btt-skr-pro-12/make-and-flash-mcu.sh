@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp -f /home/pi/klipper_config/config/boards/btt-octopus-11/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/klipper_config/config/boards/btt-skr-pro-12/firmware.config /home/pi/klipper/.config
 cd /home/pi/klipper
 make olddefconfig
 make clean
