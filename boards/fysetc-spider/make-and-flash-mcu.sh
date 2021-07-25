@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp -f /home/pi/klipper_config/config/boards/ft-spider/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/klipper_config/config/boards/fysetc-spider/firmware.config /home/pi/klipper/.config
 cd /home/pi/klipper
 make olddefconfig
 make clean
