@@ -1,5 +1,6 @@
 #!/bin/bash
 
+MCU=/dev/fysetc-spider
 cp -f /home/pi/klipper_config/config/boards/fysetc-spider/firmware.config /home/pi/klipper/.config
 cd /home/pi/klipper
 make olddefconfig
