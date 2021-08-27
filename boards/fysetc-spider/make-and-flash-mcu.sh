@@ -11,8 +11,9 @@ if [ -e $MCU ]; then
     echo "Flashing Spider via path"
     make flash FLASH_DEVICE=$MCU
 else
-    echo "Flashing Spider via vendor and device ids"
-    make flash FLASH_DEVICE=$VENDORDEVICEID
+    echo "No USB connection found"
+    sudo service klipper start
+    exit 1
 fi
 sleep 5
 if [$? -e 0]; then
