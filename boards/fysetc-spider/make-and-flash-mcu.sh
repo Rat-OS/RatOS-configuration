@@ -10,13 +10,14 @@ sudo service klipper stop
 if [ -e $MCU ]; then
     echo "Flashing Spider via path"
     make flash FLASH_DEVICE=$MCU
+    tstat=$?
 else
     echo "No USB connection found"
     sudo service klipper start
     exit 1
 fi
 sleep 5
-if [$? -e 0]; then
+if [ "$tstat" -eq 0 ]; then
     echo "Flashing succesful!"
 else
     echo "Flashing failed :("
