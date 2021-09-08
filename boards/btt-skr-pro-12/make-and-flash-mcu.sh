@@ -7,7 +7,7 @@ make clean
 make
 sudo service klipper stop
 ./scripts/flash-sdcard.sh /dev/btt-skr-pro-12 btt-skr-pro-v1.2
-if [$? -e 0]; then
+if [$? -eq 0]; then
     echo "Flashing succesful!"
 else
     echo "Flashing failed :("
