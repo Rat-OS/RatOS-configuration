@@ -26,19 +26,19 @@ else
 fi
 sleep 5
 if [ -e $MCU ]; then
-    echo "Flashing Succesful!"
+    echo "Flashing Successful!"
 else
     echo "Flashing Octopus via vendor and device ids - 2nd pass"
     make flash FLASH_DEVICE=$VENDORDEVICEID
 
     sleep 5
     if [ -e $MCU ]; then
-        echo "Flashing Succesful!"
+        echo "Flashing Successful!"
     else
         echo "Flashing Octopus via vendor and device ids - 3rd pass"
         make flash FLASH_DEVICE=$VENDORDEVICEID
-        if [$? -e 0]; then
-            echo "Flashing succesful!"
+        if [ $? -e 0 ]; then
+            echo "Flashing successful!"
         else
             echo "Flashing failed :("
             sudo service klipper start

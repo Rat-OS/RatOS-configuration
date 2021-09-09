@@ -18,7 +18,7 @@ else
 fi
 sleep 5
 if [ "$tstat" -eq 0 ]; then
-    echo "Flashing succesful!"
+    echo "Flashing successful!"
 else
     echo "Flashing failed :("
     sudo service klipper start
