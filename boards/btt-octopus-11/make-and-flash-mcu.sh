@@ -1,6 +1,7 @@
 #!/bin/bash
-# NOTE: This script ONLY WORKS if the board has already been flashed with
-# klipper via SD card PRIOR to installing the boot0 jumper.
+# NOTE: This script ONLY WORKS if there's no SD card in the board AND the 
+# board has already been flashed with klipper via SD card.
+# NEXT SECTION IS ONLY RELEVANT IF USING THE boot0 JUMPER (NOT RECOMMENDED)
 # The first time the board is booted after the jumper has been installed
 # the board needs to be flashed via the dfu vendor:device id. After that
 # it can be flashed via the /dev/btt-octopus-11 path, but it then fails
