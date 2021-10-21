@@ -9,15 +9,6 @@ report_status()
     echo -e "\n\n###### $1"
 }
 
-install_numpy()
-{
-    report_status "Installing numpy and related packages..."
-    KLIPPER_PYTHON_DIR="${HOME}/klippy-env"
-    ${KLIPPER_PYTHON_DIR}/bin/pip install -v numpy
-    sudo apt-get update
-    sudo apt-get install --yes python-numpy python-matplotlib
-}
-
 install_printer_config()
 {
     report_status "Copying printer configuration"
@@ -44,4 +35,3 @@ set -e
 verify_ready
 install_printer_config
 install_udev_rules
-install_numpy
