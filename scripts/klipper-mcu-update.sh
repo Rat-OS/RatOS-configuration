@@ -49,6 +49,14 @@ update_skr_pro_12() {
     fi
 }
 
+update_skr_2_429() {
+    if [[ -h "/dev/btt-skr-2-429" ]]
+    then
+        echo "SKR 2 W/ STM32F429 detected"
+        /home/pi/klipper_config/config/boards/btt-skr-2-429/make-and-flash-mcu.sh
+    fi
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -59,3 +67,4 @@ update_octopus_pro_429
 update_btt_octopus_11
 update_fysetc_spider
 update_skr_pro_12
+update_skr_2_429
