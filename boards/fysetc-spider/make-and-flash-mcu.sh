@@ -11,6 +11,14 @@ pushd /home/pi/klipper
 make olddefconfig
 make clean
 make
+
+if [ ! -d "/home/pi/klipper_config/firmware_binaries" ]
+then
+    mkdir /home/pi/klipper_config/firmware_binaries
+    chown pi:pi /home/pi/klipper_config/firmware_binaries
+fi
+cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-fysetc-spider.bin
+
 service klipper stop
 if [ -e $MCU ]; then
     echo "Flashing Spider via path"

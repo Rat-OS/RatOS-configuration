@@ -13,12 +13,14 @@ pushd /home/pi/klipper
 make olddefconfig
 make clean
 make
+
 if [ ! -d "/home/pi/klipper_config/firmware_binaries" ]
 then
     mkdir /home/pi/klipper_config/firmware_binaries
     chown pi:pi /home/pi/klipper_config/firmware_binaries
 fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
+
 echo "The SKR 2 cannot currently be flashed via DFU."
 echo "firmware-btt-skr-2-429.bin has been compiled and is available"
 echo "in the firmware_binaries folder in Mainsail under the Machine tab. Use this to flash via SD Card."
