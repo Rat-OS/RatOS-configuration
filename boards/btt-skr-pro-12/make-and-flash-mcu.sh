@@ -1,17 +1,24 @@
 #!/bin/bash
 
+if [ "$EUID" -ne 0 ]
+  then echo "ERROR: Please run as root"
+  exit
+fi
+
 cp -f /home/pi/klipper_config/config/boards/btt-skr-pro-12/firmware.config /home/pi/klipper/.config
-cd /home/pi/klipper
+pushd /home/pi/klipper
 make olddefconfig
 make clean
 make
-sudo service klipper stop
+service klipper stop
 ./scripts/flash-sdcard.sh /dev/btt-skr-pro-12 btt-skr-pro-v1.2
 if [ $? -eq 0 ]; then
     echo "Flashing successful!"
 else
     echo "Flashing failed :("
-    sudo service klipper start
+    service klipper start
+    popd
     exit 1
 fi
-sudo service klipper start
+service klipper start
+popd

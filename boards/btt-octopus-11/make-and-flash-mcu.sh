@@ -10,14 +10,19 @@
 # where it doesn't, for that we have a 3rd pass...
 
 
+if [ "$EUID" -ne 0 ]
+  then echo "ERROR: Please run as root"
+  exit
+fi
+
 MCU=/dev/btt-octopus-11
 VENDORDEVICEID=0483:df11
 cp -f /home/pi/klipper_config/config/boards/btt-octopus-11/firmware.config /home/pi/klipper/.config
-cd /home/pi/klipper
+pushd /home/pi/klipper
 make olddefconfig
 make clean
 make
-sudo service klipper stop
+service klipper stop
 if [ -h $MCU ]; then
     echo "Flashing Octopus via path"
     make flash FLASH_DEVICE=$MCU
@@ -42,9 +47,11 @@ else
             echo "Flashing successful!"
         else
             echo "Flashing failed :("
-            sudo service klipper start
+            service klipper start
+            popd
             exit 1
         fi
     fi
 fi
-sudo service klipper start
+service klipper start
+popd
