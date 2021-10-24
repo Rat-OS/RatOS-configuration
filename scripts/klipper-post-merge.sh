@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo ./klipper-mcu-update.sh
+sudo /home/pi/klipper_config/config/scripts/klipper-mcu-update.sh

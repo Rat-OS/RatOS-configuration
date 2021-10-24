@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo ./ratos-update.sh
+sudo /home/pi/klipper_config/config/scripts/ratos-update.sh
