@@ -18,7 +18,7 @@ make olddefconfig
 make clean
 make
 sudo service klipper stop
-if [ -e $MCU ]; then
+if [ -h $MCU ]; then
     echo "Flashing Octopus via path"
     make flash FLASH_DEVICE=$MCU
 else
@@ -26,14 +26,14 @@ else
     make flash FLASH_DEVICE=$VENDORDEVICEID
 fi
 sleep 5
-if [ -e $MCU ]; then
+if [ -h $MCU ]; then
     echo "Flashing Successful!"
 else
     echo "Flashing Octopus via vendor and device ids - 2nd pass"
     make flash FLASH_DEVICE=$VENDORDEVICEID
 
     sleep 5
-    if [ -e $MCU ]; then
+    if [ -h $MCU ]; then
         echo "Flashing Successful!"
     else
         echo "Flashing Octopus via vendor and device ids - 3rd pass"
