@@ -9,6 +9,7 @@
 # where it doesn't, for that we have a 3rd pass...
 
 
+pushd /home/pi/klipper
 sudo service klipper stop
 echo "flashing rpi-mcu"
 cp -f /home/pi/klipper_config/config/boards/rpi/firmware.config /home/pi/klipper/.config
@@ -16,3 +17,4 @@ make olddefconfig
 make clean
 make flash
 sudo service klipper start
+popd
