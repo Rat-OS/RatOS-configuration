@@ -1,5 +1,5 @@
 #!/bin/sh
-logfile="/var/log/vcore.log"
+logfile="/var/log/ratos.log"
 
 if [ -e /tmp/printer ]; then
     echo "RESTART" > /tmp/printer
