@@ -13,7 +13,7 @@ pushd /home/pi/klipper
 make olddefconfig
 make clean
 make
-if [ ! -d "/home/pi/klipper_config/firmware_binaries"]
+if [ ! -d "/home/pi/klipper_config/firmware_binaries" ]
 then
     mkdir /home/pi/klipper_config/firmware_binaries
     chown pi:pi /home/pi/klipper_config/firmware_binaries
