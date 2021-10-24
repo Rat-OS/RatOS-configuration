@@ -21,6 +21,12 @@ install_udev_rules()
     sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
 }
 
+install_hooks()
+{
+    ln -s /home/pi/klipper_config/config/scripts/ratos-post-merge.sh /home/pi/klipper_config/config/.git/hooks/post-merge
+    ln -s /home/pi/klipper_config/config/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
+}
+
 verify_ready()
 {
     if [ "$EUID" -eq 0 ]; then
@@ -35,3 +41,4 @@ set -e
 verify_ready
 install_printer_config
 install_udev_rules
+install_hooks
