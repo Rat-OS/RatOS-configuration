@@ -21,9 +21,7 @@ then
 fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
 
-echo "The SKR 2 cannot currently be flashed via DFU."
-echo "firmware-btt-skr-2-429.bin has been compiled and is available"
-echo "in the firmware_binaries folder in Mainsail under the Machine tab. Use this to flash via SD Card."
+echo "The SKR 2 cannot currently be flashed via DFU. The file firmware-btt-skr-2-429.bin has been compiled and is available in the firmware_binaries folder in Mainsail under the Machine tab. Use this to flash via SD Card."
 echo "NOTE: Remember to rename the file to firmware.bin on the SD Card!"
 # service klipper stop
 # if [ -h $MCU ]; then
