@@ -49,12 +49,12 @@ compile_skr_pro_12() {
 }
 
 compile_skr_2_429() {
-    cp -f /home/pi/klipper_config/config/boards/btt-skr-2-446/firmware.config /home/pi/klipper/.config
+    cp -f /home/pi/klipper_config/config/boards/btt-skr-2-429/firmware.config /home/pi/klipper/.config
     pushd /home/pi/klipper
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-446.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
 }
 
 # Force script to exit if an error occurs
