@@ -6,7 +6,6 @@ fi
 
 compile_octopus_pro_446() {
     cp -f /home/pi/klipper_config/config/boards/btt-octopus-pro-446/firmware.config /home/pi/klipper/.config
-    cd /home/pi/klipper
     make olddefconfig
     make clean
     make
@@ -15,7 +14,7 @@ compile_octopus_pro_446() {
 
 compile_octopus_pro_429() {
     cp -f /home/pi/klipper_config/config/boards/btt-octopus-pro-429/firmware.config /home/pi/klipper/.config
-    cd /home/pi/klipper
+    pushd /home/pi/klipper
     make olddefconfig
     make clean
     make
@@ -24,7 +23,7 @@ compile_octopus_pro_429() {
 
 compile_btt_octopus_11() {
     cp -f /home/pi/klipper_config/config/boards/btt-octopus-11/firmware.config /home/pi/klipper/.config
-    cd /home/pi/klipper
+    pushd /home/pi/klipper
     make olddefconfig
     make clean
     make
@@ -33,7 +32,7 @@ compile_btt_octopus_11() {
 
 compile_fysetc_spider() {
     cp -f /home/pi/klipper_config/config/boards/fysetc-spider/firmware.config /home/pi/klipper/.config
-    cd /home/pi/klipper
+    pushd /home/pi/klipper
     make olddefconfig
     make clean
     make
@@ -42,7 +41,7 @@ compile_fysetc_spider() {
 
 compile_skr_pro_12() {
     cp -f /home/pi/klipper_config/config/boards/btt-skr-pro-12/firmware.config /home/pi/klipper/.config
-    cd /home/pi/klipper
+    pushd /home/pi/klipper
     make olddefconfig
     make clean
     make
@@ -51,7 +50,7 @@ compile_skr_pro_12() {
 
 compile_skr_2_429() {
     cp -f /home/pi/klipper_config/config/boards/btt-skr-2-446/firmware.config /home/pi/klipper/.config
-    cd /home/pi/klipper
+    pushd /home/pi/klipper
     make olddefconfig
     make clean
     make
@@ -67,6 +66,9 @@ then
     chown pi:pi /home/pi/klipper_config/firmware_binaries
 fi
 
+
+pushd /home/pi/klipper
+
 # Run make scripts for the supported boards.
 compile_octopus_pro_446
 compile_octopus_pro_429
@@ -74,3 +76,5 @@ compile_btt_octopus_11
 compile_fysetc_spider
 compile_skr_pro_12
 compile_skr_2_429
+
+popd
