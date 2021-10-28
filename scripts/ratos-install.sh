@@ -24,8 +24,15 @@ install_udev_rules()
 
 install_hooks()
 {
+    report_status "Installing git hooks"
     ln -s /home/pi/klipper_config/config/scripts/ratos-post-merge.sh /home/pi/klipper_config/config/.git/hooks/post-merge
     ln -s /home/pi/klipper_config/config/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
+}
+
+compile_binaries()
+{
+    report_status "Compiling firmware binaries"
+    sudo /home/pi/klipper_config/config/scripts/compile-binaries.sh
 }
 
 verify_ready()
@@ -43,3 +50,4 @@ verify_ready
 install_printer_config
 install_udev_rules
 install_hooks
+compile_binaries
