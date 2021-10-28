@@ -12,7 +12,8 @@ report_status()
 install_printer_config()
 {
     report_status "Copying printer configuration"
-    cp -f /home/pi/klipper_config/config/templates/v-core-3-printer.template.cfg /home/pi/klipper_config/printer.cfg
+    PRINTER_CFG = /home/pi/klipper_config/printer.cfg
+    tail -n +2 /home/pi/klipper_config/config/templates/v-core-3-printer.template.cfg > $PRINTER_CFG
 }
 
 install_udev_rules()
