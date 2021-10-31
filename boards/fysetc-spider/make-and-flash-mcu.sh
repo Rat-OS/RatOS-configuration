@@ -25,7 +25,7 @@ if [ -e $MCU ]; then
     echo "Flashing Spider via path"
     make flash FLASH_DEVICE=$MCU
     tstat=$?
-elif [ -e ]
+else
     echo "No USB connection found, trying DFU id"
     make flash FLASH_DEVICE=$VENDORDEVICEID
     service klipper start
@@ -41,7 +41,7 @@ else
         echo "Flashing Spider via path"
         make flash FLASH_DEVICE=$MCU
         tstat=$?
-    elif [ -e ]
+    else
         echo "No USB connection found, trying DFU id"
         make flash FLASH_DEVICE=$VENDORDEVICEID
         service klipper start
