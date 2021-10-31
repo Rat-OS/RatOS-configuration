@@ -5,6 +5,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+VENDORDEVICEID=0483:df11
 MCU=/dev/fysetc-spider
 cp -f /home/pi/klipper_config/config/boards/fysetc-spider/firmware.config /home/pi/klipper/.config
 pushd /home/pi/klipper
@@ -24,8 +25,9 @@ if [ -e $MCU ]; then
     echo "Flashing Spider via path"
     make flash FLASH_DEVICE=$MCU
     tstat=$?
-else
-    echo "No USB connection found"
+elif [ -e ]
+    echo "No USB connection found, trying DFU id"
+    make flash FLASH_DEVICE=$VENDORDEVICEID
     service klipper start
     popd
     exit 1
@@ -34,10 +36,26 @@ sleep 5
 if [ "$tstat" -eq 0 ]; then
     echo "Flashing successful!"
 else
-    echo "Flashing failed :("
-    service klipper start
-    popd
-    exit 1
+    echo "Flashing failed trying again"
+    if [ -e $MCU ]; then
+        echo "Flashing Spider via path"
+        make flash FLASH_DEVICE=$MCU
+        tstat=$?
+    elif [ -e ]
+        echo "No USB connection found, trying DFU id"
+        make flash FLASH_DEVICE=$VENDORDEVICEID
+        service klipper start
+        popd
+        exit 1
+    fi
+
+    if [ "$tstat" -eq 0 ]; then
+        echo "Flashing successful!"
+    else
+        service klipper start
+        popd
+        exit 1
+    fi
 fi
 service klipper start
 popd
