@@ -1,0 +1,4 @@
+# BTT SKR 2 w/ STM32F429
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="614e",  ATTRS{idVendor}=="1d50", ACTION=="add", SYMLINK+="btt-skr-2-429", RUN+="/home/pi/klipper_config/v-core-3/scripts/klipper-mcu-added.sh"
+
+ACTION=="remove", ENV{DEVLINKS}=="/dev/btt-skr-2-429"
