@@ -19,7 +19,7 @@ fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-pro-12.bin
 
 service klipper stop
-./scripts/flash-sdcard.sh /dev/btt-skr-pro-12 btt-skr-pro-v1.2
+su -c "./scripts/flash-sdcard.sh /dev/btt-skr-pro-12 btt-skr-pro-v1.2" pi
 if [ $? -eq 0 ]; then
     echo "Flashing successful!"
 else
