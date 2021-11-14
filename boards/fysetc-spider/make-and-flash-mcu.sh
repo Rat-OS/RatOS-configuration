@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$EUID" -ne 0 ]
+  then echo "ERROR: Please run as root"
+  exit
+fi
+
 VENDORDEVICEID=0483:df11
 MCU=/dev/fysetc-spider
 cp -f /home/pi/klipper_config/config/boards/fysetc-spider/firmware.config /home/pi/klipper/.config

@@ -8,6 +8,11 @@
 # vendor:device id. Then it correctly exits DFU mode. Except those times
 # where it doesn't, for that we have a 3rd pass...
 
+if [ "$EUID" -ne 0 ]
+  then echo "ERROR: Please run as root"
+  exit
+fi
+
 pushd /home/pi/klipper
 service klipper stop
 echo "flashing rpi-mcu"

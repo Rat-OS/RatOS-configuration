@@ -1,6 +1,11 @@
 #!/bin/bash
 # NOTE: UNTESTED
 
+if [ "$EUID" -ne 0 ]
+  then echo "ERROR: Please run as root"
+  exit
+fi
+
 MCU=/dev/btt-skr-2-429
 VENDORDEVICEID=0483:df11
 cp -f /home/pi/klipper_config/config/boards/btt-skr-2-429/firmware.config /home/pi/klipper/.config
