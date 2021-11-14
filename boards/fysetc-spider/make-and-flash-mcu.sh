@@ -19,6 +19,7 @@ then
     chown pi:pi /home/pi/klipper_config/firmware_binaries
 fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-fysetc-spider.bin
+chown pi:pi /home/pi/klipper_config/firmware_binaries/firmware-fysetc-spider.bin
 
 service klipper stop
 if [ -e $MCU ]; then

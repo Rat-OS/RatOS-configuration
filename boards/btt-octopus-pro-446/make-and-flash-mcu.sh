@@ -28,6 +28,7 @@ then
     chown pi:pi /home/pi/klipper_config/firmware_binaries
 fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-pro-446.bin
+chown pi:pi /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-pro-446.bin
 
 service klipper stop
 if [ -h $MCU ]; then

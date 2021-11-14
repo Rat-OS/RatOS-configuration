@@ -20,6 +20,7 @@ then
     chown pi:pi /home/pi/klipper_config/firmware_binaries
 fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
+chown pi:pi /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
 
 # Reset ownership
 chown pi:pi -R /home/pi/klipper
