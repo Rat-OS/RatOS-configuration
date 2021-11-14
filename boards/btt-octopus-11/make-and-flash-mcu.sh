@@ -9,12 +9,6 @@
 # vendor:device id. Then it correctly exits DFU mode. Except those times
 # where it doesn't, for that we have a 3rd pass...
 
-
-if [ "$EUID" -ne 0 ]
-  then echo "ERROR: Please run as root"
-  exit
-fi
-
 MCU=/dev/btt-octopus-11
 VENDORDEVICEID=0483:df11
 cp -f /home/pi/klipper_config/config/boards/btt-octopus-11/firmware.config /home/pi/klipper/.config
