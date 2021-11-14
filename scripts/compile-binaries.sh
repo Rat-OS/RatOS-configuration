@@ -1,8 +1,4 @@
 #!/bin/bash
-if [ "$EUID" -ne 0 ]
-  then echo "ERROR: Please run as root"
-  exit
-fi
 
 compile_octopus_pro_446() {
     cp -f /home/pi/klipper_config/config/boards/btt-octopus-pro-446/firmware.config /home/pi/klipper/.config

@@ -53,5 +53,7 @@ else
         exit 1
     fi
 fi
+# Reset ownership
+chown pi:pi -R /home/pi/klipper
 service klipper start
 popd

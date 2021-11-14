@@ -57,9 +57,11 @@ else
             echo "Flashing failed :("
             service klipper start
             popd
+            chown pi:pi -R /home/pi/klipper
             exit 1
         fi
     fi
 fi
+chown pi:pi -R /home/pi/klipper
 service klipper start
 popd

@@ -56,9 +56,13 @@ else
             echo "Flashing failed :("
             service klipper start
             popd
+            # Reset ownership
+            chown pi:pi -R /home/pi/klipper
             exit 1
         fi
     fi
 fi
+# Reset ownership
+chown pi:pi -R /home/pi/klipper
 service klipper start
 popd

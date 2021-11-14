@@ -20,5 +20,9 @@ cp -f /home/pi/klipper_config/config/boards/rpi/firmware.config /home/pi/klipper
 make olddefconfig
 make clean
 make flash
+
+# Reset ownership
+chown pi:pi -R /home/pi/klipper
+
 service klipper start
 popd

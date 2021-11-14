@@ -4,6 +4,11 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+ensure_ownership() {
+  chown pi:pi -R /home/pi/klipper
+  chown pi:pi -R /home/pi/klipper_config
+}
+
 update_symlinks()
 {
     echo "Updating RatOS device symlinks.."
@@ -16,3 +21,4 @@ set -e
 
 # Run update symlinks
 update_symlinks
+ensure_ownership
