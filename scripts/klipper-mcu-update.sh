@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ "$EUID" -e 0 ]
+  then echo "ERROR: This script should not be run as root"
+  exit
+fi
 
 update_rpi() {
     echo "Updating RPi"
