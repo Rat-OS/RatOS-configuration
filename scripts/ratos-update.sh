@@ -7,6 +7,7 @@ fi
 ensure_ownership() {
   chown pi:pi -R /home/pi/klipper
   chown pi:pi -R /home/pi/klipper_config
+  chown pi:pi -R /home/pi/.KlipperScreen-env
 }
 
 update_symlinks()
