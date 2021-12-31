@@ -53,4 +53,3 @@ install_udev_rules
 install_hooks
 ensure_sudo_command_whitelisting
 compile_binaries
-copy_and_export_folder firmware_binaries /home/pi/klipper_config/firmware_binaries firmware_binaries
