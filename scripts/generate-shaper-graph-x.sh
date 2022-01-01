@@ -8,4 +8,4 @@ then
     chown pi:pi /home/pi/klipper_config/input_shaper
 fi
 
-~/klipper/scripts/calibrate_shaper.py $NEWX -o /home/pi/klipper_config/input_shaper/resonances_x_$DATE.png
+python2 ~/klipper/scripts/calibrate_shaper.py $NEWX -o /home/pi/klipper_config/input_shaper/resonances_x_$DATE.png
