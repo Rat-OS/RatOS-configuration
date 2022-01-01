@@ -3,11 +3,20 @@
 # for the v-core 3 klipper setup.
 
 SYSTEMDDIR="/etc/systemd/system"
+PKGLIST="python3-numpy python3-matplotlib"
+
 source /home/pi/klipper_config/config/scripts/sudo-command-whitelisting.sh
+
 
 report_status()
 {
     echo -e "\n\n###### $1"
+}
+
+install_dependencies()
+{
+    report_status "Installing RatOS dependencies"
+    apt-update && apt-get install -y $PKGLIST
 }
 
 install_printer_config()
@@ -51,5 +60,6 @@ verify_ready
 install_printer_config
 install_udev_rules
 install_hooks
+install_dependencies
 ensure_sudo_command_whitelisting
 compile_binaries
