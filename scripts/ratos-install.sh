@@ -16,7 +16,7 @@ report_status()
 install_dependencies()
 {
     report_status "Installing RatOS dependencies"
-    apt-get update && apt-get install -y $PKGLIST
+    sudo apt-get update && sudo apt-get install -y $PKGLIST
 }
 
 install_printer_config()
