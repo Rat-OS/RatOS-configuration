@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$EUID" -ne 0 ]
-  then echo "ERROR: Please run as root"
+  then echo "ERROR: This script should be run as root"
   exit
 fi
 

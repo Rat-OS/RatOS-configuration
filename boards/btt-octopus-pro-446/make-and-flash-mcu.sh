@@ -28,6 +28,7 @@ then
     chown pi:pi /home/pi/klipper_config/firmware_binaries
 fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-pro-446.bin
+chown pi:pi /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-pro-446.bin
 
 service klipper stop
 if [ -h $MCU ]; then
@@ -56,9 +57,13 @@ else
             echo "Flashing failed :("
             service klipper start
             popd
+            # Reset ownership
+            chown pi:pi -R /home/pi/klipper
             exit 1
         fi
     fi
 fi
+# Reset ownership
+chown pi:pi -R /home/pi/klipper
 service klipper start
 popd

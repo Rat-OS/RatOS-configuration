@@ -20,6 +20,10 @@ then
     chown pi:pi /home/pi/klipper_config/firmware_binaries
 fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
+chown pi:pi /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
+
+# Reset ownership
+chown pi:pi -R /home/pi/klipper
 
 echo "The SKR 2 cannot currently be flashed via DFU. The file firmware-btt-skr-2-429.bin has been compiled and is available in the firmware_binaries folder in Mainsail under the Machine tab. Use this to flash via SD Card."
 echo "NOTE: Remember to rename the file to firmware.bin on the SD Card!"
