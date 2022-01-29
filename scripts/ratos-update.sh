@@ -4,7 +4,8 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-source /home/pi/klipper_config/config/scripts/sudo-command-whitelisting.sh
+source /home/pi/klipper_config/config/scripts/ratos-common.sh
+source /home/pi/klipper_config/config/scripts/moonraker-ensure-policykit-rules.sh
 
 ensure_ownership() {
   chown pi:pi -R /home/pi/klipper
@@ -31,4 +32,6 @@ set -e
 update_symlinks
 ensure_ownership
 ensure_sudo_command_whitelisting
+install_hooks
+ensure_moonraker_policiykit_rules
 restart_klipper

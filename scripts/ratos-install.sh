@@ -5,13 +5,8 @@
 SYSTEMDDIR="/etc/systemd/system"
 PKGLIST="python3-numpy python3-matplotlib"
 
-source /home/pi/klipper_config/config/scripts/sudo-command-whitelisting.sh
-
-
-report_status()
-{
-    echo -e "\n\n###### $1"
-}
+source /home/pi/klipper_config/config/scripts/ratos-common.sh
+source /home/pi/klipper_config/config/scripts/moonraker-ensure-policykit-rules.sh
 
 install_dependencies()
 {
@@ -31,14 +26,6 @@ install_udev_rules()
     report_status "Installing udev rules"
     sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
 }
-
-install_hooks()
-{
-    report_status "Installing git hooks"
-    ln -s /home/pi/klipper_config/config/scripts/ratos-post-merge.sh /home/pi/klipper_config/config/.git/hooks/post-merge
-    ln -s /home/pi/klipper_config/config/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
-}
-
 compile_binaries()
 {
     report_status "Compiling firmware binaries"
@@ -62,4 +49,5 @@ install_udev_rules
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
+ensure_moonraker_policiykit_rules
 compile_binaries
