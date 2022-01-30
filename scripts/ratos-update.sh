@@ -38,5 +38,4 @@ ensure_ownership
 ensure_sudo_command_whitelisting
 install_hooks
 ensure_moonraker_policiykit_rules
-[ $? -eq 1 ] && restart_moonraker
 restart_klipper
