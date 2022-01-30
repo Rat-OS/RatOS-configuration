@@ -25,7 +25,8 @@ ensure_moonraker_policiykit_rules() {
 	then
 		cp /home/pi/moonraker/scripts/set-policykit-rules.sh /tmp/set-policykit-rules.sh
 		# if moonraker restarts the update process will be terminated, leaving a broken moonraker install.
-		sed -i 's/sudo systemctl restart moonraker/#sudo systemctl restart moonraker/' /tmp/set-policykit-rules.sh
+		sed -i 's/sudo systemctl restart moonraker/#sudo systemctl restart moonraker/g' /tmp/set-policykit-rules.sh
+		sed -i ':a;N;$!ba;s/verify_ready\n/#verify_ready\n/g' /tmp/set-policykit-rules.sh
 		echo -e "\n\n###### Moonraker policy not found, running moonraker policykit script..."
 		if [ "$EUID" -eq 0 ]; then
 			# This feels wrong, but...

@@ -24,10 +24,6 @@ restart_klipper()
 {
   service klipper restart
 }
-restart_moonraker()
-{
-  sudo systemctl restart moonraker
-}
 
 # Force script to exit if an error occurs
 set -e
@@ -38,5 +34,5 @@ ensure_ownership
 ensure_sudo_command_whitelisting
 install_hooks
 ensure_moonraker_policiykit_rules
-[ $? -eq 1 ] && restart_moonraker
+[ $? -eq 1 ] && echo "Policykit rules have changed. You will have to manually restart moonraker."
 restart_klipper
