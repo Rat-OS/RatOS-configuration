@@ -48,6 +48,6 @@ install_printer_config
 install_udev_rules
 install_hooks
 install_dependencies
-ensure_sudo_command_whitelisting
+ensure_sudo_command_whitelisting root
 ensure_moonraker_policiykit_rules
 compile_binaries
