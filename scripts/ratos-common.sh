@@ -24,7 +24,7 @@ install_hooks()
 ensure_sudo_command_whitelisting()
 {
 	sudo="sudo"
-	if [ $1 = "root" ]
+	if [ "$1" = "root" ]
 	then
 		sudo=""
 	fi
