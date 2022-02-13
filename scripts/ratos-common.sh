@@ -34,8 +34,8 @@ ensure_sudo_command_whitelisting()
 	then
 		$sudo rm /etc/sudoers.d/030-ratos-githooks
 	fi
-	$sudo touch /tmp/030-ratos-githooks
-	$sudo cat << '#EOF' > /tmp/030-ratos-githooks
+	touch /tmp/030-ratos-githooks
+	cat << '#EOF' > /tmp/030-ratos-githooks
 pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/ratos-update.sh
 pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/klipper-mcu-update.sh
 pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/moonraker-update.sh
@@ -48,8 +48,8 @@ pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/moonraker-update.
 	# Whitelist change hostname script
 	if [[ ! -e /etc/sudoers.d/031-ratos-change-hostname ]]
 	then
-		$sudo touch /tmp/031-ratos-change-hostname
-		$sudo cat << '#EOF' > /tmp/031-ratos-change-hostname
+		touch /tmp/031-ratos-change-hostname
+		cat << '#EOF' > /tmp/031-ratos-change-hostname
 pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/change-hostname-as-root.sh
 #EOF
 
