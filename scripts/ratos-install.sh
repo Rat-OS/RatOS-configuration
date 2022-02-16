@@ -6,7 +6,6 @@ SYSTEMDDIR="/etc/systemd/system"
 PKGLIST="python3-numpy python3-matplotlib"
 
 source /home/pi/klipper_config/config/scripts/ratos-common.sh
-source /home/pi/klipper_config/config/scripts/moonraker-ensure-policykit-rules.sh
 
 install_dependencies()
 {
@@ -49,5 +48,4 @@ install_udev_rules
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
-ensure_moonraker_policiykit_rules
 compile_binaries
