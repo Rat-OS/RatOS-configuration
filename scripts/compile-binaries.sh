@@ -73,5 +73,6 @@ compile_btt_octopus_11
 compile_fysetc_spider
 compile_skr_pro_12
 compile_skr_2_429
+chown pi:pi /home/pi/klipper_config/firmware_binaries/*.bin
 
 popd
