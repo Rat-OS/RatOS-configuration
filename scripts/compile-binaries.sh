@@ -54,6 +54,14 @@ compile_skr_2_429() {
     cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
 }
 
+compile_mellow_super_infinity() {
+    cp -f /home/pi/klipper_config/config/boards/mellow_super_infinity/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/mellow_super_infinity.bin
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -73,5 +81,6 @@ compile_btt_octopus_11
 compile_fysetc_spider
 compile_skr_pro_12
 compile_skr_2_429
+compile_mellow_super_infinity
 
 popd
