@@ -1,0 +1,8 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "SKR 2 407",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-skr-2-407",
+	"firmwareBinaryName": "firmware-btt-skr-2-407.bin",
+	"compileScript": "compile.sh"
+}
