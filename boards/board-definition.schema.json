@@ -34,5 +34,5 @@
 		"type": "string"
 	  }
 	},
-	"required": [ "serialPath", "name", "manufacturer", "firmwareBinaryName" ]
+	"required": [ "serialPath", "name", "manufacturer", "firmwareBinaryName", "compileScript" ]
   }
