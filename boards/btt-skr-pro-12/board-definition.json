@@ -6,5 +6,6 @@
 	"firmwareBinaryName": "firmware-btt-skr-pro-12.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
-	"flashInstructions": "Flashing only works if there's a properly formatted (FAT16) micro SD card in the SKR Pro's SD Card slot. The smaller the SD card the better, a cheap 128mb TF-card is perfect."
+	"flashInstructions": "Flashing only works if there's a properly formatted (FAT16 or FAT32 with a small blocksize) micro SD card in the SKR Pro's SD Card slot. The smaller the SD card the better, a cheap 128mb TF-card is perfect.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-pro-12"
 }
