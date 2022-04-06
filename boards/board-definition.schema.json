@@ -32,6 +32,10 @@
 	  "flashInstructions": {
 		"description": "Instructions for how to make sure the board can be automatically flashed",
 		"type": "string"
+	  },
+	  "documentationLink": {
+		  "description": "Link to the RatOS configuration for this board",
+		  "type": "string"
 	  }
 	},
 	"required": [ "serialPath", "name", "manufacturer", "firmwareBinaryName", "compileScript" ]
