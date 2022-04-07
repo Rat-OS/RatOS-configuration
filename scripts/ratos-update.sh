@@ -25,6 +25,21 @@ restart_klipper()
   service klipper restart
 }
 
+fix_klipperscreen_forcepush()
+{
+  [ -f /home/pi/.klipperscreenforcepushfixed ] && return
+  pushd /home/pi/KlipperScreen
+  git fetch
+  git merge-base --is-ancestor origin/master master
+  if [ $? -ne 0 ]; then
+    git reset --hard origin/master~1
+    curl -X GET "http://localhost/machine/update/status?refresh=true"
+    curl -X POST "http://localhost/machine/update/client?name=KlipperScreen"
+    touch /home/pi/.klipperscreenforcepushfixed 
+  fi
+  popd
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -35,4 +50,5 @@ ensure_sudo_command_whitelisting
 install_hooks
 ensure_moonraker_policiykit_rules
 [ $? -eq 1 ] && echo "Policykit rules have changed. You will have to manually restart moonraker. Power cycling the raspberry pi will also do the trick."
+fix_klipperscreen_forcepush
 restart_klipper
