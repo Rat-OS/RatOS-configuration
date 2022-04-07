@@ -40,9 +40,6 @@ fix_klipperscreen_forcepush()
   popd
 }
 
-# Force script to exit if an error occurs
-set -e
-
 # Run update symlinks
 update_symlinks
 ensure_ownership
