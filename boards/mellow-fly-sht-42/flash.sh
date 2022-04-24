@@ -9,6 +9,7 @@ service klipper stop
 if [ -h $MCU ]; then
     echo "Flashing Mellow FLY-SHT 42 via path"
     make flash FLASH_DEVICE=$MCU
+fi
 sleep 5
 if [ -h $MCU ]; then
     echo "Flashing Successful!"
