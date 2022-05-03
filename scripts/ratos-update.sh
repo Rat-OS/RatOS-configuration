@@ -33,11 +33,17 @@ fix_klipperscreen_forcepush()
   git merge-base --is-ancestor origin/master master
   if [ $? -ne 0 ]; then
     git reset --hard origin/master~1
+    chown -R pi /home/pi/KlipperScreen
     curl -X GET "http://localhost/machine/update/status?refresh=true"
     curl -X POST "http://localhost/machine/update/client?name=KlipperScreen"
     touch /home/pi/.klipperscreenforcepushfixed 
   fi
   popd
+}
+
+fix_klipperscreen_permissions()
+{
+  chown -R pi /home/pi/KlipperScreen
 }
 
 # Run update symlinks
@@ -48,4 +54,5 @@ install_hooks
 ensure_moonraker_policiykit_rules
 [ $? -eq 1 ] && echo "Policykit rules have changed. You will have to manually restart moonraker. Power cycling the raspberry pi will also do the trick."
 fix_klipperscreen_forcepush
+fix_klipperscreen_permissions
 restart_klipper
