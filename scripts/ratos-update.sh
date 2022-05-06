@@ -34,8 +34,8 @@ fix_klipperscreen_forcepush()
   if [ $? -ne 0 ]; then
     git reset --hard origin/master~1
     chown -R pi /home/pi/KlipperScreen
-    curl -X GET "http://localhost/machine/update/status?refresh=true"
-    curl -X POST "http://localhost/machine/update/client?name=KlipperScreen"
+    # curl -X GET "http://localhost/machine/update/status?refresh=true"
+    # curl -X POST "http://localhost/machine/update/client?name=KlipperScreen"
     touch /home/pi/.klipperscreenforcepushfixed 
   fi
   popd
