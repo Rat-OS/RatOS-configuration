@@ -58,10 +58,10 @@ update_skr_2_429() {
 }
 
 update_skr_3() {
-    if [[ -h "/dev/btt-skr-2-429" ]]
+    if [[ -h "/dev/btt-skr-3" ]]
     then
         echo "SKR 3 detected"
-        /home/pi/klipper_config/config/boards/btt-skr-2-429/make-and-flash-mcu.sh
+        /home/pi/klipper_config/config/boards/btt-skr-3/make-and-flash-mcu.sh
     fi
 }
 
