@@ -1,0 +1,9 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "SKR 2 429",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-skr-2-429",
+	"firmwareBinaryName": "firmware-btt-skr-2-429.bin",
+	"compileScript": "compile.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-2-429"
+}

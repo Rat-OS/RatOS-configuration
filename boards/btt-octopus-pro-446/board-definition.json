@@ -1,0 +1,11 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Octopus Pro 446",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-octopus-pro-446",
+	"firmwareBinaryName": "firmware-btt-octopus-pro-446.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "Flashing only works if the SD card slot on the Octopus Pro is empty.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-pro-446"
+}
