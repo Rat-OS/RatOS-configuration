@@ -1,0 +1,11 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Octopus V1.1",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-octopus-11",
+	"firmwareBinaryName": "firmware-btt-octopus-11.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "Flashing only works if the SD card slot on the Octopus is empty.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-11"
+}
