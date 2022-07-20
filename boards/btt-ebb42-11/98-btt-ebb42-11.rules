@@ -1,0 +1,4 @@
+# BTT EBB 42 V1.1
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="614e",  ATTRS{idVendor}=="1d50", ATTRS{serial}=="btt-ebb42-11", ACTION=="add", SYMLINK+="btt-ebb42-11", RUN+="/home/pi/klipper_config/config/scripts/klipper-mcu-added.sh"
+
+ACTION=="remove", ENV{DEVLINKS}=="/dev/btt-ebb42-11"
