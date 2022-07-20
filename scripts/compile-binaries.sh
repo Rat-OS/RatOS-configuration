@@ -63,6 +63,15 @@ compile_mellow_fly_sht_42() {
     cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-mellow-fly-sht-42.bin
 }
 
+compile_btt_skr_mini_e3_30() {
+    echo "Compiling firmware for BTT SKR E3 Mini V3.0"
+    cp -f /home/pi/klipper_config/config/boards/btt-skr-mini-e3-30/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-mini-e3-30.bin
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -83,6 +92,7 @@ compile_fysetc_spider
 compile_skr_pro_12
 compile_skr_2_429
 compile_mellow_fly_sht_42
+compile_btt_skr_mini_e3_30
 chown pi:pi /home/pi/klipper_config/firmware_binaries/*.bin
 
 popd
