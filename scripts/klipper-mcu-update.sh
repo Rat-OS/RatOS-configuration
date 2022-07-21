@@ -66,7 +66,7 @@ update_btt_ebb42_11() {
 }
 
 update_btt_ebb36_11() {
-    if [[ -h "/dev/btt-ebb42-11" ]]
+    if [[ -h "/dev/btt-ebb36-11" ]]
     then
         echo "BTT EBB36 v1.1 detected"
         /home/pi/klipper_config/config/boards/btt-ebb36-11/make-and-flash-mcu.sh
