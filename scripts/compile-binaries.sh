@@ -107,6 +107,15 @@ compile_btt_skr_mini_e3_30() {
     cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-mini-e3-30.bin
 }
 
+compile_btt_skr_3() {
+    echo "Compiling firmware for SKR 3"
+    cp -f /home/pi/klipper_config/config/boards/btt-skr-3/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-3.bin
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -132,6 +141,7 @@ compile_btt_ebb42_12
 compile_btt_ebb36_12
 compile_mellow_fly_sht_42
 compile_btt_skr_mini_e3_30
+compile_btt_skr_3
 chown pi:pi /home/pi/klipper_config/firmware_binaries/*.bin
 
 popd
