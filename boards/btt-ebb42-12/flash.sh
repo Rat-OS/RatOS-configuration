@@ -7,7 +7,7 @@ fi
 pushd /home/pi/klipper
 service klipper stop
 if [ -h $MCU ]; then
-    echo "Flashing BTT EBB42 V1.2 via path"
+    echo "Flashing BTT EBB42 v1.2 via path"
     make flash FLASH_DEVICE=$MCU
 fi
 sleep 5
