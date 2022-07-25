@@ -1,0 +1,11 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "BTT-EBB42-12",
+	"manufacturer": "BigTreeTech",
+	"serialPath": "/dev/btt-ebb42-12",
+	"firmwareBinaryName": "firmware-btt-ebb42-12.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/ebb42-12"
+}
