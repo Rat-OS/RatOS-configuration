@@ -61,7 +61,7 @@ update_btt_ebb42_10() {
     if [[ -h "/dev/btt-ebb42-10" ]]
     then
         echo "BTT EBB42 v1.0 detected"
-        /home/pi/klipper_config/config/boards/btt-ebb42-11/make-and-flash-mcu.sh
+        /home/pi/klipper_config/config/boards/btt-ebb42-10/make-and-flash-mcu.sh
     fi
 }
 
