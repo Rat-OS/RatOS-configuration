@@ -65,6 +65,14 @@ update_btt_ebb42_10() {
     fi
 }
 
+update_btt_ebb36_10() {
+    if [[ -h "/dev/btt-ebb36-10" ]]
+    then
+        echo "BTT EBB36 v1.0 detected"
+        /home/pi/klipper_config/config/boards/btt-ebb42-10/make-and-flash-mcu.sh
+    fi
+}
+
 update_btt_ebb42_11() {
     if [[ -h "/dev/btt-ebb42-11" ]]
     then
@@ -125,6 +133,7 @@ update_fysetc_spider
 update_skr_pro_12
 update_skr_2_429
 update_btt_ebb42_10
+update_btt_ebb36_10
 update_btt_ebb42_11
 update_btt_ebb36_11
 update_btt_ebb42_12
