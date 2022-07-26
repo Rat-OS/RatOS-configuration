@@ -121,6 +121,14 @@ update_btt_skr_mini_e3_30() {
     fi
 }
 
+update_btt_skr_3() {
+    if [[ -h "/dev/btt-skr-3" ]]
+    then
+        echo "SKR 3 detected"
+        /home/pi/klipper_config/config/boards/btt-skr-3/make-and-flash-mcu.sh
+    fi
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -138,5 +146,9 @@ update_btt_ebb42_11
 update_btt_ebb36_11
 update_btt_ebb42_12
 update_btt_ebb36_12
+<<<<<<< HEAD
+=======
+update_btt_skr_3
+>>>>>>> 08e616378fe754a7ff0a64f0cf24d4acb88f57ee
 update_mellow_fly_sht_42
 update_btt_skr_mini_e3_30
