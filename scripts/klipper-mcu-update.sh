@@ -146,9 +146,6 @@ update_btt_ebb42_11
 update_btt_ebb36_11
 update_btt_ebb42_12
 update_btt_ebb36_12
-<<<<<<< HEAD
-=======
 update_btt_skr_3
->>>>>>> 08e616378fe754a7ff0a64f0cf24d4acb88f57ee
 update_mellow_fly_sht_42
 update_btt_skr_mini_e3_30
