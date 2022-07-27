@@ -1,6 +1,5 @@
 #!/bin/bash
-
-MCU=/dev/btt-skr-3
+MCU=/dev/btt-ebb36-10
 if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
@@ -8,7 +7,7 @@ fi
 pushd /home/pi/klipper
 service klipper stop
 if [ -h $MCU ]; then
-    echo "Flashing BTT SKR 3 via path"
+    echo "Flashing BTT EBB36 v1.0 via path"
     make flash FLASH_DEVICE=$MCU
 fi
 sleep 5
