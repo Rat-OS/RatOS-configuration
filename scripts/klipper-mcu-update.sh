@@ -121,6 +121,14 @@ update_mellow_fly_sht_42() {
     fi
 }
 
+update_mellow_fly_sht_36() {
+    if [[ -h "/dev/mellow-fly-sht-42" ]]
+    then
+        echo "Mellow FLY-SHT42 detected"
+        /home/pi/klipper_config/config/boards/mellow-fly-sht-36/make-and-flash-mcu.sh
+    fi
+}
+
 update_btt_skr_mini_e3_30() {
     if [[ -h "/dev/btt-skr-mini-e3-30" ]]
     then
@@ -157,4 +165,5 @@ update_btt_ebb42_12
 update_btt_ebb36_12
 update_btt_skr_3
 update_mellow_fly_sht_42
+update_mellow_fly_sht_36
 update_btt_skr_mini_e3_30

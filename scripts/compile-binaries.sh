@@ -116,6 +116,7 @@ compile_btt_ebb36_12() {
     make
     cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb36-12.bin
 }
+
 compile_mellow_fly_sht_42() {
     echo "Compiling firmware for Mellow FLY-SHT42"
     cp -f /home/pi/klipper_config/config/boards/mellow-fly-sht-42/firmware.config /home/pi/klipper/.config
@@ -123,6 +124,15 @@ compile_mellow_fly_sht_42() {
     make clean
     make
     cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-mellow-fly-sht-42.bin
+}
+
+compile_mellow_fly_sht_36() {
+    echo "Compiling firmware for Mellow FLY-SHT36"
+    cp -f /home/pi/klipper_config/config/boards/mellow-fly-sht-36/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-mellow-fly-sht-36.bin
 }
 
 compile_btt_skr_mini_e3_30() {
@@ -170,6 +180,7 @@ compile_btt_ebb36_11
 compile_btt_ebb42_12
 compile_btt_ebb36_12
 compile_mellow_fly_sht_42
+compile_mellow_fly_sht_36
 compile_btt_skr_mini_e3_30
 compile_btt_skr_3
 chown pi:pi /home/pi/klipper_config/firmware_binaries/*.bin
