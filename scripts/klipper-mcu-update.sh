@@ -33,6 +33,14 @@ update_btt_octopus_11() {
     fi
 }
 
+update_btt_octopus_11_407() {
+    if [[ -h "/dev/btt-octopus-11-407" ]]
+    then
+        echo "Octopus v1.1 STM32F407 detected"
+        /home/pi/klipper_config/config/boards/btt-octopus-11-407/make-and-flash-mcu.sh
+    fi
+}
+
 update_fysetc_spider() {
     if [[ -h "/dev/fysetc-spider" ]]
     then
@@ -137,6 +145,7 @@ update_rpi
 update_octopus_pro_446
 update_octopus_pro_429
 update_btt_octopus_11
+update_btt_octopus_11_407
 update_fysetc_spider
 update_skr_pro_12
 update_skr_2_429

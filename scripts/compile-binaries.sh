@@ -27,6 +27,15 @@ compile_btt_octopus_11() {
     cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-11.bin
 }
 
+compile_btt_octopus_11_407() {
+    echo "Compiling firmware for BTT Octopus v1.1"
+    cp -f /home/pi/klipper_config/config/boards/btt-octopus-407/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-407.bin
+}
+
 compile_fysetc_spider() {
     echo "Compiling firmware for Fysetc Spider v1.1"
     cp -f /home/pi/klipper_config/config/boards/fysetc-spider/firmware.config /home/pi/klipper/.config
@@ -150,6 +159,7 @@ pushd /home/pi/klipper
 compile_octopus_pro_446
 compile_octopus_pro_429
 compile_btt_octopus_11
+compile_btt_octopus_11_407
 compile_fysetc_spider
 compile_skr_pro_12
 compile_skr_2_429
