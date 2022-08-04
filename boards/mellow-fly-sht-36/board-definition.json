@@ -1,7 +1,8 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"isToolboard": true,
 	"name": "FLY-SHT36",
-	"manufacturer": "mellow",
+	"manufacturer": "Mellow",
 	"serialPath": "/dev/mellow-fly-sht-36",
 	"firmwareBinaryName": "firmware-mellow-fly-sht-36.bin",
 	"compileScript": "compile.sh",

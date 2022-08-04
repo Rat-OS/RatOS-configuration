@@ -1,7 +1,8 @@
 {
 	"$schema": "../board-definition.schema.json",
-	"name": "BTT-EBB36-11",
-	"manufacturer": "BigTreeTech",
+	"isToolboard": true,
+	"name": "EBB36 v1.1",
+	"manufacturer": "BIGTREETECH",
 	"serialPath": "/dev/btt-ebb36-11",
 	"firmwareBinaryName": "firmware-btt-ebb36-11.bin",
 	"compileScript": "compile.sh",
