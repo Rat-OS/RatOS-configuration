@@ -1,12 +1,12 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"isToolboard": true,
-	"name": "FLY-SHT42",
+	"name": "FLY-SHT36",
 	"manufacturer": "Mellow",
-	"serialPath": "/dev/mellow-fly-sht-42",
-	"firmwareBinaryName": "firmware-mellow-fly-sht-42.bin",
+	"serialPath": "/dev/mellow-fly-sht-36",
+	"firmwareBinaryName": "firmware-mellow-fly-sht-36.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"flashInstructions": "After initial flashing, make sure the boot0 jumper is not inserted.",
-	"documentationLink": "https://os.ratrig.com/docs/boards/mellow/fly-sht-42"
+	"documentationLink": "https://os.ratrig.com/docs/boards/mellow/fly-sht-36"
 }

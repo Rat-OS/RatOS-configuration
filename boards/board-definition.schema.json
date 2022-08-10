@@ -37,6 +37,10 @@
 			"description": "Link to the RatOS configuration for this board",
 			"type": "string"
 		},
+		"isToolboard": {
+			"description": "Whether this controlboard is a toolboard",
+			"type": "boolean"
+		},
 		"dfu": {
 			"description": "DFU Flashing details",
 			"type": "object",
