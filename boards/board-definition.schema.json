@@ -5,38 +5,65 @@
 	"description": "A 3d printer control board",
 	"type": "object",
 	"properties": {
-	  "serialPath": {
-		"description": "The path for serial communication with this MCU",
-		"type": "string"
-	  },
-	  "name": {
-		"description": "The name of the control board",
-		"type": "string"
-	  },
-	  "manufacturer": {
-		  "description": "The name of the manufacturer of this board",
-		  "type": "string"
-	  },
-	  "firmwareBinaryName": {
-		  "description": "The firmware binary filename",
-		  "type": "string"
-	  },
-	  "compileScript": {
-		  "description": "The path to the compilation script if the board supports automatic firmware compilation, relative to the board definition directory",
-		  "type": "string"
-	  },
-	  "flashScript": {
-		"description": "The path to the flashing script if the board supports automatic firmware flashing, relative to the board definition directory",
-		"type": "string"
-	  },
-	  "flashInstructions": {
-		"description": "Instructions for how to make sure the board can be automatically flashed",
-		"type": "string"
-	  },
-	  "documentationLink": {
-		  "description": "Link to the RatOS configuration for this board",
-		  "type": "string"
-	  }
+		"serialPath": {
+			"description": "The path for serial communication with this MCU",
+			"type": "string"
+		},
+		"name": {
+			"description": "The name of the control board",
+			"type": "string"
+		},
+		"manufacturer": {
+			"description": "The name of the manufacturer of this board",
+			"type": "string"
+		},
+		"firmwareBinaryName": {
+			"description": "The firmware binary filename in RatOS",
+			"type": "string"
+		},
+		"compileScript": {
+			"description": "The path to the compilation script if the board supports automatic firmware compilation, relative to the board definition directory",
+			"type": "string"
+		},
+		"flashScript": {
+			"description": "The path to the flashing script if the board supports automatic firmware flashing, relative to the board definition directory",
+			"type": "string"
+		},
+		"flashInstructions": {
+			"description": "Instructions for how to make sure the board can be automatically flashed",
+			"type": "string"
+		},
+		"documentationLink": {
+			"description": "Link to the RatOS configuration for this board",
+			"type": "string"
+		},
+		"isToolboard": {
+			"description": "Whether this controlboard is a toolboard",
+			"type": "boolean"
+		},
+		"dfu": {
+			"description": "DFU Flashing details",
+			"type": "object",
+			"properties": {
+				"boot0Image": {
+					"description": "Path to a picture for locating the boot0 jumper",
+					"type": "string"
+				},
+				"resetImage": {
+					"description": "Path to a picture for locating the reset button",
+					"type": "string"
+				},
+				"flashDevice": {
+					"description": "A string containing the vendor and device id to use as the flash target, eg 0483:df11",
+					"type": "string"
+				}
+			},
+			"required": ["boot0Image", "resetImage", "flashDevice"]
+		},
+		"sdFileName": {
+			"description": "The filename for the firmware binary when flashing via SD card",
+			"type": "string"
+		}
 	},
-	"required": [ "serialPath", "name", "manufacturer", "firmwareBinaryName", "compileScript" ]
-  }
+	"required": ["serialPath", "name", "manufacturer", "firmwareBinaryName", "compileScript", "documentationLink"]
+}

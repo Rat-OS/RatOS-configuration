@@ -1,0 +1,12 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"isToolboard": true,
+	"name": "EBB42 v1.0",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-ebb42-10",
+	"firmwareBinaryName": "firmware-btt-ebb42-10.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/ebb42-10"
+}

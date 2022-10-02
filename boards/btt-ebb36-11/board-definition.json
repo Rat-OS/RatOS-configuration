@@ -1,0 +1,12 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"isToolboard": true,
+	"name": "EBB36 v1.1",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-ebb36-11",
+	"firmwareBinaryName": "firmware-btt-ebb36-11.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "After initial flashing, make sure the boot0 jumper is not inserted.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/ebb36-11"
+}
