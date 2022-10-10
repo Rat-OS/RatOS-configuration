@@ -1,0 +1,11 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Manta M4P",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-manta-m4p",
+	"firmwareBinaryName": "firmware-btt-manta-m4p.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "Flashing only works if the SD card slot on the Manta is empty.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-m4p"
+}
