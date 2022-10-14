@@ -1,1 +1,5 @@
 mcu-detection.cfg
+/.vs/RatOS-configuration/v16
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
