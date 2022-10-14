@@ -25,11 +25,6 @@ install_udev_rules()
     report_status "Installing udev rules"
     sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
 }
-compile_binaries()
-{
-    report_status "Compiling firmware binaries"
-    sudo /home/pi/klipper_config/config/scripts/compile-binaries.sh
-}
 
 verify_ready()
 {
@@ -48,4 +43,3 @@ install_udev_rules
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
-compile_binaries

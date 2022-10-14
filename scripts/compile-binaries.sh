@@ -29,11 +29,11 @@ compile_btt_octopus_11() {
 
 compile_btt_octopus_11_407() {
     echo "Compiling firmware for BTT Octopus v1.1"
-    cp -f /home/pi/klipper_config/config/boards/btt-octopus-407/firmware.config /home/pi/klipper/.config
+    cp -f /home/pi/klipper_config/config/boards/btt-octopus-11-407/firmware.config /home/pi/klipper/.config
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-407.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-11-407.bin
 }
 
 compile_fysetc_spider() {
