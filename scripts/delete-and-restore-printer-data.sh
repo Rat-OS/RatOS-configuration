@@ -5,7 +5,7 @@ if [ -d "/home/pi/printer_data" ]; then
   rm -rf /home/pi/printer_data/database
   rm -rf /home/pi/printer_data/gcodes
   rm -rf /home/pi/printer_data/logs
-elif
+else
   mkdir /home/pi/printer_data
 fi
 
