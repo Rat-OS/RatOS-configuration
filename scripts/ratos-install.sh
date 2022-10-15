@@ -45,6 +45,7 @@ set -e
 
 verify_ready
 install_printer_config
+fix_printer_data
 install_udev_rules
 install_hooks
 install_dependencies
