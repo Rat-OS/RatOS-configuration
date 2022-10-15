@@ -26,6 +26,12 @@ install_udev_rules()
     sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
 }
 
+fix_printer_data()
+{
+    report_status "Fixing printer data"
+    ./delete-and-restore-printer-data.sh
+}
+
 verify_ready()
 {
     if [ "$EUID" -eq 0 ]; then
