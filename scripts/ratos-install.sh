@@ -29,7 +29,7 @@ install_udev_rules()
 fix_printer_data()
 {
     report_status "Fixing printer data"
-    ./delete-and-restore-printer-data.sh
+    /home/pi/klipper_config/config/scripts/delete-and-restore-printer-data.sh
 }
 
 verify_ready()
