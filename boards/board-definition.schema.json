@@ -56,6 +56,10 @@
 				"instructions": {
 					"description": "Instruction steps for how to boot into DFU mode",
 					"type": "array"
+				},
+				"reminder": {
+					"description": "Post-flashing reminders, if any.",
+					"type": "string"
 				}
 			},
 			"required": ["dfuBootImage", "flashDevice", "instructions"]
