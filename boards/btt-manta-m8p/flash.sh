@@ -7,7 +7,7 @@ fi
 pushd /home/pi/klipper
 service klipper stop
 if [ -h $MCU ]; then
-    echo "Flashing Manta via path"
+    echo "Flashing Manta M8P via path"
     make flash FLASH_DEVICE=$MCU
 fi
 sleep 5
