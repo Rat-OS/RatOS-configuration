@@ -41,6 +41,10 @@
 			"description": "Whether this controlboard is a toolboard",
 			"type": "boolean"
 		},
+		"isHost": {
+			"description": "Whether this is the host computer RatOS is running on (used for Pi)",
+			"type": "boolean"
+		},
 		"dfu": {
 			"description": "DFU Flashing details",
 			"type": "object",
