@@ -145,7 +145,7 @@ update_btt_skr_3() {
     fi
 }
 
-flash_result=$(curl --fail -X POST 'http://localhost:3000/configure/api/trpc/mcu.flash-all-connected' -H 'content-type: application/json')
+flash_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/mcu.flash-all-connected' -H 'content-type: application/json')
 configurator_success=$?
 if [ $configurator_success -eq 0 ]
 then
