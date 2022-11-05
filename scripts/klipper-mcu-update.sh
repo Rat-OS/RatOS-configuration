@@ -145,25 +145,31 @@ update_btt_skr_3() {
     fi
 }
 
-# Force script to exit if an error occurs
-set -e
+flash_result=$(curl -X --fail POST 'http://localhost:3000/configure/api/trpc/mcu.flash-all-connected' -H 'content-type: application/json')
+configurator_success=$?
+if [ $configurator_success -eq 0 ]
+then
+    echo $flash_result | jq '.result.data.json'
+else
+    echo "Installed configurator doesn't support flashing yet, falling back to old method"
+    # Run make scripts for the supported boards.
+    update_rpi
+    update_octopus_pro_446
+    update_octopus_pro_429
+    update_btt_octopus_11
+    update_btt_octopus_11_407
+    update_fysetc_spider
+    update_skr_pro_12
+    update_skr_2_429
+    update_btt_ebb42_10
+    update_btt_ebb36_10
+    update_btt_ebb42_11
+    update_btt_ebb36_11
+    update_btt_ebb42_12
+    update_btt_ebb36_12
+    update_btt_skr_3
+    update_mellow_fly_sht_42
+    update_mellow_fly_sht_36
+    update_btt_skr_mini_e3_30
+fi
 
-# Run make scripts for the supported boards.
-update_rpi
-update_octopus_pro_446
-update_octopus_pro_429
-update_btt_octopus_11
-update_btt_octopus_11_407
-update_fysetc_spider
-update_skr_pro_12
-update_skr_2_429
-update_btt_ebb42_10
-update_btt_ebb36_10
-update_btt_ebb42_11
-update_btt_ebb36_11
-update_btt_ebb42_12
-update_btt_ebb36_12
-update_btt_skr_3
-update_mellow_fly_sht_42
-update_mellow_fly_sht_36
-update_btt_skr_mini_e3_30
