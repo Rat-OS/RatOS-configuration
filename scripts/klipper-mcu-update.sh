@@ -149,7 +149,7 @@ flash_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api
 configurator_success=$?
 if [ $configurator_success -eq 0 ]
 then
-    echo $flash_result | jq '.result.data.json'
+    echo $flash_result | jq -r '.result.data.json'
 else
     echo "Installed configurator doesn't support flashing yet, falling back to old method"
     # Run make scripts for the supported boards.
