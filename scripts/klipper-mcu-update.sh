@@ -145,6 +145,7 @@ update_btt_skr_3() {
     fi
 }
 
+echo "##### Flashing connected MCU's"
 flash_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/mcu.flash-all-connected' -H 'content-type: application/json')
 configurator_success=$?
 if [ $configurator_success -eq 0 ]
@@ -173,3 +174,12 @@ else
     update_btt_skr_mini_e3_30
 fi
 
+echo "##### Symlinking registered klippy extensions"
+extensions_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.symlink' -H 'content-type: application/json')
+extensions_success=$?
+if [ $extensions_success -eq 0 ]
+then
+    echo $extensions_result | jq -r '.result.data.json'
+else
+    echo "Failed to symlink extensions, ignore this if not on RatOS 2.0 yet"
+fi

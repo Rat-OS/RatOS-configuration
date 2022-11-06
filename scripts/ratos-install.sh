@@ -7,6 +7,8 @@ PKGLIST="python3-numpy python3-matplotlib jq"
 
 source /home/pi/klipper_config/config/scripts/ratos-common.sh
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 install_dependencies()
 {
     report_status "Installing RatOS dependencies"
@@ -40,6 +42,14 @@ verify_ready()
     fi
 }
 
+register_gcode_shell_command()
+{
+    EXT_NAME="gcode_shell_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="gcode_shell_command.py"
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -50,3 +60,5 @@ install_udev_rules
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
+register_gcode_shell_command
+

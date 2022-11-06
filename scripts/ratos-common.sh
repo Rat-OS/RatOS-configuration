@@ -3,6 +3,25 @@ report_status()
     echo -e "\n\n###### $1"
 }
 
+register_klippy_extension() {
+    EXT_NAME=$1
+    EXT_PATH=$2
+    EXT_FILE=$3
+    report_status "Registering klippy extension '$EXT_NAME' with the RatOS Configurator..."
+    if [ ! -e $EXT_PATH/$EXT_FILE ]
+    then
+        echo "ERROR: The file you're trying to register does not exist"
+        exit 1
+    fi
+    curl --silent --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' -H 'content-type: application/json' --data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\"}}" > /dev/null
+    if [ $? -eq 0 ]
+    then
+        echo "Registered $EXT_NAME successfully."
+    else
+        echo "ERROR: Failed to register $EXT_NAME. Is the RatOS configurator running?"
+        exit 1
+    fi
+}
 
 install_hooks()
 {
