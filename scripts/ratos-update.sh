@@ -46,7 +46,7 @@ fix_klipperscreen_permissions()
   chown -R pi /home/pi/KlipperScreen
 }
 
-symlink_extensions()
+symlink_klippy_extensions()
 {
 	report_status "Symlinking klippy extensions"
 	symlink_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.symlink' -H 'content-type: application/json')
@@ -55,7 +55,20 @@ symlink_extensions()
 	then
 		echo $symlink_result | jq -r '.result.data.json'
 	else
-		echo "Failed to symlink extensions. Is the RatOS configurator running? Ignore this if not on RatOS 2.0 yet"
+		echo "Failed to symlink klippy extensions. Is the RatOS configurator running? Ignore this if not on RatOS 2.0 yet"
+	fi
+}
+
+symlink_moonraker_extensions()
+{
+	report_status "Symlinking moonraker extensions"
+	symlink_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/moonraker-extensions.symlink' -H 'content-type: application/json')
+	configurator_success=$?
+	if [ $configurator_success -eq 0 ]
+	then
+		echo $symlink_result | jq -r '.result.data.json'
+	else
+		echo "Failed to symlink moonraker extensions. Is the RatOS configurator running? Ignore this if not on RatOS 2.0 yet"
 	fi
 }
 # Run update symlinks
@@ -67,5 +80,6 @@ ensure_moonraker_policiykit_rules
 [ $? -eq 1 ] && echo "Policykit rules have changed. You will have to manually restart moonraker. Power cycling the raspberry pi will also do the trick."
 fix_klipperscreen_forcepush
 fix_klipperscreen_permissions
-symlink_extensions
+symlink_klippy_extensions
+symlink_moonraker_extensions
 restart_klipper
