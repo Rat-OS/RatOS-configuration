@@ -12,7 +12,7 @@ verify_ready()
     fi
 }
 
-symlink_extensions()
+symlink_klippy_extensions()
 {
 	report_status "Symlinking klippy extensions"
 	symlink_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.symlink' -H 'content-type: application/json')
@@ -21,7 +21,21 @@ symlink_extensions()
 	then
 		echo $symlink_result | jq -r '.result.data.json'
 	else
-		echo "Failed to symlink extensions. Is the RatOS configurator running?"
+		echo "Failed to symlink klippy extensions. Is the RatOS configurator running?"
+		exit 1
+	fi
+}
+
+symlink_moonraker_extensions()
+{
+	report_status "Symlinking moonraker extensions"
+	symlink_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/moonraker-extensions.symlink' -H 'content-type: application/json')
+	configurator_success=$?
+	if [ $configurator_success -eq 0 ]
+	then
+		echo $symlink_result | jq -r '.result.data.json'
+	else
+		echo "Failed to symlink moonraker extensions. Is the RatOS configurator running?"
 		exit 1
 	fi
 }
@@ -30,4 +44,5 @@ symlink_extensions()
 set -e
 
 verify_ready
-symlink_extensions
+symlink_klippy_extensions
+symlink_moonraker_extensions
