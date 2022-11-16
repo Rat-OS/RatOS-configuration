@@ -21,7 +21,7 @@ if [ -h $MCU ]; then
 	retVal=0
 else
 	dfuPostFlash=$(lsusb | grep -c "0483:df11")
-	if [ $dfuPreFlash -eq 1 && $dfuPostFlash -eq 0 ]; then
+	if [ $dfuPreFlash -eq 1 ] && [ $dfuPostFlash -eq 0 ]; then
 		echo "Seems like flashing failed, but the device is still in DFU mode. Attempting to recover."
 		make flash FLASH_DEVICE=0483:df11
 		sleep 5
