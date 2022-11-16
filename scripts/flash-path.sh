@@ -30,7 +30,7 @@ else
 		fi
 	fi
 fi
-if [ $retVal -eq 0]; then
+if [ $retVal -eq 0 ]; then
 	echo "Flashing successful."
 else
 	echo "Flashing failed."
