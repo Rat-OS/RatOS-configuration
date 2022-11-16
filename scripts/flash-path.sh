@@ -10,7 +10,7 @@ if [ "$MCU" == "" ]; then
 fi
 pushd /home/pi/klipper
 service klipper stop
-dfuPreFlash=$(lsusb | grep -c "0483:df11")
+dfuDevicesPreFlash=$(lsusb | grep -c "0483:df11")
 if [ -h $MCU ]; then
     echo "Flashing SKRat via path"
     make flash FLASH_DEVICE=$MCU
@@ -20,8 +20,10 @@ retVal=1
 if [ -h $MCU ]; then
 	retVal=0
 else
-	dfuPostFlash=$(lsusb | grep -c "0483:df11")
-	if [ $dfuPreFlash -eq 1 ] && [ $dfuPostFlash -eq 0 ]; then
+	dfuDevicesPostFlash=$(lsusb | grep -c "0483:df11")
+	echo "dfuDevicesPreFlash: $dfuDevicesPreFlash"
+	echo "dfuDevicesPostFlash: $dfuDevicesPostFlash"
+	if [ $dfuDevicesPreFlash -eq 0 ] && [ $dfuDevicesPostFlash -eq 1 ]; then
 		echo "Seems like flashing failed, but the device is still in DFU mode. Attempting to recover."
 		make flash FLASH_DEVICE=0483:df11
 		sleep 5
