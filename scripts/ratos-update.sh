@@ -82,4 +82,3 @@ fix_klipperscreen_forcepush
 fix_klipperscreen_permissions
 symlink_klippy_extensions
 symlink_moonraker_extensions
-restart_klipper
