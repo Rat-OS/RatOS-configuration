@@ -2,11 +2,11 @@
 MCU=$1
 if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
-  exit
+  exit 1
 fi
 if [ "$MCU" == "" ]; then
 	echo "ERROR: Please specify a device to flash"
-	exit
+	exit 1
 fi
 pushd /home/pi/klipper
 service klipper stop
