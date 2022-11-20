@@ -12,5 +12,4 @@ make olddefconfig
 make clean
 # Reset ownership
 chown pi:pi -R /home/pi/klipper
-service klipper start
 popd
