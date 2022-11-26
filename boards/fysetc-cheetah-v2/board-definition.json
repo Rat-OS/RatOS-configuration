@@ -1,0 +1,11 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Cheetah v2",
+	"manufacturer": "Fysetc",
+	"serialPath": "/dev/fysetc-cheetah-v2",
+	"firmwareBinaryName": "firmware-fysetc-cheetah-v2.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "Flashing dfu-util -R -a 0 -s 0x08008000:leave -D klipper.bin",
+	"documentationLink": "https://os.ratrig.com/docs/boards/fysetc/cheetah-v2"
+}
