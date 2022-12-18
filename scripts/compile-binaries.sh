@@ -171,6 +171,15 @@ compile_prusa_einsy() {
     cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-prusa-einsy.bin
 }
 
+compile_prusa_buddy() {
+    echo "Compiling firmware for Prusa Buddy"
+    cp -f /home/pi/klipper_config/config/boards/prusa-buddy/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-prusa-buddy.bin
+}
+
 # Force script to exit if an error occurs
 set -e
 
