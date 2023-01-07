@@ -5,15 +5,11 @@ report_status()
 
 disable_modem_manager()
 {
-	if [[ -e /etc/systemd/system/ModemManager.service ]]
+	sudo systemctl is-enabled ModemManager.service > /dev/null
+	if [[ $? -eq 0 ]]
 	then
-		MM_LINK=$( readlink -f /etc/systemd/system/ModemManager.service )
-		if [ $MM_LINK != "/dev/null" ]
-		then
-			report_status "Disabling ModemManager"
-			sudo systemctl stop ModemManager.service 2> /dev/null
-			sudo systemctl mask ModemManager.service
-		fi
+		report_status "Disabling ModemManager"
+		sudo systemctl mask ModemManager.service
 	fi
 }
 
