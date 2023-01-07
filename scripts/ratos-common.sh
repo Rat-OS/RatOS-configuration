@@ -3,6 +3,20 @@ report_status()
     echo -e "\n\n###### $1"
 }
 
+disable_modem_manager()
+{
+	if [[ -e /etc/systemd/system/ModemManager.service ]]
+	then
+		MM_LINK=$( readlink -f /etc/systemd/system/ModemManager.service )
+		if [ $MM_LINK != "/dev/null" ]
+		then
+			report_status "Disabling ModemManager"
+			sudo systemctl stop ModemManager.service 2> /dev/null
+			sudo systemctl mask ModemManager.service
+		fi
+	fi
+}
+
 register_klippy_extension() {
     EXT_NAME=$1
     EXT_PATH=$2

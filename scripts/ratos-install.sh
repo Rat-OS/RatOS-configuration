@@ -61,4 +61,4 @@ install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
 register_gcode_shell_command
-
+disable_modem_manager
