@@ -28,12 +28,6 @@ install_udev_rules()
     sudo ln -s /home/pi/printer_data/config/RatOS/boards/*/*.rules /etc/udev/rules.d/
 }
 
-fix_printer_data()
-{
-    report_status "Fixing printer data"
-    /home/pi/printer_data/config/RatOS/scripts/delete-and-restore-printer-data.sh
-}
-
 verify_ready()
 {
     if [ "$EUID" -eq 0 ]; then
@@ -55,7 +49,6 @@ set -e
 
 verify_ready
 install_printer_config
-fix_printer_data
 install_udev_rules
 install_hooks
 install_dependencies
