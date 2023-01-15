@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /home/pi/klipper_config/config/scripts/moonraker-ensure-policykit-rules.sh
+source /home/pi/printer_data/config/RatOS/scripts/moonraker-ensure-policykit-rules.sh
 ensure_moonraker_policiykit_rules
 
 validate_moonraker_config()
@@ -14,7 +14,7 @@ validate_moonraker_config()
     echo "Installing old moonraker config.."
 	echo $has_include
 	echo $install_version
-    # cp /home/pi/klipper_config/config/old-moonraker.conf /home/pi/klipper_config/config/moonraker.conf
+    # cp /home/pi/printer_data/config/RatOS/old-moonraker.conf /home/pi/printer_data/config/RatOS/moonraker.conf
   fi
 }
 

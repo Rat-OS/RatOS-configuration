@@ -2,7 +2,7 @@
 # This script install additional dependencies
 # for the v-core 3 klipper setup.
 
-source /home/pi/klipper_config/config/scripts/ratos-common.sh
+source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
 
 verify_ready()
 {

@@ -3,7 +3,7 @@ if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
 fi
-cp -f /home/pi/klipper_config/config/boards/mellow-fly-sht-42/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/printer_data/config/RatOS/boards/mellow-fly-sht-42/firmware.config /home/pi/klipper/.config
 pushd /home/pi/klipper
 make olddefconfig
 make clean

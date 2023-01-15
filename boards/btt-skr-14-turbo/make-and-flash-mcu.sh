@@ -5,7 +5,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-cp -f /home/pi/klipper_config/config/boards/btt-skr-14-turbo/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/printer_data/config/RatOS/boards/btt-skr-14-turbo/firmware.config /home/pi/klipper/.config
 pushd /home/pi/klipper
 make olddefconfig
 make clean

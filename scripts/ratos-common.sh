@@ -26,17 +26,17 @@ register_klippy_extension() {
 install_hooks()
 {
     report_status "Installing git hooks"
-	if [[ ! -e /home/pi/klipper_config/config/.git/hooks/post-merge ]]
+	if [[ ! -e /home/pi/printer_data/config/RatOS/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/klipper_config/config/scripts/ratos-post-merge.sh /home/pi/klipper_config/config/.git/hooks/post-merge
+ 	   ln -s /home/pi/printer_data/config/RatOS/scripts/ratos-post-merge.sh /home/pi/printer_data/config/RatOS/.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/klipper/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/klipper_config/config/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
+ 	   ln -s /home/pi/printer_data/config/RatOS/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/moonraker/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/klipper_config/config/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
+ 	   ln -s /home/pi/printer_data/config/RatOS/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
 	fi
 }
 
@@ -55,9 +55,9 @@ ensure_sudo_command_whitelisting()
 	fi
 	touch /tmp/030-ratos-githooks
 	cat << '#EOF' > /tmp/030-ratos-githooks
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/ratos-update.sh
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/klipper-mcu-update.sh
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/moonraker-update.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/ratos-update.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/klipper-mcu-update.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/moonraker-update.sh
 #EOF
 
 	$sudo chown root:root /tmp/030-ratos-githooks
@@ -69,7 +69,7 @@ pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/moonraker-update.
 	then
 		touch /tmp/031-ratos-change-hostname
 		cat << '#EOF' > /tmp/031-ratos-change-hostname
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/change-hostname-as-root.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/change-hostname-as-root.sh
 #EOF
 
 		$sudo chown root:root /tmp/031-ratos-change-hostname

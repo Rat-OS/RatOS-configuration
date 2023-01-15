@@ -4,8 +4,8 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-source /home/pi/klipper_config/config/scripts/ratos-common.sh
-source /home/pi/klipper_config/config/scripts/moonraker-ensure-policykit-rules.sh
+source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
+source /home/pi/printer_data/config/RatOS/scripts/moonraker-ensure-policykit-rules.sh
 
 ensure_ownership() {
   chown pi:pi -R /home/pi/klipper
@@ -17,7 +17,7 @@ update_symlinks()
 {
   echo "Updating RatOS device symlinks.."
   rm /etc/udev/rules.d/98-*.rules
-  ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
+  ln -s /home/pi/printer_data/config/RatOS/boards/*/*.rules /etc/udev/rules.d/
 }
 
 restart_klipper()

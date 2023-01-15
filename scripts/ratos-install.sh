@@ -5,7 +5,7 @@
 SYSTEMDDIR="/etc/systemd/system"
 PKGLIST="python3-numpy python3-matplotlib jq"
 
-source /home/pi/klipper_config/config/scripts/ratos-common.sh
+source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
@@ -19,19 +19,19 @@ install_printer_config()
 {
     report_status "Copying printer configuration"
     PRINTER_CFG="/home/pi/klipper_config/printer.cfg"
-    tail -n +2 /home/pi/klipper_config/config/templates/initial-printer.template.cfg > $PRINTER_CFG
+    tail -n +2 /home/pi/printer_data/config/RatOS/templates/initial-printer.template.cfg > $PRINTER_CFG
 }
 
 install_udev_rules()
 {
     report_status "Installing udev rules"
-    sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
+    sudo ln -s /home/pi/printer_data/config/RatOS/boards/*/*.rules /etc/udev/rules.d/
 }
 
 fix_printer_data()
 {
     report_status "Fixing printer data"
-    /home/pi/klipper_config/config/scripts/delete-and-restore-printer-data.sh
+    /home/pi/printer_data/config/RatOS/scripts/delete-and-restore-printer-data.sh
 }
 
 verify_ready()
