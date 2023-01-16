@@ -18,7 +18,7 @@ install_dependencies()
 install_printer_config()
 {
     report_status "Copying printer configuration"
-    PRINTER_CFG="/home/pi/klipper_config/printer.cfg"
+    PRINTER_CFG="/home/pi/printer_data/config/printer.cfg"
     tail -n +2 /home/pi/printer_data/config/RatOS/templates/initial-printer.template.cfg > $PRINTER_CFG
 }
 

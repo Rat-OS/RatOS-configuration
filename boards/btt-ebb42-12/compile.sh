@@ -9,11 +9,11 @@ make olddefconfig
 make clean
 make
 
-if [ ! -d "/home/pi/klipper_config/firmware_binaries" ]
+if [ ! -d "/home/pi/printer_data/config/firmware_binaries" ]
 then
-    mkdir /home/pi/klipper_config/firmware_binaries
-    chown pi:pi /home/pi/klipper_config/firmware_binaries
+    mkdir /home/pi/printer_data/config/firmware_binaries
+    chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb42-12.bin
-chown pi:pi /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb42-12.bin
+cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb42-12.bin
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb42-12.bin
 popd

@@ -6,7 +6,7 @@ compile_octopus_pro_446() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-pro-446.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-octopus-pro-446.bin
 }
 
 compile_octopus_pro_429() {
@@ -15,7 +15,7 @@ compile_octopus_pro_429() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-pro-429.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-octopus-pro-429.bin
 }
 
 compile_btt_octopus_11() {
@@ -24,7 +24,7 @@ compile_btt_octopus_11() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-11.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-octopus-11.bin
 }
 
 compile_btt_octopus_11_407() {
@@ -33,7 +33,7 @@ compile_btt_octopus_11_407() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-octopus-11-407.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-octopus-11-407.bin
 }
 
 compile_fysetc_spider() {
@@ -42,7 +42,7 @@ compile_fysetc_spider() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-fysetc-spider.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-fysetc-spider.bin
 }
 
 compile_skr_pro_12() {
@@ -51,7 +51,7 @@ compile_skr_pro_12() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-pro-12.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-pro-12.bin
 }
 
 compile_skr_2_429() {
@@ -60,7 +60,7 @@ compile_skr_2_429() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-2-429.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-2-429.bin
 }
 
 compile_btt_ebb42_10() {
@@ -69,7 +69,7 @@ compile_btt_ebb42_10() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb42-10.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb42-10.bin
 }
 
 compile_btt_ebb36_10() {
@@ -78,7 +78,7 @@ compile_btt_ebb36_10() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb36-10.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb36-10.bin
 }
 
 compile_btt_ebb42_11() {
@@ -87,7 +87,7 @@ compile_btt_ebb42_11() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb42-11.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb42-11.bin
 }
 
 compile_btt_ebb36_11() {
@@ -96,7 +96,7 @@ compile_btt_ebb36_11() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb36-11.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb36-11.bin
 }
 
 compile_btt_ebb42_12() {
@@ -105,7 +105,7 @@ compile_btt_ebb42_12() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb42-12.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb42-12.bin
 }
 
 compile_btt_ebb36_12() {
@@ -114,7 +114,7 @@ compile_btt_ebb36_12() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-ebb36-12.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb36-12.bin
 }
 
 compile_mellow_fly_sht_42() {
@@ -123,7 +123,7 @@ compile_mellow_fly_sht_42() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-mellow-fly-sht-42.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-mellow-fly-sht-42.bin
 }
 
 compile_mellow_fly_sht_36() {
@@ -132,7 +132,7 @@ compile_mellow_fly_sht_36() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-mellow-fly-sht-36.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-mellow-fly-sht-36.bin
 }
 
 compile_btt_skr_mini_e3_30() {
@@ -141,7 +141,7 @@ compile_btt_skr_mini_e3_30() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-mini-e3-30.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-mini-e3-30.bin
 }
 
 compile_btt_skr_3() {
@@ -150,16 +150,16 @@ compile_btt_skr_3() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-3.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-3.bin
 }
 
 # Force script to exit if an error occurs
 set -e
 
-if [ ! -d "/home/pi/klipper_config/firmware_binaries" ]
+if [ ! -d "/home/pi/printer_data/config/firmware_binaries" ]
 then
-    mkdir /home/pi/klipper_config/firmware_binaries
-    chown pi:pi /home/pi/klipper_config/firmware_binaries
+    mkdir /home/pi/printer_data/config/firmware_binaries
+    chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
 
 
@@ -183,6 +183,6 @@ compile_mellow_fly_sht_42
 compile_mellow_fly_sht_36
 compile_btt_skr_mini_e3_30
 compile_btt_skr_3
-chown pi:pi /home/pi/klipper_config/firmware_binaries/*.bin
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/*.bin
 
 popd
