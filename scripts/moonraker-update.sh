@@ -7,7 +7,7 @@ validate_moonraker_config()
 {
   echo "Ensuring valid moonraker config.."
   install_version=$(/home/pi/moonraker-env/bin/python -mlmdb -e /home/pi/.moonraker_database/ -d moonraker get validate_install)
-  cat /home/pi/klipper_config/moonraker.conf | grep "\[include config/moonraker.conf\]" > /dev/null
+  cat /home/pi/klipper_config/moonraker.conf | grep "\[include RatOS/moonraker.conf\]" > /dev/null
   has_include=$?
   if [ $has_include -eq 0 ] && [ "$install_version" = "'validate_install': missing" ]; then
     # Temporarily replace with old config
