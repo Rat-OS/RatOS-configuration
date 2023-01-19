@@ -5,7 +5,7 @@
 SYSTEMDDIR="/etc/systemd/system"
 PKGLIST="python3-numpy python3-matplotlib jq"
 
-source /home/pi/klipper_config/config/scripts/ratos-common.sh
+source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
@@ -18,20 +18,14 @@ install_dependencies()
 install_printer_config()
 {
     report_status "Copying printer configuration"
-    PRINTER_CFG="/home/pi/klipper_config/printer.cfg"
-    tail -n +2 /home/pi/klipper_config/config/templates/initial-printer.template.cfg > $PRINTER_CFG
+    PRINTER_CFG="/home/pi/printer_data/config/printer.cfg"
+    tail -n +2 /home/pi/printer_data/config/RatOS/templates/initial-printer.template.cfg > $PRINTER_CFG
 }
 
 install_udev_rules()
 {
     report_status "Installing udev rules"
-    sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
-}
-
-fix_printer_data()
-{
-    report_status "Fixing printer data"
-    /home/pi/klipper_config/config/scripts/delete-and-restore-printer-data.sh
+    sudo ln -s /home/pi/printer_data/config/RatOS/boards/*/*.rules /etc/udev/rules.d/
 }
 
 verify_ready()
@@ -55,10 +49,8 @@ set -e
 
 verify_ready
 install_printer_config
-fix_printer_data
 install_udev_rules
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
 register_gcode_shell_command
-disable_modem_manager

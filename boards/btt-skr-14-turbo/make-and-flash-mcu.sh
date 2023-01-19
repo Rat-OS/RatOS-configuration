@@ -5,19 +5,19 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-cp -f /home/pi/klipper_config/config/boards/btt-skr-14-turbo/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/printer_data/config/RatOS/boards/btt-skr-14-turbo/firmware.config /home/pi/klipper/.config
 pushd /home/pi/klipper
 make olddefconfig
 make clean
 make
 
-if [ ! -d "/home/pi/klipper_config/firmware_binaries" ]
+if [ ! -d "/home/pi/printer_data/config/firmware_binaries" ]
 then
-    mkdir /home/pi/klipper_config/firmware_binaries
-    chown pi:pi /home/pi/klipper_config/firmware_binaries
+    mkdir /home/pi/printer_data/config/firmware_binaries
+    chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-14-turbo.bin
-chown pi:pi /home/pi/klipper_config/firmware_binaries/firmware-btt-skr-14-turbo.bin
+cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-14-turbo.bin
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-14-turbo.bin
 
 service klipper stop
 su -c "./scripts/flash-sdcard.sh /dev/btt-skr-14-turbo generic-lpc1769" pi
