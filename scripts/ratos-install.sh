@@ -3,7 +3,7 @@
 # for the v-core 3 klipper setup.
 
 SYSTEMDDIR="/etc/systemd/system"
-PKGLIST="python3-numpy python3-matplotlib jq"
+PKGLIST="python3-numpy python3-matplotlib jq curl"
 
 source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
 
