@@ -6,8 +6,8 @@ report_status()
 disable_modem_manager()
 {
 	report_status "Checking if ModemManager is enabled..."
-	sudo systemctl is-enabled ModemManager.service &> /dev/null
-	if [[ $? -eq 0 ]]
+	
+	if ! sudo systemctl is-enabled ModemManager.service &> /dev/null; then
 	then
 		report_status "Disabling ModemManager..."
 		sudo systemctl mask ModemManager.service
