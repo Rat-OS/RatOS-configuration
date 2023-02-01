@@ -44,5 +44,6 @@ symlink_moonraker_extensions()
 set -xe
 
 verify_ready
+disable_modem_manager
 symlink_klippy_extensions
 symlink_moonraker_extensions
