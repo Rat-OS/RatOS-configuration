@@ -52,5 +52,6 @@ install_printer_config
 install_udev_rules
 install_hooks
 install_dependencies
+disable_modem_manager
 ensure_sudo_command_whitelisting
 register_gcode_shell_command

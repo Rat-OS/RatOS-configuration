@@ -3,6 +3,19 @@ report_status()
     echo -e "\n\n###### $1"
 }
 
+disable_modem_manager()
+{
+	report_status "Checking if ModemManager is enabled..."
+	sudo systemctl is-enabled ModemManager.service &> /dev/null
+	if [[ $? -eq 0 ]]
+	then
+		report_status "Disabling ModemManager..."
+		sudo systemctl mask ModemManager.service
+	else
+		report_status "Modem manager is already disabled, continuing..."
+	fi
+}
+
 register_klippy_extension() {
     EXT_NAME=$1
     EXT_PATH=$2
@@ -13,7 +26,7 @@ register_klippy_extension() {
         echo "ERROR: The file you're trying to register does not exist"
         exit 1
     fi
-    curl --silent --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' -H 'content-type: application/json' --data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\"}}" > /dev/null
+    curl --silent --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' -H 'content-type: application/json' --data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\"}}" &> /dev/null
     if [ $? -eq 0 ]
     then
         echo "Registered $EXT_NAME successfully."
