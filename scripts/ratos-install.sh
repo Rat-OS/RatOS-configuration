@@ -45,7 +45,7 @@ register_gcode_shell_command()
 }
 
 # Force script to exit if an error occurs
-set -e
+set -xe
 
 verify_ready
 install_printer_config

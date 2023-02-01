@@ -41,7 +41,7 @@ symlink_moonraker_extensions()
 }
 
 # Force script to exit if an error occurs
-set -e
+set -xe
 
 verify_ready
 symlink_klippy_extensions
