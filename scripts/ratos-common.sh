@@ -3,19 +3,6 @@ report_status()
     echo -e "\n\n###### $1"
 }
 
-disable_modem_manager()
-{
-	report_status "Checking if ModemManager is enabled..."
-	sudo systemctl is-enabled ModemManager.service > /dev/null
-	if [[ $? -eq 0 ]]
-	then
-		report_status "Disabling ModemManager..."
-		sudo systemctl mask ModemManager.service
-	else
-		report_status "Modem manager is already disabled, continuing..."
-	fi
-}
-
 register_klippy_extension() {
     EXT_NAME=$1
     EXT_PATH=$2

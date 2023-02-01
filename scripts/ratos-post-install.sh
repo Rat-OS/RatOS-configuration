@@ -46,4 +46,3 @@ set -xe
 verify_ready
 symlink_klippy_extensions
 symlink_moonraker_extensions
-disable_modem_manager
