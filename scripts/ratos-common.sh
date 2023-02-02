@@ -27,7 +27,7 @@ register_klippy_extension() {
         exit 1
     fi
     
-    if curl --silent --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' \
+    if curl --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' \
 		-H 'content-type: application/json' \
 		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\"}}"
     then
