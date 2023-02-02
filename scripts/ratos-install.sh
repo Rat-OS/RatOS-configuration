@@ -5,9 +5,8 @@
 SYSTEMDDIR="/etc/systemd/system"
 PKGLIST="python3-numpy python3-matplotlib jq curl"
 
-source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SCRIPT_DIR/ratos-common.sh
 
 install_dependencies()
 {
