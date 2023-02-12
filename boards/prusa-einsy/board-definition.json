@@ -1,10 +1,10 @@
 {
 	"$schema": "../board-definition.schema.json",
-	"name": "Buddy",
+	"name": "Einsy",
 	"manufacturer": "Prusa",
-	"serialPath": "/dev/prusa-buddy",
-	"firmwareBinaryName": "firmware-prusa-buddy.bin",
+	"serialPath": "/dev/prusa-einsy",
+	"firmwareBinaryName": "firmware-prusa-einsy.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
-	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/buddy"
+	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/einsy"
 }

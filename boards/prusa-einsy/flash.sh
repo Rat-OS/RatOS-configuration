@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MCU=/dev/prusa-buddy
+MCU=/dev/prusa-einsy
 if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
