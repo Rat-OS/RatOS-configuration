@@ -7,12 +7,6 @@ fi
 source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
 source /home/pi/printer_data/config/RatOS/scripts/moonraker-ensure-policykit-rules.sh
 
-ensure_ownership() {
-  chown pi:pi -R /home/pi/klipper
-  chown pi:pi -R /home/pi/klipper_config
-  chown pi:pi -R /home/pi/.KlipperScreen-env
-}
-
 update_symlinks()
 {
   echo "Updating RatOS device symlinks.."
@@ -52,7 +46,6 @@ symlink_moonraker_extensions()
 }
 # Run update symlinks
 update_symlinks
-ensure_ownership
 ensure_sudo_command_whitelisting
 install_hooks
 symlink_klippy_extensions
