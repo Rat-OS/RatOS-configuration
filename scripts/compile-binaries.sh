@@ -164,7 +164,7 @@ compile_prusa_buddy() {
 
 compile_prusa_einsy() {
     echo "Compiling firmware for Prusa Einsy"
-    cp -f /home/pi/printer_data/config/boards/prusa-einsy/firmware.config /home/pi/klipper/.config
+    cp -f /home/pi/printer_data/config/RatOS/boards/prusa-einsy/firmware.config /home/pi/klipper/.config
     make olddefconfig
     make clean
     make
