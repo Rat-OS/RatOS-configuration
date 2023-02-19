@@ -43,6 +43,14 @@ register_gcode_shell_command()
     register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
 }
 
+register_ratos_homing()
+{
+    EXT_NAME="ratos_homing_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="ratos_homing.py"
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+}
+
 # Force script to exit if an error occurs
 set -xe
 

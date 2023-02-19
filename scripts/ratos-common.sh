@@ -20,16 +20,20 @@ register_klippy_extension() {
 	EXT_NAME=$1
     EXT_PATH=$2
     EXT_FILE=$3
+	ERROR_IF_EXISTS=$4
+	[[ "$ERROR_IF_EXISTS" == "false" ]] && ERROR_IF_EXISTS="false" || ERROR_IF_EXISTS="true"
+
     report_status "Registering klippy extension '$EXT_NAME' with the RatOS Configurator..."
     if [ ! -e "$EXT_PATH/$EXT_FILE" ]
     then
         echo "ERROR: The file you're trying to register does not exist"
         exit 1
     fi
+
     
     if curl --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' \
 		-H 'content-type: application/json' \
-		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\"}}"
+		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\",\"errorIfExists\":$ERROR_IF_EXISTS}}"
     then
         echo "Registered $EXT_NAME successfully."
     else
