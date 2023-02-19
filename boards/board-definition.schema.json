@@ -45,6 +45,10 @@
 			"description": "Whether this is the host computer RatOS is running on (used for Pi)",
 			"type": "boolean"
 		},
+		"disableAutoFlash": {
+			"description": "Whether to disable automatic flashing of this board",
+			"type": "boolean"
+		},
 		"dfu": {
 			"description": "DFU Flashing details",
 			"type": "object",
