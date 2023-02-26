@@ -41,9 +41,9 @@ symlink_moonraker_extensions()
 }
 
 # Force script to exit if an error occurs
-set -e
+set -xe
 
 verify_ready
+disable_modem_manager
 symlink_klippy_extensions
 symlink_moonraker_extensions
-disable_modem_manager

@@ -3,11 +3,10 @@
 # for the v-core 3 klipper setup.
 
 SYSTEMDDIR="/etc/systemd/system"
-PKGLIST="python3-numpy python3-matplotlib jq"
-
-source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
+PKGLIST="python3-numpy python3-matplotlib jq curl"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SCRIPT_DIR/ratos-common.sh
 
 install_dependencies()
 {
@@ -44,8 +43,16 @@ register_gcode_shell_command()
     register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
 }
 
+register_ratos_homing()
+{
+    EXT_NAME="ratos_homing_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="ratos_homing.py"
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+}
+
 # Force script to exit if an error occurs
-set -e
+set -xe
 
 verify_ready
 install_printer_config

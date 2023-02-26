@@ -1,3 +1,4 @@
+#!/bin/bash
 report_status()
 {
     echo -e "\n\n###### $1"
@@ -5,26 +6,34 @@ report_status()
 
 disable_modem_manager()
 {
-	sudo systemctl is-enabled ModemManager.service > /dev/null
-	if [[ $? -eq 0 ]]
-	then
-		report_status "Disabling ModemManager"
+	report_status "Checking if ModemManager is enabled..."
+	
+	if ! sudo systemctl is-enabled ModemManager.service &> /dev/null; then
+		report_status "Disabling ModemManager..."
 		sudo systemctl mask ModemManager.service
+	else
+		report_status "Modem manager is already disabled, continuing..."
 	fi
 }
 
 register_klippy_extension() {
-    EXT_NAME=$1
+	EXT_NAME=$1
     EXT_PATH=$2
     EXT_FILE=$3
+	ERROR_IF_EXISTS=$4
+	[[ "$ERROR_IF_EXISTS" == "false" ]] && ERROR_IF_EXISTS="false" || ERROR_IF_EXISTS="true"
+
     report_status "Registering klippy extension '$EXT_NAME' with the RatOS Configurator..."
-    if [ ! -e $EXT_PATH/$EXT_FILE ]
+    if [ ! -e "$EXT_PATH/$EXT_FILE" ]
     then
         echo "ERROR: The file you're trying to register does not exist"
         exit 1
     fi
-    curl --silent --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' -H 'content-type: application/json' --data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\"}}" > /dev/null
-    if [ $? -eq 0 ]
+
+    
+    if curl --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' \
+		-H 'content-type: application/json' \
+		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\",\"errorIfExists\":$ERROR_IF_EXISTS}}"
     then
         echo "Registered $EXT_NAME successfully."
     else

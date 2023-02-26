@@ -4,14 +4,10 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
 source /home/pi/printer_data/config/RatOS/scripts/moonraker-ensure-policykit-rules.sh
-
-ensure_ownership() {
-  chown pi:pi -R /home/pi/klipper
-  chown pi:pi -R /home/pi/klipper_config
-  chown pi:pi -R /home/pi/.KlipperScreen-env
-}
 
 update_symlinks()
 {
@@ -23,6 +19,15 @@ update_symlinks()
 restart_klipper()
 {
   service klipper restart
+}
+
+register_ratos_homing()
+{
+    EXT_NAME="ratos_homing_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="ratos_homing.py"
+	# Don't error if extension is already registered
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE "false"
 }
 
 symlink_klippy_extensions()
@@ -52,8 +57,8 @@ symlink_moonraker_extensions()
 }
 # Run update symlinks
 update_symlinks
-ensure_ownership
 ensure_sudo_command_whitelisting
 install_hooks
+register_ratos_homing
 symlink_klippy_extensions
 symlink_moonraker_extensions

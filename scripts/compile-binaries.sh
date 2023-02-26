@@ -153,6 +153,15 @@ compile_btt_skr_3() {
     cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-3.bin
 }
 
+compile_prusa_buddy() {
+    echo "Compiling firmware for Prusa Buddy"
+    cp -f /home/pi/printer_data/config/RatOS/boards/prusa-buddy/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/firmware_binaries/firmware-prusa-buddy.bin
+}
+
 # Force script to exit if an error occurs
 set -e
 
@@ -183,6 +192,7 @@ compile_mellow_fly_sht_42
 compile_mellow_fly_sht_36
 compile_btt_skr_mini_e3_30
 compile_btt_skr_3
+compile_prusa_buddy
 chown pi:pi /home/pi/printer_data/config/firmware_binaries/*.bin
 
 popd
