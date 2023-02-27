@@ -54,4 +54,5 @@ ensure_moonraker_policiykit_rules
 [ $? -eq 1 ] && echo "Policykit rules have changed. You will have to manually restart moonraker. Power cycling the raspberry pi will also do the trick."
 fix_klipperscreen_forcepush
 fix_klipperscreen_permissions
+ensure_service_permission
 restart_klipper
