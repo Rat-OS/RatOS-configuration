@@ -62,3 +62,4 @@ install_hooks
 register_ratos_homing
 symlink_klippy_extensions
 symlink_moonraker_extensions
+ensure_service_permission
