@@ -159,7 +159,7 @@ compile_prusa_buddy() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/firmware_binaries/firmware-prusa-buddy.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-prusa-buddy.bin
 }
 
 compile_prusa_einsy() {
@@ -168,7 +168,7 @@ compile_prusa_einsy() {
     make olddefconfig
     make clean
     make
-    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/firmware_binaries/firmware-prusa-einsy.bin
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-prusa-einsy.bin
 }
 
 # Force script to exit if an error occurs
