@@ -42,6 +42,23 @@ register_klippy_extension() {
     fi
 }
 
+register_gcode_shell_command()
+{
+    EXT_NAME="gcode_shell_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="gcode_shell_command.py"
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+}
+
+register_ratos_homing()
+{
+    EXT_NAME="ratos_homing_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="ratos_homing.py"
+	# Don't error if extension is already registered
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE "false"
+}
+
 install_hooks()
 {
     report_status "Installing git hooks"
