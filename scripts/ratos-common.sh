@@ -79,8 +79,20 @@ install_hooks()
 ensure_service_permission()
 {
 	report_status "Updating service permissions"
-	if ! cat /home/pi/printer_data/moonraker.asvc | grep "ratos-configurator" &>/dev/null; then
-		printf '\nratos-configurator' >> /home/pi/printer_data/moonraker.asvc
+	if ! cat /home/pi/printer_data/moonraker.asvc | grep "klipper_mcu" &>/dev/null; then
+		cat << '#EOF' > /home/pi/printer_data/moonraker.asvc
+klipper_mcu
+webcamd
+MoonCord
+KlipperScreen
+moonraker-telegram-bot
+moonraker-obico
+sonar
+crowsnest
+octoeverywhere
+ratos-configurator
+#EOF
+
 		report_status "Configurator added to moonraker service permissions"
 	fi
 }
