@@ -44,6 +44,5 @@ install_udev_rules
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
-ensure_service_permission
 register_gcode_shell_command
 register_ratos_homing
