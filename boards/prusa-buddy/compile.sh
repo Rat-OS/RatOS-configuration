@@ -16,7 +16,7 @@ then
     mkdir /home/pi/printer_data/config/firmware_binaries
     chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-prusa-buddy.bin
+cp -f /home/pi/klipper/out/klipper.elf.hex /home/pi/printer_data/config/firmware_binaries/firmware-prusa-buddy.bin
 chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-prusa-buddy.bin
 
 # Reset ownership
