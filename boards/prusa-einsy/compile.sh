@@ -16,8 +16,8 @@ then
     mkdir /home/pi/printer_data/config/firmware_binaries
     chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-prusa-einsy.bin
-chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-prusa-einsy.bin
+cp -f /home/pi/klipper/out/klipper.elf.hex /home/pi/printer_data/config/firmware_binaries/firmware-prusa-einsy.elf.hex
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-prusa-einsy.elf.hex
 
 # Reset ownership
 chown pi:pi -R /home/pi/klipper
