@@ -21,15 +21,6 @@ restart_klipper()
   service klipper restart
 }
 
-register_ratos_homing()
-{
-    EXT_NAME="ratos_homing_extension"
-    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
-    EXT_FILE="ratos_homing.py"
-	# Don't error if extension is already registered
-    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE "false"
-}
-
 symlink_klippy_extensions()
 {
 	report_status "Symlinking klippy extensions"
@@ -58,6 +49,7 @@ symlink_moonraker_extensions()
 # Run update symlinks
 update_symlinks
 ensure_sudo_command_whitelisting
+ensure_service_permission
 install_hooks
 register_ratos_homing
 symlink_klippy_extensions

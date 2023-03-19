@@ -35,22 +35,6 @@ verify_ready()
     fi
 }
 
-register_gcode_shell_command()
-{
-    EXT_NAME="gcode_shell_extension"
-    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
-    EXT_FILE="gcode_shell_command.py"
-    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
-}
-
-register_ratos_homing()
-{
-    EXT_NAME="ratos_homing_extension"
-    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
-    EXT_FILE="ratos_homing.py"
-    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
-}
-
 # Force script to exit if an error occurs
 set -xe
 
@@ -61,3 +45,4 @@ install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
 register_gcode_shell_command
+register_ratos_homing
