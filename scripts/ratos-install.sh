@@ -3,9 +3,10 @@
 # for the v-core 3 klipper setup.
 
 SYSTEMDDIR="/etc/systemd/system"
-PKGLIST="python3-numpy python3-matplotlib"
+PKGLIST="python3-numpy python3-matplotlib jq curl"
 
-source /home/pi/klipper_config/config/scripts/ratos-common.sh
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SCRIPT_DIR/ratos-common.sh
 
 install_dependencies()
 {
@@ -16,19 +17,14 @@ install_dependencies()
 install_printer_config()
 {
     report_status "Copying printer configuration"
-    PRINTER_CFG="/home/pi/klipper_config/printer.cfg"
-    tail -n +2 /home/pi/klipper_config/config/templates/initial-printer.template.cfg > $PRINTER_CFG
+    PRINTER_CFG="/home/pi/printer_data/config/printer.cfg"
+    tail -n +2 /home/pi/printer_data/config/RatOS/templates/initial-printer.template.cfg > $PRINTER_CFG
 }
 
 install_udev_rules()
 {
     report_status "Installing udev rules"
-    sudo ln -s /home/pi/klipper_config/config/boards/*/*.rules /etc/udev/rules.d/
-}
-compile_binaries()
-{
-    report_status "Compiling firmware binaries"
-    sudo /home/pi/klipper_config/config/scripts/compile-binaries.sh
+    sudo ln -s /home/pi/printer_data/config/RatOS/boards/*/*.rules /etc/udev/rules.d/
 }
 
 verify_ready()
@@ -39,8 +35,24 @@ verify_ready()
     fi
 }
 
+register_gcode_shell_command()
+{
+    EXT_NAME="gcode_shell_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="gcode_shell_command.py"
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+}
+
+register_ratos_homing()
+{
+    EXT_NAME="ratos_homing_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="ratos_homing.py"
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+}
+
 # Force script to exit if an error occurs
-set -e
+set -xe
 
 verify_ready
 install_printer_config
@@ -48,4 +60,4 @@ install_udev_rules
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
-compile_binaries
+register_gcode_shell_command

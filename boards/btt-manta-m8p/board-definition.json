@@ -1,0 +1,10 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Manta M8P",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-manta-m8p",
+	"firmwareBinaryName": "firmware-btt-manta-m8p.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-m8p"
+}

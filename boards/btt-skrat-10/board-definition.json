@@ -1,0 +1,22 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "SKRat v1.0",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-skrat-10",
+	"firmwareBinaryName": "firmware-btt-skrat-10.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skrat-10",
+	"dfu": {
+		"flashDevice": "0483:df11",
+		"dfuBootImage": "dfubooting.png",
+		"instructions": [
+			"Connect the board via USB to the Raspberry Pi",
+			"Make sure the board is powered (you can use usb power by placing a jumper on the USB_5V pins above the reset button)",
+			"Press and hold the BOOT button on the board.",
+			"Press and release the RESET button on the board.",
+			"Release the BOOT button."
+		],
+		"reminder": "Remember to remove the USB_5V jumper if you installed it on the board."
+	}
+}

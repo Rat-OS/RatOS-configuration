@@ -1,0 +1,10 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "SKR Mini E3 V3.0",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-skr-mini-e3-30",
+	"firmwareBinaryName": "firmware-btt-skr-mini-e3-30.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-mini-e3-30"
+}

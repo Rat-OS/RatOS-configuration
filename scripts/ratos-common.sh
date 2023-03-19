@@ -1,23 +1,61 @@
+#!/bin/bash
 report_status()
 {
     echo -e "\n\n###### $1"
 }
 
+disable_modem_manager()
+{
+	report_status "Checking if ModemManager is enabled..."
+	
+	if ! sudo systemctl is-enabled ModemManager.service &> /dev/null; then
+		report_status "Disabling ModemManager..."
+		sudo systemctl mask ModemManager.service
+	else
+		report_status "Modem manager is already disabled, continuing..."
+	fi
+}
+
+register_klippy_extension() {
+	EXT_NAME=$1
+    EXT_PATH=$2
+    EXT_FILE=$3
+	ERROR_IF_EXISTS=$4
+	[[ "$ERROR_IF_EXISTS" == "false" ]] && ERROR_IF_EXISTS="false" || ERROR_IF_EXISTS="true"
+
+    report_status "Registering klippy extension '$EXT_NAME' with the RatOS Configurator..."
+    if [ ! -e "$EXT_PATH/$EXT_FILE" ]
+    then
+        echo "ERROR: The file you're trying to register does not exist"
+        exit 1
+    fi
+
+    
+    if curl --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' \
+		-H 'content-type: application/json' \
+		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\",\"errorIfExists\":$ERROR_IF_EXISTS}}"
+    then
+        echo "Registered $EXT_NAME successfully."
+    else
+        echo "ERROR: Failed to register $EXT_NAME. Is the RatOS configurator running?"
+        exit 1
+    fi
+}
 
 install_hooks()
 {
     report_status "Installing git hooks"
-	if [[ ! -e /home/pi/klipper_config/config/.git/hooks/post-merge ]]
+	if [[ ! -e /home/pi/printer_data/config/RatOS/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/klipper_config/config/scripts/ratos-post-merge.sh /home/pi/klipper_config/config/.git/hooks/post-merge
+ 	   ln -s /home/pi/printer_data/config/RatOS/scripts/ratos-post-merge.sh /home/pi/printer_data/config/RatOS/.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/klipper/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/klipper_config/config/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
+ 	   ln -s /home/pi/printer_data/config/RatOS/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/moonraker/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/klipper_config/config/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
+ 	   ln -s /home/pi/printer_data/config/RatOS/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
 	fi
 }
 
@@ -36,9 +74,9 @@ ensure_sudo_command_whitelisting()
 	fi
 	touch /tmp/030-ratos-githooks
 	cat << '#EOF' > /tmp/030-ratos-githooks
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/ratos-update.sh
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/klipper-mcu-update.sh
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/moonraker-update.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/ratos-update.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/klipper-mcu-update.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/moonraker-update.sh
 #EOF
 
 	$sudo chown root:root /tmp/030-ratos-githooks
@@ -50,7 +88,7 @@ pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/moonraker-update.
 	then
 		touch /tmp/031-ratos-change-hostname
 		cat << '#EOF' > /tmp/031-ratos-change-hostname
-pi  ALL=(ALL) NOPASSWD: /home/pi/klipper_config/config/scripts/change-hostname-as-root.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/change-hostname-as-root.sh
 #EOF
 
 		$sudo chown root:root /tmp/031-ratos-change-hostname

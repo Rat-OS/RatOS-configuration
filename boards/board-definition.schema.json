@@ -41,24 +41,36 @@
 			"description": "Whether this controlboard is a toolboard",
 			"type": "boolean"
 		},
+		"isHost": {
+			"description": "Whether this is the host computer RatOS is running on (used for Pi)",
+			"type": "boolean"
+		},
+		"disableAutoFlash": {
+			"description": "Whether to disable automatic flashing of this board",
+			"type": "boolean"
+		},
 		"dfu": {
 			"description": "DFU Flashing details",
 			"type": "object",
 			"properties": {
-				"boot0Image": {
-					"description": "Path to a picture for locating the boot0 jumper",
-					"type": "string"
-				},
-				"resetImage": {
-					"description": "Path to a picture for locating the reset button",
+				"dfuBootImage": {
+					"description": "Path to a picture for locating the buttons and/or jumpers required to boot into DFU mode",
 					"type": "string"
 				},
 				"flashDevice": {
 					"description": "A string containing the vendor and device id to use as the flash target, eg 0483:df11",
 					"type": "string"
+				},
+				"instructions": {
+					"description": "Instruction steps for how to boot into DFU mode",
+					"type": "array"
+				},
+				"reminder": {
+					"description": "Post-flashing reminders, if any.",
+					"type": "string"
 				}
 			},
-			"required": ["boot0Image", "resetImage", "flashDevice"]
+			"required": ["dfuBootImage", "flashDevice", "instructions"]
 		},
 		"sdFileName": {
 			"description": "The filename for the firmware binary when flashing via SD card",
