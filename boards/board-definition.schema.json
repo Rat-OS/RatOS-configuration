@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft-07/schema",
-	"$id": "https://os.ratrig.com/board-defintion.schema.json",
+	"$id": "https://os.ratrig.com/board-definition.schema.json",
 	"title": "Control Board",
 	"description": "A 3d printer control board",
 	"type": "object",
