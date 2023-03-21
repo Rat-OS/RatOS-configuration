@@ -1,0 +1,10 @@
+{
+  "$schema": "../board-definition.schema.json",
+  "name": "Einsy",
+  "manufacturer": "Prusa",
+  "serialPath": "/dev/prusa-einsy",
+  "firmwareBinaryName": "firmware-prusa-einsy.elf.hex",
+  "compileScript": "compile.sh",
+  "flashScript": "flash.sh",
+  "documentationLink": "https://os.ratrig.com/docs/boards/prusa/einsy"
+}

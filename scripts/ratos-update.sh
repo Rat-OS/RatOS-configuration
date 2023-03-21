@@ -4,14 +4,10 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
 source /home/pi/printer_data/config/RatOS/scripts/moonraker-ensure-policykit-rules.sh
-
-ensure_ownership() {
-  chown pi:pi -R /home/pi/klipper
-  chown pi:pi -R /home/pi/klipper_config
-  chown pi:pi -R /home/pi/.KlipperScreen-env
-}
 
 update_symlinks()
 {
@@ -52,8 +48,9 @@ symlink_moonraker_extensions()
 }
 # Run update symlinks
 update_symlinks
-ensure_ownership
 ensure_sudo_command_whitelisting
+ensure_service_permission
 install_hooks
+register_ratos_homing
 symlink_klippy_extensions
 symlink_moonraker_extensions

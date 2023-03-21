@@ -20,22 +20,43 @@ register_klippy_extension() {
 	EXT_NAME=$1
     EXT_PATH=$2
     EXT_FILE=$3
+	ERROR_IF_EXISTS=$4
+	[[ "$ERROR_IF_EXISTS" == "false" ]] && ERROR_IF_EXISTS="false" || ERROR_IF_EXISTS="true"
+
     report_status "Registering klippy extension '$EXT_NAME' with the RatOS Configurator..."
     if [ ! -e "$EXT_PATH/$EXT_FILE" ]
     then
         echo "ERROR: The file you're trying to register does not exist"
         exit 1
     fi
+
     
     if curl --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' \
 		-H 'content-type: application/json' \
-		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\"}}"
+		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\",\"errorIfExists\":$ERROR_IF_EXISTS}}"
     then
         echo "Registered $EXT_NAME successfully."
     else
         echo "ERROR: Failed to register $EXT_NAME. Is the RatOS configurator running?"
         exit 1
     fi
+}
+
+register_gcode_shell_command()
+{
+    EXT_NAME="gcode_shell_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="gcode_shell_command.py"
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+}
+
+register_ratos_homing()
+{
+    EXT_NAME="ratos_homing_extension"
+    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_FILE="ratos_homing.py"
+	# Don't error if extension is already registered
+    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE "false"
 }
 
 install_hooks()
@@ -52,6 +73,27 @@ install_hooks()
 	if [[ ! -e /home/pi/moonraker/.git/hooks/post-merge ]]
 	then
  	   ln -s /home/pi/printer_data/config/RatOS/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
+	fi
+}
+
+ensure_service_permission()
+{
+	report_status "Updating service permissions"
+	if ! cat /home/pi/printer_data/moonraker.asvc | grep "klipper_mcu" &>/dev/null; then
+		cat << '#EOF' > /home/pi/printer_data/moonraker.asvc
+klipper_mcu
+webcamd
+MoonCord
+KlipperScreen
+moonraker-telegram-bot
+moonraker-obico
+sonar
+crowsnest
+octoeverywhere
+ratos-configurator
+#EOF
+
+		report_status "Configurator added to moonraker service permissions"
 	fi
 }
 

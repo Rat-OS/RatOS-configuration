@@ -1,0 +1,11 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Manta E3EZ",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-manta-e3ez",
+	"firmwareBinaryName": "firmware-btt-manta-e3ez.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "Flashing only works if the SD card slot on the Manta is empty.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-e3ez"
+}
