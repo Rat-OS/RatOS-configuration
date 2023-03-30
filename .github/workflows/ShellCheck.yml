@@ -22,8 +22,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint_modules:
-    name: Shellcheck (modules)
+  lint_scripts:
+    name: Shellcheck (scripts)
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Repository
@@ -37,7 +37,7 @@ jobs:
         env:
           SHELLCHECK_OPTS: -ax -s bash
         with:
-          scandir: "./src"
+          scandir: "./scripts"
           format: tty
 
       - name: Failure Summary
@@ -52,26 +52,20 @@ jobs:
         run: |
           echo "## Shellcheck succeeded :tada:" >> $GITHUB_STEP_SUMMARY
           echo "Well done .. :white_check_mark:" >> $GITHUB_STEP_SUMMARY
-  lint_configs:
-    name: Shellcheck (configs)
+  lint_boards:
+    name: Shellcheck (boards)
     runs-on: ubuntu-latest
     steps:
       - name: Fetch Repository
         uses: actions/checkout@v3
 
-      - name: Get configs
-        id: configs
-        run: |
-          SCANFILES="$(find ${{ github.workspace }}/config -type f -printf "%f\n" | uniq | tr '\n' ' ')"
-          echo "additional=${SCANFILES}" >> $GITHUB_OUTPUT
       - name: Run ShellCheck
-        id: sc-configs
+        id: boards
         uses: ludeeus/action-shellcheck@master
         env:
           SHELLCHECK_OPTS: -ax -s bash
         with:
-          scandir: "./config"
-          additional_files: "${{ steps.configs.outputs.additional }}"
+          scandir: "./boards"
           format: tty
 
       - name: Failure Summary
