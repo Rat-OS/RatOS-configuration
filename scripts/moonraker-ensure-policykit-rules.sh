@@ -3,7 +3,6 @@
 POLKIT_LEGACY_DIR="/etc/polkit-1/localauthority/50-local.d"
 POLKIT_DIR="/etc/polkit-1/rules.d"
 POLKIT_USR_DIR="/usr/share/polkit-1/rules.d"
-MOONRAKER_UNIT="/etc/systemd/system/moonraker.service"
 
 ensure_moonraker_policiykit_rules() {
 	if [[ -e ${POLKIT_USR_DIR}/moonraker.rules ]]

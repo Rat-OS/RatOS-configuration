@@ -1,17 +1,16 @@
 #!/bin/bash
 # This script install additional dependencies
-# for the v-core 3 klipper setup.
+# for RatOS.
 
-SYSTEMDDIR="/etc/systemd/system"
 PKGLIST="python3-numpy python3-matplotlib jq curl"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-source $SCRIPT_DIR/ratos-common.sh
+source "$SCRIPT_DIR"/ratos-common.sh
 
 install_dependencies()
 {
     report_status "Installing RatOS dependencies"
-    sudo apt-get update && sudo apt-get install -y $PKGLIST
+    sudo apt-get update && sudo apt-get install -y "$PKGLIST"
 }
 
 install_printer_config()
@@ -31,7 +30,7 @@ verify_ready()
 {
     if [ "$EUID" -eq 0 ]; then
         echo "This script must not run as root"
-        exit -1
+        exit 1
     fi
 }
 
