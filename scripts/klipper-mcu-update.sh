@@ -9,7 +9,7 @@ flash_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api
 configurator_success=$?
 if [ $configurator_success -eq 0 ]
 then
-    echo $flash_result | jq -r '.result.data.json'
+    echo "$flash_result" | jq -r '.result.data.json'
 else
     echo "Failed to flash connected MCUs, is the configurator running?"
 fi
@@ -19,7 +19,7 @@ extensions_result=$(curl --fail --silent -X POST 'http://localhost:3000/configur
 extensions_success=$?
 if [ $extensions_success -eq 0 ]
 then
-    echo $extensions_result | jq -r '.result.data.json'
+    echo "$extensions_result" | jq -r '.result.data.json'
 else
     echo "Failed to symlink extensions, ignore this if not on RatOS 2.0 yet"
 fi
@@ -29,7 +29,7 @@ symlink_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/a
 configurator_success=$?
 if [ $configurator_success -eq 0 ]
 then
-    echo $symlink_result | jq -r '.result.data.json'
+    echo "$symlink_result" | jq -r '.result.data.json'
 else
     echo "Failed to symlink moonraker extensions. Is the RatOS configurator running? Ignore this if not on RatOS 2.0 yet"
 fi
