@@ -5,7 +5,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-pushd /home/pi/klipper
+pushd /home/pi/klipper || exit
 service klipper stop
 su -c "./scripts/flash-sdcard.sh /dev/btt-skr-pro-12 btt-skr-pro-v1.2" pi
 if [ $? -eq 0 ]; then
@@ -13,7 +13,7 @@ if [ $? -eq 0 ]; then
 else
     echo "Flashing failed :("
     service klipper start
-    popd
+    popd || exit
     # Reset ownership
     chown pi:pi -R /home/pi/klipper
     exit 1
@@ -21,4 +21,4 @@ fi
 # Reset ownership
 chown pi:pi -R /home/pi/klipper
 service klipper start
-popd
+popd || exit

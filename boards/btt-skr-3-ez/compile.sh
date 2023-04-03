@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 cp -f /home/pi/printer_data/config/RatOS/boards/btt-skr-3-ez/firmware.config /home/pi/klipper/.config
-pushd /home/pi/klipper
+pushd /home/pi/klipper || exit
 make olddefconfig
 make clean
 make
@@ -21,4 +21,4 @@ chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-3-ez
 
 # Reset ownership
 chown pi:pi -R /home/pi/klipper
-popd
+popd || exit
