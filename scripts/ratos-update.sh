@@ -5,9 +5,9 @@ if [ "$EUID" -ne 0 ]
 fi
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-# shellcheck source=./ratos-common.sh
+# shellcheck source=./scripts/ratos-common.sh
 source "$SCRIPT_DIR"/ratos-common.sh
-# shellcheck source=./moonraker-ensure-policykit-rules.sh
+# shellcheck source=./scripts/moonraker-ensure-policykit-rules.sh
 source "$SCRIPT_DIR"/moonraker-ensure-policykit-rules.sh
 
 update_symlinks()
@@ -49,7 +49,7 @@ symlink_moonraker_extensions()
 }
 # Run update symlinks
 update_symlinks
-ensure_sudo_command_whitelisting
+ensure_sudo_command_whitelisting root
 ensure_service_permission
 install_hooks
 register_ratos_homing
