@@ -5,6 +5,7 @@
 PKGLIST="python3-numpy python3-matplotlib jq curl"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# shellcheck source=./ratos-common.sh
 source "$SCRIPT_DIR"/ratos-common.sh
 
 install_dependencies()

@@ -65,15 +65,15 @@ install_hooks()
     report_status "Installing git hooks"
 	if [[ ! -e /home/pi/printer_data/config/RatOS/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/printer_data/config/RatOS/scripts/ratos-post-merge.sh /home/pi/printer_data/config/RatOS/.git/hooks/post-merge
+ 	   ln -s "$SCRIPT_DIR"/ratos-post-merge.sh "$SCRIPT_DIR"/../.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/klipper/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/printer_data/config/RatOS/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
+ 	   ln -s "$SCRIPT_DIR"/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/moonraker/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/printer_data/config/RatOS/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
+ 	   ln -s "$SCRIPT_DIR"/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
 	fi
 }
 
