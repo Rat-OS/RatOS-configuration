@@ -20,8 +20,7 @@ cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_bin
 chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-14-turbo.bin
 
 service klipper stop
-su -c "./scripts/flash-sdcard.sh /dev/btt-skr-14-turbo generic-lpc1769" pi
-if [ $? -eq 0 ]; then
+if su -c "./scripts/flash-sdcard.sh /dev/btt-skr-14-turbo generic-lpc1769" pi -eq 0; then
     echo "Flashing successful!"
 else
     echo "Flashing failed :("
