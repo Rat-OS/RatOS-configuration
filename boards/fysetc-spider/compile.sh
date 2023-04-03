@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 cp -f /home/pi/printer_data/config/RatOS/boards/fysetc-spider/firmware.config /home/pi/klipper/.config
-pushd /home/pi/klipper
+pushd /home/pi/klipper || exit
 make olddefconfig
 make clean
 make
@@ -19,4 +19,4 @@ fi
 cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-fysetc-spider.bin
 chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-fysetc-spider.bin
 
-popd
+popd || exit

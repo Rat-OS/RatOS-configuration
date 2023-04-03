@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 cp -f /home/pi/printer_data/config/RatOS/boards/btt-skr-14-turbo/firmware.config /home/pi/klipper/.config
-pushd /home/pi/klipper
+pushd /home/pi/klipper || exit
 make olddefconfig
 make clean
 make
@@ -26,7 +26,7 @@ if [ $? -eq 0 ]; then
 else
     echo "Flashing failed :("
     service klipper start
-    popd
+    popd || exit
     # Reset ownership
     chown pi:pi -R /home/pi/klipper
     exit 1
@@ -34,4 +34,4 @@ fi
 # Reset ownership
 chown pi:pi -R /home/pi/klipper
 service klipper start
-popd
+popd || exit
