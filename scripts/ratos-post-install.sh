@@ -3,6 +3,7 @@
 # for the v-core 3 klipper setup.
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# shellcheck source=./ratos-common.sh
 source "$SCRIPT_DIR"/ratos-common.sh
 
 verify_ready()
