@@ -4,9 +4,8 @@ on:
     branches:
       - "**"
     paths:
-      - "config/**"
-      - "src/**"
-      - "!src/version"
+      - "boards/**"
+      - "scripts/**"
       # Add workflow itself for now
       - ".github/workflows/ShellCheck.yml"
 
