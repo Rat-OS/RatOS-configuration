@@ -1,6 +1,6 @@
 {
 	"$schema": "../board-definition.schema.json",
-	"name": "SKR 3 EZ",
+	"name": "SKR 3 EZ H743",
 	"manufacturer": "BIGTREETECH",
 	"serialPath": "/dev/btt-skr-3-ez",
 	"firmwareBinaryName": "firmware-btt-skr-3-ez.bin",
