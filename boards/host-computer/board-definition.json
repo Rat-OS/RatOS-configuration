@@ -1,7 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
-	"name": "Pi",
-	"manufacturer": "Raspberry",
+	"name": "Computer",
+	"manufacturer": "Host",
 	"isHost": true,
 	"serialPath": "/tmp/klipper_host_mcu",
 	"firmwareBinaryName": "~/klipper/out/klipper.elf",

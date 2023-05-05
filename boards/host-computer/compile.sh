@@ -6,8 +6,8 @@ if [ "$EUID" -ne 0 ]
 fi
 
 pushd /home/pi/klipper
-echo "flashing rpi-mcu"
-cp -f /home/pi/printer_data/config/RatOS/boards/rpi/firmware.config /home/pi/klipper/.config
+echo "flashing host-computer-mcu"
+cp -f /home/pi/printer_data/config/RatOS/boards/host-computer/firmware.config /home/pi/klipper/.config
 make olddefconfig
 make clean
 # Reset ownership
