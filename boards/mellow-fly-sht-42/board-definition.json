@@ -14,7 +14,7 @@
 		"dfuBootImage": "dfubooting.png",
 		"instructions": [
 			"Add the jumper as shown in the picture",
-			"Connect the board via USB to the Raspberry Pi",
+			"Connect the board via USB to the host computer",
 			"Make sure the board is powered on",
 			"If the board was already connected and powered when you inserted the jumper, click the boot button on the board."
 		],
