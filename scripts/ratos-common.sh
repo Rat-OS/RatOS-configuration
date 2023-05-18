@@ -27,7 +27,7 @@ install_beacon()
 		exit 1
 	fi
 
-	pushd "$BEACON_DIR" || exit
+	pushd "/home/pi" || exit
 	git clone https://github.com/beacon3d/beacon_klipper.git beacon
 	popd || exit
 
