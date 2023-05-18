@@ -21,6 +21,12 @@ install_beacon()
 	KLIPPER_DIR="/home/pi/klipper"
 	KLIPPER_ENV="/home/pi/klippy-env"
 	BEACON_DIR="/home/pi/beacon"
+    report_status "Installing beacon module..."
+
+	if [ -d "$BEACON_DIR" ]; then
+		echo "beacon: beacon already installed, skipping..."
+		exit 1
+	fi
 
 	if [ ! -d "$KLIPPER_DIR" ] || [ ! -d "$KLIPPER_ENV" ]; then
 		echo "beacon: klipper or klippy env doesn't exist"
@@ -39,7 +45,6 @@ install_beacon()
 	echo "beacon: registering beacon with the configurator."
 	register_klippy_extension "beacon" "$BEACON_DIR" "beacon.py"
 
-	echo "beacon: installation successful."
 }
 
 register_klippy_extension() {
