@@ -50,6 +50,7 @@ symlink_moonraker_extensions()
 update_symlinks
 ensure_sudo_command_whitelisting
 ensure_service_permission
+install_beacon
 install_hooks
 register_ratos_homing
 symlink_klippy_extensions

@@ -16,6 +16,32 @@ disable_modem_manager()
 	fi
 }
 
+install_beacon()
+{
+	KLIPPER_DIR="/home/pi/klipper"
+	KLIPPER_ENV="/home/pi/klippy-env"
+	BEACON_DIR="/home/pi/beacon"
+
+	if [ ! -d "$KLIPPER_DIR" ] || [ ! -d "$KLIPPER_ENV" ]; then
+		echo "beacon: klipper or klippy env doesn't exist"
+		exit 1
+	fi
+
+	pushd "$BEACON_DIR" || exit
+	git clone https://github.com/beacon3d/beacon_klipper.git beacon
+	popd || exit
+
+	# install beacon requirements to env
+	echo "beacon: installing python requirements to env."
+	"${KLIPPER_ENV}/bin/pip" install -r "${BEACON_DIR}/requirements.txt"
+
+	# update link to beacon.py
+	echo "beacon: registering beacon with the configurator."
+	register_klippy_extension "beacon" "$BEACON_DIR" "beacon.py"
+
+	echo "beacon: installation successful."
+}
+
 register_klippy_extension() {
 	EXT_NAME=$1
     EXT_PATH=$2
