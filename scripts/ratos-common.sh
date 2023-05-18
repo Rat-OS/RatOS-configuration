@@ -35,6 +35,7 @@ install_beacon()
 
 	pushd "/home/pi" || return
 	git clone https://github.com/beacon3d/beacon_klipper.git beacon
+	chown -R pi:pi beacon
 	popd || return
 
 	# install beacon requirements to env
