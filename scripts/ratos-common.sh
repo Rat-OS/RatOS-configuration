@@ -25,17 +25,17 @@ install_beacon()
 
 	if [ -d "$BEACON_DIR" ]; then
 		echo "beacon: beacon already installed, skipping..."
-		exit 1
+		return
 	fi
 
 	if [ ! -d "$KLIPPER_DIR" ] || [ ! -d "$KLIPPER_ENV" ]; then
 		echo "beacon: klipper or klippy env doesn't exist"
-		exit 1
+		return
 	fi
 
-	pushd "/home/pi" || exit
+	pushd "/home/pi" || return
 	git clone https://github.com/beacon3d/beacon_klipper.git beacon
-	popd || exit
+	popd || return
 
 	# install beacon requirements to env
 	echo "beacon: installing python requirements to env."
