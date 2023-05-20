@@ -23,7 +23,7 @@ install_beacon()
 	BEACON_DIR="/home/pi/beacon"
     report_status "Installing beacon module..."
 
-	if [ -d "$BEACON_DIR" ]; then
+	if [ -d "$BEACON_DIR" ] || [ -e "$KLIPPER_DIR/klippy/extras/beacon.py" ]; then
 		echo "beacon: beacon already installed, skipping..."
 		return
 	fi
