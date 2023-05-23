@@ -1,0 +1,11 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Octopus Pro H723 V1.1",
+	"manufacturer": "BIGTREETECH",
+	"serialPath": "/dev/btt-octopus-pro-h723-11",
+	"firmwareBinaryName": "firmware-btt-octopus-pro-h723-11.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "Flashing only works if the SD card slot on the Octopus Pro is empty.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-pro-h723-11"
+}
