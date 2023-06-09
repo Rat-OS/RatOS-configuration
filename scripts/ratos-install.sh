@@ -41,6 +41,7 @@ set -xe
 verify_ready
 install_printer_config
 install_udev_rules
+install_beacon
 install_hooks
 install_dependencies
 ensure_sudo_command_whitelisting
