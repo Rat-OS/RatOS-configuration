@@ -11,10 +11,9 @@ if [ "$#" -ne 1 ]
   exit
 fi
 
-CURRENT_HOSTNAME=`cat /etc/hostname | tr -d " \t\n\r"`
-echo $1 > /etc/hostname
-sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$1/g" /etc/hosts
-if [ $? -eq 0 ] 
+CURRENT_HOSTNAME=$(tr -d " \t\n\r" < /etc/hostname)
+echo "$1" > /etc/hostname
+if sed -i "s/127.0.1.1.*$CURRENT_HOSTNAME/127.0.1.1\t$1/g" /etc/hosts 
 then
 	echo "Hostname has been changed, please reboot your Raspberry Pi for the change to take effect"
 else

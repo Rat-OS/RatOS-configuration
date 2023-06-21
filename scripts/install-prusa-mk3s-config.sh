@@ -1,3 +1,4 @@
 #!/bin/bash
 
-tail -n +2 /home/pi/printer_data/config/RatOS/templates/prusa-mk3s-printer.template.cfg > /home/pi/printer_data/config/printer.cfg
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+tail -n +2 "$SCRIPT_DIR"/../templates/prusa-mk3s-printer.template.cfg > "$SCRIPT_DIR"/../../printer.cfg

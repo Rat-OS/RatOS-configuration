@@ -1,4 +1,5 @@
 #!/bin/bash
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 report_status()
 {
     echo -e "\n\n###### $1"
@@ -77,18 +78,18 @@ register_klippy_extension() {
 register_gcode_shell_command()
 {
     EXT_NAME="gcode_shell_extension"
-    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
     EXT_FILE="gcode_shell_command.py"
-    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE
+    register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE
 }
 
 register_ratos_homing()
 {
     EXT_NAME="ratos_homing_extension"
-    EXT_PATH=$(realpath $SCRIPT_DIR/../klippy)
+    EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
     EXT_FILE="ratos_homing.py"
 	# Don't error if extension is already registered
-    register_klippy_extension $EXT_NAME $EXT_PATH $EXT_FILE "false"
+    register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }
 
 install_hooks()
@@ -96,22 +97,22 @@ install_hooks()
     report_status "Installing git hooks"
 	if [[ ! -e /home/pi/printer_data/config/RatOS/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/printer_data/config/RatOS/scripts/ratos-post-merge.sh /home/pi/printer_data/config/RatOS/.git/hooks/post-merge
+ 	   ln -s "$SCRIPT_DIR"/ratos-post-merge.sh "$SCRIPT_DIR"/../.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/klipper/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/printer_data/config/RatOS/scripts/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
+ 	   ln -s "$SCRIPT_DIR"/klipper-post-merge.sh /home/pi/klipper/.git/hooks/post-merge
 	fi
 	if [[ ! -e /home/pi/moonraker/.git/hooks/post-merge ]]
 	then
- 	   ln -s /home/pi/printer_data/config/RatOS/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
+ 	   ln -s "$SCRIPT_DIR"/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
 	fi
 }
 
 ensure_service_permission()
 {
 	report_status "Updating service permissions"
-	if ! cat /home/pi/printer_data/moonraker.asvc | grep "klipper_mcu" &>/dev/null; then
+	if ! grep "klipper_mcu" /home/pi/printer_data/moonraker.asvc &>/dev/null || ! grep "ratos-configurator" /home/pi/printer_data/moonraker.asvc &>/dev/null; then
 		cat << '#EOF' > /home/pi/printer_data/moonraker.asvc
 klipper_mcu
 webcamd

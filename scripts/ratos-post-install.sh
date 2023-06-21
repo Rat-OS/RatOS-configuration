@@ -2,13 +2,15 @@
 # This script install additional dependencies
 # for the v-core 3 klipper setup.
 
-source /home/pi/printer_data/config/RatOS/scripts/ratos-common.sh
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# shellcheck source=./scripts/ratos-common.sh
+source "$SCRIPT_DIR"/ratos-common.sh
 
 verify_ready()
 {
     if [ "$EUID" -eq 0 ]; then
         echo "This script must not run as root"
-        exit -1
+        exit 1
     fi
 }
 
@@ -19,7 +21,7 @@ symlink_klippy_extensions()
 	configurator_success=$?
 	if [ $configurator_success -eq 0 ]
 	then
-		echo $symlink_result | jq -r '.result.data.json'
+		echo "$symlink_result" | jq -r '.result.data.json'
 	else
 		echo "Failed to symlink klippy extensions. Is the RatOS configurator running?"
 		exit 1
@@ -33,7 +35,7 @@ symlink_moonraker_extensions()
 	configurator_success=$?
 	if [ $configurator_success -eq 0 ]
 	then
-		echo $symlink_result | jq -r '.result.data.json'
+		echo "$symlink_result" | jq -r '.result.data.json'
 	else
 		echo "Failed to symlink moonraker extensions. Is the RatOS configurator running?"
 		exit 1
