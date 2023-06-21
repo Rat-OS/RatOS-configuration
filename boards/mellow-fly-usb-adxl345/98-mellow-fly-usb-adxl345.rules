@@ -1,0 +1,4 @@
+# Mellow FLY-USB-ADXL345
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="614e",  ATTRS{idVendor}=="1d50", ATTRS{serial}=="E66*", ACTION=="add", SYMLINK+="mellow-fly-usb-adxl345", RUN+="/home/pi/printer_data/config/RatOS/scripts/klipper-mcu-added.sh"
+
+ACTION=="remove", ENV{DEVLINKS}=="/dev/mellow-fly-usb-adxl345"
