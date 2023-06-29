@@ -5,5 +5,16 @@
 	"serialPath": "/dev/btt-octopus-pro-429",
 	"firmwareBinaryName": "firmware-btt-octopus-pro-429.bin",
 	"compileScript": "compile.sh",
-	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-pro-429"
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-pro-429",
+	"dfu": {
+		"flashDevice": "0483:df11",
+		"dfuBootImage": "dfubooting.drawio.png",
+		"instructions": [
+			"Connect the board via USB to the Raspberry Pi",
+			"Add the jumper to BOOT0 as shown in the picture",
+			"Make sure the board is powered on",
+			"If the board was already connected and powered when you inserted the jumper, click the reset button on the board."
+		],
+		"reminder": "Remember to remove the BOOT0 jumper after flashing."
+	}
 }
