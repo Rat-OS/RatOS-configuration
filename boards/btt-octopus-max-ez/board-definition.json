@@ -10,7 +10,7 @@
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/btt-octopus-max-ez",
     "dfu": {
         "flashDevice": "0483:df11",
-        "dfuBootImage": "dfubooting.png",
+        "dfuBootImage": "dfubooting.drawio.png",
         "instructions": [
             "Connect the board via USB to the Raspberry Pi",
             "Make sure the board is powered (you can use usb power by placing a jumper on the VBUS pins)",
