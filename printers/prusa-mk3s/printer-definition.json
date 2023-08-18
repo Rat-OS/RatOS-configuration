@@ -1,0 +1,17 @@
+{
+	"$schema": "../printer-definition.schema.json",
+    "name": "MK3S",
+    "description": "The classic Prusa i3 MK3s from Prusa Research",
+    "manufacturer": "Prusa",
+    "documentationLink": "https://os.ratrig.com/docs/printers/prusa-mini",
+    "image": "prusa-mk3s.webp",
+    "template": "prusa-mk3s-printer.template.cfg",
+    "defaults": {
+        "board": "prusa-enisy",
+        "extruder": "mk3s",
+        "hotend": "v6",
+        "probe": "superpinda",
+        "xEndstop": "endstop",
+        "yEndstop": "endstop"
+    }
+}

@@ -1,0 +1,17 @@
+{
+	"$schema": "../printer-definition.schema.json",
+    "name": "Mini",
+    "description": "Mini bed slinger from Prusa Research",
+    "manufacturer": "Prusa",
+    "documentationLink": "https://os.ratrig.com/docs/printers/prusa-mini",
+    "image": "prusa-mini.webp",
+    "template": "prusa-mini-printer.template.cfg",
+    "defaults": {
+        "board": "prusa-buddy",
+        "extruder": "prusa-mini",
+        "hotend": "v6",
+        "probe": "superpinda",
+        "xEndstop": "endstop",
+        "yEndstop": "endstop"
+    }
+}

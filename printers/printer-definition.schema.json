@@ -1,0 +1,73 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"$id": "https://os.ratrig.com/printer-definition.schema.json",
+	"title": "Printer",
+	"description": "A RatOS supported 3d printer",
+	"type": "object",
+	"properties": {
+		"name": {
+			"description": "The name of the printer",
+			"type": "string"
+		},
+		"description": {
+			"description": "A description of the printer",
+			"type": "string"
+		},
+		"manufacturer": {
+			"description": "The name of the manufacturer of this printer",
+			"type": "string"
+		},
+		"documentationLink": {
+			"description": "Link to the RatOS documentation for this printer",
+			"type": "string"
+		},
+		"image": {
+			"description": "Link to an image of the printer",
+			"type": "string"
+		},
+		"sizes": {
+			"description": "Size options for this printer",
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		},
+		"template": {
+			"description": "Printer.cfg template for this printer",
+			"type": "string"
+		},
+		"defaults": {
+			"description": "Default hardware for this printer",
+			"type": "object",
+			"properties": {
+				"extruder": {
+					"description": "Default extruder for this printer. Should be the name of the config without the file extension.",
+					"type": "string"
+				},
+				"board": {
+					"description": "Default board for this printer. Should be the name of the board directory.",
+					"type": "string"
+				},
+				"hotend": {
+					"description": "Default hotend for this printer. Should be the name of the config without the file extension.",
+					"type": "string"
+				},
+				"probe": {
+					"description": "Default probe for this printer. Should be the name of the config without the file extension.",
+					"type": "string"
+				},
+				"xEndstop": {
+					"description": "Default x endstop for this printer",
+					"type": "string",
+					"enum": ["sensorless", "endstop"]
+				},
+				"yEndstop": {
+					"description": "Default y endstop for this printer",
+					"type": "string",
+					"enum": ["sensorless", "endstop"]
+				}
+			}
+		}
+	},
+	"required": ["name", "description", "manufacturer", "documentationLink", "image", "template"]
+}

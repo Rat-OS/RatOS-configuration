@@ -1,0 +1,22 @@
+{
+	"$schema": "../printer-definition.schema.json",
+    "name": "V-Core Pro v1.3",
+    "manufacturer": "Rat Rig",
+    "documentationLink": "https://os.ratrig.com/docs/printers/v-core-pro",
+    "description": "Discontinued CoreXY printer from Rat Rig which comes in 3 sizes",
+    "image": "rat-rig-v-core-pro-13.jpg",
+    "template": "v-core-pro-printer.template.cfg",
+    "sizes": [
+        300,
+        400,
+        500
+    ],
+    "defaults": {
+        "board": "btt-skr-pro-12",
+        "extruder": "bmg",
+        "hotend": "v6",
+        "probe": "probe",
+        "xEndstop": "sensorless",
+        "yEndstop": "sensorless"
+    }
+}

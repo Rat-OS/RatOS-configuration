@@ -1,0 +1,22 @@
+{
+	"$schema": "../printer-definition.schema.json",
+    "name": "V2.4",
+    "description": "CoreXY printer with floating gantry from Voron Design, which comes in 3 sizes",
+    "manufacturer": "Voron Design",
+    "documentationLink": "https://os.ratrig.com/docs/printers/v-24",
+    "image": "voron-v24.png",
+    "template": "voron-v24-printer.template.cfg",
+    "sizes": [
+        250,
+        300,
+        350
+    ],
+    "defaults": {
+        "board": "btt-octopus-11",
+        "extruder": "clockwork-2",
+        "hotend": "dragon-high-flow",
+        "probe": "probe",
+        "xEndstop": "endstop",
+        "yEndstop": "endstop"
+    }
+}
