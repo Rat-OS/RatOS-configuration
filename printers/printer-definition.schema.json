@@ -59,15 +59,36 @@
 				"xEndstop": {
 					"description": "Default x endstop for this printer",
 					"type": "string",
-					"enum": ["sensorless", "endstop"]
+					"enum": [
+						"sensorless",
+						"endstop"
+					]
 				},
 				"yEndstop": {
 					"description": "Default y endstop for this printer",
 					"type": "string",
-					"enum": ["sensorless", "endstop"]
+					"enum": [
+						"sensorless",
+						"endstop"
+					]
 				}
-			}
+			},
+			"required": [
+				"extruder",
+				"board",
+				"hotend",
+				"xEndstop",
+				"yEndstop"
+			]
 		}
 	},
-	"required": ["name", "description", "manufacturer", "documentationLink", "image", "template"]
+	"required": [
+		"name",
+		"description",
+		"manufacturer",
+		"documentationLink",
+		"image",
+		"template",
+		"defaults"
+	]
 }
