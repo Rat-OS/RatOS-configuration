@@ -9,6 +9,7 @@
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/ebb36-11",
 	"disableAutoFlash": true,
+	"driverCount": 1,
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",

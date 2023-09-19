@@ -25,6 +25,10 @@
 			"description": "Link to an image of the printer",
 			"type": "string"
 		},
+		"driverCountRequired": {
+			"description": "Amount of drivers required for this printer",
+			"type": "number"
+		},
 		"sizes": {
 			"description": "Size options for this printer",
 			"type": "array",
@@ -87,6 +91,7 @@
 		"description",
 		"manufacturer",
 		"documentationLink",
+		"driverCountRequired",
 		"image",
 		"template",
 		"defaults"

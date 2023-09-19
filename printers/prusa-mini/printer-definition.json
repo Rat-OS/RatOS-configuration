@@ -6,6 +6,7 @@
     "documentationLink": "https://os.ratrig.com/docs/printers/prusa-mini",
     "image": "prusa-mini.webp",
     "template": "prusa-mini-printer.template.cfg",
+    "driverCountRequired": 4,
     "defaults": {
         "board": "prusa-buddy",
         "extruder": "prusa-mini",

@@ -49,6 +49,18 @@
 			"description": "Whether to disable automatic flashing of this board",
 			"type": "boolean"
 		},
+		"hasQuirksFiles": {
+			"description": "Whether this board has a quirks file that needs to be loaded (must be called quirks.cfg and quirks-toolboard.cfg)",
+			"type": "boolean"
+		},
+		"driverCount": {
+			"description": "How many drivers this board has",
+			"type": "number"
+		},
+		"extruderlessConfig": {
+			"description": "The name of an extruderless config (used for 5 driver boards to support 6 driver printers)",
+			"type": "string"
+		},
 		"dfu": {
 			"description": "DFU Flashing details",
 			"type": "object",
@@ -77,5 +89,5 @@
 			"type": "string"
 		}
 	},
-	"required": ["serialPath", "name", "manufacturer", "firmwareBinaryName", "compileScript", "documentationLink"]
+	"required": ["serialPath", "name", "manufacturer", "firmwareBinaryName", "compileScript", "documentationLink", "driverCount"]
 }

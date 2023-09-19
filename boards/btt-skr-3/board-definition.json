@@ -6,5 +6,6 @@
 	"firmwareBinaryName": "firmware-btt-skr-3.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
+	"driverCount": 5,
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-3"
 }

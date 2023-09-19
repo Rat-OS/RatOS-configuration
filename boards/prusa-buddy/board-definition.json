@@ -4,6 +4,7 @@
 	"manufacturer": "Prusa",
 	"serialPath": "/dev/prusa-buddy",
 	"firmwareBinaryName": "firmware-prusa-buddy.bin",
+	"driverCount": 4,
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/buddy"

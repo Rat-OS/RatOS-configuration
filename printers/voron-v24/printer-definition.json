@@ -6,6 +6,7 @@
     "documentationLink": "https://os.ratrig.com/docs/printers/v-24",
     "image": "voron-v24.png",
     "template": "voron-v24-printer.template.cfg",
+    "driverCountRequired": 7,
     "sizes": [
         250,
         300,

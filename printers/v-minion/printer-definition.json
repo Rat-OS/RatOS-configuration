@@ -6,6 +6,7 @@
     "documentationLink": "https://os.ratrig.com/docs/printers/v-minion",
     "image": "rat-rig-v-minion.jpeg",
     "template": "v-minion-printer.template.cfg",
+    "driverCountRequired": 4,
     "defaults": {
         "board": "btt-skrat-10",
         "extruder": "lgx-lite",

@@ -6,6 +6,7 @@
     "documentationLink": "https://os.ratrig.com/docs/printers/v-core-3",
     "image": "rat-rig-v-core-3.png",
     "template": "v-core-3-printer.template.cfg",
+    "driverCountRequired": 6,
     "sizes": [
         200,
         300,

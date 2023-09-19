@@ -4,5 +4,7 @@
 	"manufacturer": "BIGTREETECH",
 	"serialPath": "/dev/btt-skr-2-407",
 	"firmwareBinaryName": "firmware-btt-skr-2-407.bin",
-	"compileScript": "compile.sh"
+	"driverCount": 5,
+	"compileScript": "compile.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-2-429"
 }

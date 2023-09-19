@@ -6,6 +6,7 @@
     "description": "Discontinued CoreXY printer from Rat Rig which comes in 3 sizes",
     "image": "rat-rig-v-core-pro-13.jpg",
     "template": "v-core-pro-printer.template.cfg",
+    "driverCountRequired": 6,
     "sizes": [
         300,
         400,

@@ -7,5 +7,6 @@
 	"firmwareBinaryName": "~/klipper/out/klipper.elf",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
+	"driverCount": 0,
 	"documentationLink": "https://os.ratrig.com/docs/boards/pi"
 }

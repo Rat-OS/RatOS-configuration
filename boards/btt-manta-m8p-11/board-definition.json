@@ -7,6 +7,7 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-m8p-11",
+	"driverCount": 8,
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",
