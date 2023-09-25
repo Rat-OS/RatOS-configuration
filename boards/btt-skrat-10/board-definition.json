@@ -9,6 +9,7 @@
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skrat-10",
 	"driverCount": 5,
 	"extruderlessConfig": "config-3z.cfg",
+	"fourPinFanConnectorCount": 2,
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",

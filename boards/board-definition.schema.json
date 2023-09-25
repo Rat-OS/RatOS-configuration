@@ -61,6 +61,10 @@
 			"description": "The name of an extruderless config (used for 5 driver boards to support 6 driver printers)",
 			"type": "string"
 		},
+		"fourPinFanConnectorCount": {
+			"description": "How many 4 pin fan connectors this board has",
+			"type": "number"
+		},
 		"dfu": {
 			"description": "DFU Flashing details",
 			"type": "object",
