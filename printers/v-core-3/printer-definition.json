@@ -19,6 +19,50 @@
         "hotend": "rapido",
         "probe": "superpinda",
         "xEndstop": "endstop",
-        "yEndstop": "endstop"
+        "yEndstop": "endstop",
+        "rails": [
+            {
+                "axis": "x",
+                "current": 1.1,
+                "voltage": 24,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH48-2504AC"
+            },
+            {
+                "axis": "y",
+                "current": 1.1,
+                "voltage": 24,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH48-2504AC"
+            },
+            {
+                "axis": "z",
+                "current": 1.1,
+                "voltage": 24,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH48-2504AC"
+            },
+            {
+                "axis": "z1",
+                "current": 1.1,
+                "voltage": 24,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH48-2504AC"
+            },
+            {
+                "axis": "z2",
+                "current": 1.1,
+                "voltage": 24,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH48-2504AC"
+            },
+            {
+                "axis": "extruder",
+                "current": 0.707,
+                "voltage": 24,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-36STH20-1004AHG"
+            }
+        ]
     }
 }

@@ -40,6 +40,13 @@
 			"description": "Printer.cfg template for this printer",
 			"type": "string"
 		},
+		"rails": {
+			"description": "Rails (steppers/drivers) needed for this printer, can be 'x', 'x1', 'y', 'y1', 'z', 'z1', 'z2', 'z3', 'extruder'.",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
 		"defaults": {
 			"description": "Default hardware for this printer",
 			"type": "object",
@@ -75,6 +82,44 @@
 						"sensorless",
 						"endstop"
 					]
+				},
+				"rails": {
+					"description": "Default rails for this printer.",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"axis": {
+								"description": "Axis for this rail. Can be 'x', 'x1', 'y', 'y1', 'z', 'z1', 'z2', 'z3', 'extruder'",
+								"type": "string"
+							},
+							"driver": {
+								"description": "Default driver for this rail",
+								"type": "string"
+							},
+							"voltage": {
+								"description": "Default voltage for this rail. 24, 36, 48, 56 and 60 is supported. Default is 24.",
+								"type": "number"
+							},
+							"stepper": {
+								"description": "Default stepper for this rail",
+								"type": "string"
+							},
+							"current": {
+								"description": "Default current for this rail",
+								"type": "number"
+							},
+							"performanceMode": {
+								"description": "If performance mode is required for this rail. Will take precedence if true and performance mode is enabled.",
+								"type": "number"
+							},
+							"microstepping": {
+								"description": "Default microstepping for this rail. Default is 64.",
+								"type": "number"
+							}
+						},
+						"required": ["axis", "driver", "voltage", "stepper", "current"]
+					}
 				}
 			},
 			"required": [
@@ -82,7 +127,8 @@
 				"board",
 				"hotend",
 				"xEndstop",
-				"yEndstop"
+				"yEndstop",
+				"rails"
 			]
 		}
 	},

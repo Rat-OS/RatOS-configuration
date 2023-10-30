@@ -57,6 +57,44 @@
 			"description": "How many drivers this board has",
 			"type": "number"
 		},
+		"integratedDrivers": {
+			"description": "Describes the drivers integrated on this board, if any",
+			"type": "object",
+			"properties": {
+				"x": {
+					"description": "The driver for the X axis",
+					"type": "string"
+				},
+				"y": {
+					"description": "The driver for the Y axis",
+					"type": "string"
+				},
+				"z": {
+					"description": "The driver for the Z axis",
+					"type": "string"
+				},
+				"z1": {
+					"description": "The driver for the Z axis",
+					"type": "string"
+				},
+				"z2": {
+					"description": "The driver for the Z axis",
+					"type": "string"
+				},
+				"extruder": {
+					"description": "The driver for the E axis",
+					"type": "string"
+				}
+			},
+			"required": ["x", "y", "z", "extruder"]
+		},
+		"driverVoltages": {
+			"description": "The supported stepper voltages. 24, 36, 48, 56 and 60 is supported. Default is 24 only.",
+			"type": "array",
+			"items": {
+				"type": "number"
+			}
+		},
 		"extruderlessConfig": {
 			"description": "The name of an extruderless config (used for 5 driver boards to support 6 driver printers)",
 			"type": "string"
@@ -79,7 +117,10 @@
 				},
 				"instructions": {
 					"description": "Instruction steps for how to boot into DFU mode",
-					"type": "array"
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
 				},
 				"reminder": {
 					"description": "Post-flashing reminders, if any.",
