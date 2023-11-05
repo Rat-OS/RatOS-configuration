@@ -7,12 +7,46 @@
     "image": "prusa-mk3s.webp",
     "template": "prusa-mk3s-printer.template.cfg",
     "driverCountRequired": 4,
+    "speedLimits": {
+        "basic": {
+            "accel": 4000,
+            "velocity": 240,
+            "z_accel": 200,
+            "z_velocity": 15
+        }
+    },
     "defaults": {
         "board": "prusa-einsy",
         "extruder": "mk3s",
         "hotend": "v6",
         "probe": "superpinda",
         "xEndstop": "endstop",
-        "yEndstop": "endstop"
+        "yEndstop": "endstop",
+        "rails": [
+            {
+                "axis": "x",
+                "current": 0.4,
+                "driver": "PRUSA-EINSY-RAMBO-TMC2130",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "y",
+                "current": 0.4,
+                "driver": "PRUSA-EINSY-RAMBO-TMC2130",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "z",
+                "current": 0.4,
+                "driver": "PRUSA-EINSY-RAMBO-TMC2130",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "extruder",
+                "current": 0.52,
+                "driver": "PRUSA-EINSY-RAMBO-TMC2130",
+                "stepper": "LDO-42STH40-1684AC"
+            }
+        ]
     }
 }

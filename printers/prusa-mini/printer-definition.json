@@ -7,12 +7,74 @@
     "image": "prusa-mini.webp",
     "template": "prusa-mini-printer.template.cfg",
     "driverCountRequired": 4,
+    "speedLimits": {
+        "basic": {
+            "accel": 3000,
+            "velocity": 165,
+            "z_accel": 200,
+            "z_velocity": 15
+        },
+        "performance": {
+            "accel": 15000,
+            "velocity": 400,
+            "z_accel": 600,
+            "z_velocity": 15
+        }
+    },
     "defaults": {
         "board": "prusa-buddy",
         "extruder": "prusa-mini",
         "hotend": "v6",
         "probe": "superpinda",
         "xEndstop": "endstop",
-        "yEndstop": "endstop"
+        "yEndstop": "endstop",
+        "rails": [
+            {
+                "axis": "x",
+                "current": 0.4,
+                "driver": "PRUSA-BUDDY-TMC2209",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "y",
+                "current": 0.4,
+                "driver": "PRUSA-BUDDY-TMC2209",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "z",
+                "current": 0.4,
+                "driver": "PRUSA-BUDDY-TMC2209",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "extruder",
+                "current": 0.5,
+                "driver": "PRUSA-BUDDY-TMC2209",
+                "stepper": "generic",
+                "microsteps": 16
+            },
+            {
+                "axis": "x",
+                "current": 1.188,
+                "performanceMode": true,
+                "driver": "PRUSA-BUDDY-TMC2209",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "y",
+                "current": 1.188,
+                "performanceMode": true,
+                "driver": "PRUSA-BUDDY-TMC2209",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "z",
+                "current": 1.188,
+                "performanceMode": true,
+                "driver": "PRUSA-BUDDY-TMC2209",
+                "stepper": "LDO-42STH40-1684AC"
+            }
+        ]
     }
 }

@@ -7,11 +7,66 @@
     "image": "voron-v0.png",
     "template": "voron-v01-printer.template.cfg",
     "driverCountRequired": 4,
+    "speedLimits": {
+        "basic": {
+            "accel": 2000,
+            "velocity": 200,
+            "z_accel": 45,
+            "z_velocity": 15
+        },
+        "performance": {
+            "accel": 12000,
+            "velocity": 600,
+            "z_accel": 45,
+            "z_velocity": 15,
+            "square_corner_velocity": 6
+        }
+    },
     "defaults": {
         "board": "btt-skr-mini-e3-30",
         "extruder": "mini-afterburner",
         "hotend": "dragonfly",
         "xEndstop": "endstop",
-        "yEndstop": "endstop"
+        "yEndstop": "endstop",
+        "rails": [
+            {
+                "axis": "x",
+                "current": 0.5,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-35STH48-1684AH"
+            },
+            {
+                "axis": "y",
+                "current": 0.5,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-35STH48-1684AH"
+            },
+            {
+                "axis": "z",
+                "current": 0.707,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH25-1004CL200E"
+            },
+            {
+                "axis": "extruder",
+                "current": 0.35,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-36STH17-1004AHG"
+            },
+            {
+                "axis": "x",
+                "current": 1.0,
+                "performanceMode": true,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-35STH48-1684AH"
+            },
+            {
+                "axis": "y",
+                "current": 1.0,
+                "performanceMode": true,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-35STH48-1684AH"
+            }
+        ]
     }
 }

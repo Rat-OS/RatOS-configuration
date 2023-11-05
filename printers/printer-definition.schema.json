@@ -47,6 +47,69 @@
 				"type": "string"
 			}
 		},
+		"speedLimits": {
+			"type": "object",
+			"description": "Speed limits for this printer",
+			"properties": {
+				"basic": {
+					"type": "object",
+					"description": "Standard speed limits",
+					"properties": {
+						"velocity": {
+							"type": "number"
+						},
+						"accel": {
+							"type": "number"
+						},
+						"z_velocity": {
+							"type": "number"
+						},
+						"z_accel": {
+							"type": "number"
+						},
+						"square_corner_velocity": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"velocity",
+						"accel",
+						"z_velocity",
+						"z_accel"
+					]
+				},
+				"performance": {
+					"type": "object",
+					"description": "Performance speed limits",
+					"properties": {
+						"velocity": {
+							"type": "number"
+						},
+						"accel": {
+							"type": "number"
+						},
+						"z_velocity": {
+							"type": "number"
+						},
+						"z_accel": {
+							"type": "number"
+						},
+						"square_corner_velocity": {
+							"type": "number"
+						}
+					},
+					"required": [
+						"velocity",
+						"accel",
+						"z_velocity",
+						"z_accel"
+					]
+				}
+			},
+			"required": [
+				"basic"
+			]
+		},
 		"defaults": {
 			"description": "Default hardware for this printer",
 			"type": "object",
@@ -111,14 +174,14 @@
 							},
 							"performanceMode": {
 								"description": "If performance mode is required for this rail. Will take precedence if true and performance mode is enabled.",
-								"type": "number"
+								"type": "boolean"
 							},
 							"microstepping": {
 								"description": "Default microstepping for this rail. Default is 64.",
 								"type": "number"
 							}
 						},
-						"required": ["axis", "driver", "voltage", "stepper", "current"]
+						"required": ["axis", "driver", "stepper", "current"]
 					}
 				}
 			},
@@ -140,6 +203,7 @@
 		"driverCountRequired",
 		"image",
 		"template",
-		"defaults"
+		"defaults",
+		"speedLimits"
 	]
 }

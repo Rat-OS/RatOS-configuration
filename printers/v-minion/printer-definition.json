@@ -7,12 +7,73 @@
     "image": "rat-rig-v-minion.jpeg",
     "template": "v-minion-printer.template.cfg",
     "driverCountRequired": 4,
+    "speedLimits": {
+        "basic": {
+            "accel": 3000,
+            "velocity": 200,
+            "z_accel": 200,
+            "z_velocity": 15
+        },
+        "performance": {
+            "accel": 15000,
+            "velocity": 600,
+            "z_accel": 600,
+            "z_velocity": 15
+        }
+    },
     "defaults": {
         "board": "btt-skrat-10",
         "extruder": "lgx-lite",
         "hotend": "dragonfly",
         "probe": "probe",
         "xEndstop": "endstop",
-        "yEndstop": "endstop"
+        "yEndstop": "endstop",
+        "rails": [
+            {
+                "axis": "x",
+                "current": 0.8,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "y",
+                "current": 0.8,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "z",
+                "current": 0.8,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "extruder",
+                "current": 0.707,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-36STH20-1004AHG"
+            },
+            {
+                "axis": "x",
+                "current": 1.188,
+                "performanceMode": true,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "y",
+                "current": 1.188,
+                "performanceMode": true,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH40-1684AC"
+            },
+            {
+                "axis": "z",
+                "current": 1.188,
+                "performanceMode": true,
+                "driver": "BTT-TMC2209-13",
+                "stepper": "LDO-42STH40-1684AC"
+            }
+        ]
     }
 }
