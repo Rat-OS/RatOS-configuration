@@ -5,6 +5,12 @@
 	"serialPath": "/dev/prusa-buddy",
 	"firmwareBinaryName": "firmware-prusa-buddy.bin",
 	"driverCount": 4,
+	"integratedDrivers": {
+		"x": "PRUSA-BUDDY-TMC2209",
+		"y": "PRUSA-BUDDY-TMC2209",
+		"z": "PRUSA-BUDDY-TMC2209",
+		"extruder": "PRUSA-BUDDY-TMC2209"
+	},
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/buddy"

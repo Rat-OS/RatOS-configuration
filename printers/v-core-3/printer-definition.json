@@ -37,42 +37,49 @@
         "rails": [
             {
                 "axis": "x",
+                "axisDescription": "The A motor in the CoreXY system, located at the rear left of the printer",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
                 "stepper": "LDO-42STH48-2504AC"
             },
             {
                 "axis": "y",
+                "axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
                 "stepper": "LDO-42STH48-2504AC"
             },
             {
                 "axis": "z",
+                "axisDescription": "The left Z motor for the kinematic bed",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
                 "stepper": "LDO-42STH48-2504AC"
             },
             {
                 "axis": "z1",
+                "axisDescription": "The rear Z motor for the kinematic bed",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
                 "stepper": "LDO-42STH48-2504AC"
             },
             {
                 "axis": "z2",
+                "axisDescription": "The right Z motor for the kinematic bed",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
                 "stepper": "LDO-42STH48-2504AC"
             },
             {
                 "axis": "extruder",
+                "axisDescription": "The extruder motor used on your toolhead",
                 "current": 0.707,
                 "driver": "BTT-TMC2209-13",
                 "stepper": "LDO-36STH20-1004AHG"
             },
             {
                 "axis": "x",
+                "axisDescription": "The A motor in the CoreXY system, located at the rear left of the printer",
                 "current": 1.6,
                 "performanceMode": true,
                 "driver": "BTT-TMC2209-13",
@@ -80,6 +87,7 @@
             },
             {
                 "axis": "y",
+                "axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
                 "current": 1.6,
                 "performanceMode": true,
                 "driver": "BTT-TMC2209-13",
@@ -87,6 +95,7 @@
             },
             {
                 "axis": "z",
+                "axisDescription": "The left Z motor for the kinematic bed",
                 "current": 1.6,
                 "performanceMode": true,
                 "driver": "BTT-TMC2209-13",
@@ -94,6 +103,7 @@
             },
             {
                 "axis": "z1",
+                "axisDescription": "The rear Z motor for the kinematic bed",
                 "current": 1.6,
                 "performanceMode": true,
                 "driver": "BTT-TMC2209-13",
@@ -101,6 +111,7 @@
             },
             {
                 "axis": "z2",
+                "axisDescription": "The right Z motor for the kinematic bed",
                 "current": 1.6,
                 "performanceMode": true,
                 "driver": "BTT-TMC2209-13",

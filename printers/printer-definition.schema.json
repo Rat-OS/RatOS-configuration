@@ -156,6 +156,10 @@
 								"description": "Axis for this rail. Can be 'x', 'x1', 'y', 'y1', 'z', 'z1', 'z2', 'z3', 'extruder'",
 								"type": "string"
 							},
+							"axisDescription": {
+								"description": "Description of the axis for this rail such as where it's located on the printer",
+								"type": "string"
+							},
 							"driver": {
 								"description": "Default driver for this rail",
 								"type": "string"
@@ -181,7 +185,7 @@
 								"type": "number"
 							}
 						},
-						"required": ["axis", "driver", "stepper", "current"]
+						"required": ["axis", "axisDescription", "driver", "stepper", "current"]
 					}
 				}
 			},

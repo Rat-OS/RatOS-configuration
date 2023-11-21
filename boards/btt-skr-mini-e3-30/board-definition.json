@@ -7,5 +7,11 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"driverCount": 4,
+	"integratedDrivers": {
+		"x": "BTT-TMC2209-13",
+		"y": "BTT-TMC2209-13",
+		"z": "BTT-TMC2209-13",
+		"extruder": "BTT-TMC2209-13"
+	},
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-mini-e3-30"
 }

@@ -85,8 +85,7 @@
 					"description": "The driver for the E axis",
 					"type": "string"
 				}
-			},
-			"required": ["x", "y", "z", "extruder"]
+			}
 		},
 		"driverVoltages": {
 			"description": "The supported stepper voltages. 24, 36, 48, 56 and 60 is supported. Default is 24 only.",
@@ -125,9 +124,13 @@
 				"reminder": {
 					"description": "Post-flashing reminders, if any.",
 					"type": "string"
+				},
+				"hasBoot0Jumper": {
+					"description": "Whether this board has a boot0 jumper",
+					"type": "boolean"
 				}
 			},
-			"required": ["dfuBootImage", "flashDevice", "instructions"]
+			"required": ["dfuBootImage", "flashDevice", "instructions", "hasBoot0Jumper"]
 		},
 		"sdFileName": {
 			"description": "The filename for the firmware binary when flashing via SD card",

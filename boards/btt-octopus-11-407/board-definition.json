@@ -18,6 +18,6 @@
 			"Make sure the board is powered on",
 			"If the board was already connected and powered when you inserted the jumper, click the reset button on the board."
 		],
-		"reminder": "Remember to remove the BOOT0 jumper after flashing."
+		"hasBoot0Jumper": true
 	}
 }

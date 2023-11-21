@@ -9,6 +9,7 @@
 	"flashInstructions": "Flashing only works if the SD card slot on the Octopus Pro is empty.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-pro-446",
 	"driverCount": 8,
+	"driverVoltages": [24, 36, 48, 56],
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.drawio.png",
@@ -18,6 +19,6 @@
 			"Make sure the board is powered on",
 			"If the board was already connected and powered when you inserted the jumper, click the reset button on the board."
 		],
-		"reminder": "Remember to remove the BOOT0 jumper after flashing."
+		"hasBoot0Jumper": true
 	}
 }

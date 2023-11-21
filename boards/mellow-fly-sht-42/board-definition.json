@@ -10,6 +10,9 @@
 	"flashInstructions": "After initial flashing, make sure the boot0 jumper is not inserted.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/mellow/fly-sht-42",
 	"driverCount": 1,
+	"integratedDrivers": {
+		"extruder": "MELLOW-FLY-TMC2209"
+	},
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",
@@ -19,6 +22,6 @@
 			"Make sure the board is powered on",
 			"If the board was already connected and powered when you inserted the jumper, click the boot button on the board."
 		],
-		"reminder": "Remember to remove the BOOT0 jumper after flashing."
+		"hasBoot0Jumper": true
 	}
 }

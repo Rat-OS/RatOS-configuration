@@ -5,6 +5,12 @@
   "serialPath": "/dev/prusa-einsy",
   "firmwareBinaryName": "firmware-prusa-einsy.elf.hex",
 	"driverCount": 4,
+	"integratedDrivers": {
+		"x": "PRUSA-EINSY-RAMBO-TMC2130",
+		"y": "PRUSA-EINSY-RAMBO-TMC2130",
+		"z": "PRUSA-EINSY-RAMBO-TMC2130",
+		"extruder": "PRUSA-EINSY-RAMBO-TMC2130"
+	},
   "compileScript": "compile.sh",
   "flashScript": "flash.sh",
   "documentationLink": "https://os.ratrig.com/docs/boards/prusa/einsy"
