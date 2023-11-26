@@ -31,48 +31,48 @@
         "rails": [
             {
                 "axis": "x",
+                "axisDescription": "The X axis motor moves the print head left and right.",
                 "current": 0.8,
+                "performanceMode": {
+                    "current": 1.188,
+                    "homingSpeed": 100
+                },
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-42STH40-1684AC",
+                "homingSpeed": 50,
+                "rotationDistance": 40
             },
             {
                 "axis": "y",
+                "axisDescription": "The Y axis motor moves the print bed forward and backward.",
                 "current": 0.8,
+                "performanceMode": {
+                    "current": 1.188,
+                    "homingSpeed": 100
+                },
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-42STH40-1684AC",
+                "homingSpeed": 50,
+                "rotationDistance": 40
             },
             {
                 "axis": "z",
+                "axisDescription": "The Z axis motor moves the print head up and down.",
                 "current": 0.8,
+                "performanceMode": {
+                    "current": 1.188
+                },
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-42STH40-1684AC",
+                "rotationDistance": 4
             },
             {
                 "axis": "extruder",
+                "axisDescription": "The extruder motor used for your toolhead",
                 "current": 0.707,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-36STH20-1004AHG"
-            },
-            {
-                "axis": "x",
-                "current": 1.188,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH40-1684AC"
-            },
-            {
-                "axis": "y",
-                "current": 1.188,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH40-1684AC"
-            },
-            {
-                "axis": "z",
-                "current": 1.188,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-36STH20-1004AHG",
+                "rotationDistance": 0
             }
         ]
     }

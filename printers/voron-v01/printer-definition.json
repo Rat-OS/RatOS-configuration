@@ -31,41 +31,54 @@
         "rails": [
             {
                 "axis": "x",
+                "axisDescription": "The A motor in the CoreXY system",
                 "current": 0.5,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-35STH48-1684AH"
+                "stepper": "LDO-35STH48-1684AH",
+                "microstepping": 128,
+                "performanceMode": {
+                    "current": 1.0,
+                    "homingSpeed": 100
+                },
+                "rotationDistance": 40,
+                "homingSpeed": 50
             },
             {
                 "axis": "y",
+                "axisDescription": "The B motor in the CoreXY system",
                 "current": 0.5,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-35STH48-1684AH"
+                "stepper": "LDO-35STH48-1684AH",
+                "microstepping": 128,
+                "performanceMode": {
+                    "current": 1.0,
+                    "homingSpeed": 100
+                },
+                "rotationDistance": 40,
+                "homingSpeed": 50
             },
             {
                 "axis": "z",
+                "axisDescription": "The Z motor that moves the bed",
                 "current": 0.707,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH25-1004CL200E"
+                "stepper": "LDO-42STH25-1004CL200E",
+                "microstepping": 128,
+                "performanceMode": {
+                    "current": 0.707,
+                    "homingSpeed": 100
+                },
+                "rotationDistance": 8,
+                "homingSpeed": 50
             },
             {
                 "axis": "extruder",
+                "axisDescription": "The extruder motor used for your toolhead",
                 "current": 0.35,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-36STH17-1004AHG"
-            },
-            {
-                "axis": "x",
-                "current": 1.0,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-35STH48-1684AH"
-            },
-            {
-                "axis": "y",
-                "current": 1.0,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-35STH48-1684AH"
+                "stepper": "LDO-36STH17-1004AHG",
+                "microstepping": 128,
+                "rotationDistance": 0
             }
         ]
     }

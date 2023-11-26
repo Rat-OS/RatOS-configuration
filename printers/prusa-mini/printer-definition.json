@@ -31,49 +31,44 @@
         "rails": [
             {
                 "axis": "x",
+                "axisDescription": "The X axis motor moves the print head left and right.",
                 "current": 0.4,
+                "performanceMode": {
+                    "current": 1.188
+                },
+                "rotationDistance": 32,
                 "driver": "PRUSA-BUDDY-TMC2209",
                 "stepper": "LDO-42STH40-1684AC"
             },
             {
                 "axis": "y",
+                "axisDescription": "The Y axis motor moves the print bed forward and backward.",
                 "current": 0.4,
+                "performanceMode": {
+                    "current": 1.188
+                },
+                "rotationDistance": 32,
                 "driver": "PRUSA-BUDDY-TMC2209",
                 "stepper": "LDO-42STH40-1684AC"
             },
             {
                 "axis": "z",
+                "axisDescription": "The Z axis motor moves the print head up and down.",
                 "current": 0.4,
+                "performanceMode": {
+                    "current": 1.188
+                },
+                "rotationDistance": 4,
                 "driver": "PRUSA-BUDDY-TMC2209",
                 "stepper": "LDO-42STH40-1684AC"
             },
             {
                 "axis": "extruder",
+                "axisDescription": "The extruder motor used for your toolhead",
                 "current": 0.5,
                 "driver": "PRUSA-BUDDY-TMC2209",
                 "stepper": "generic",
-                "microsteps": 16
-            },
-            {
-                "axis": "x",
-                "current": 1.188,
-                "performanceMode": true,
-                "driver": "PRUSA-BUDDY-TMC2209",
-                "stepper": "LDO-42STH40-1684AC"
-            },
-            {
-                "axis": "y",
-                "current": 1.188,
-                "performanceMode": true,
-                "driver": "PRUSA-BUDDY-TMC2209",
-                "stepper": "LDO-42STH40-1684AC"
-            },
-            {
-                "axis": "z",
-                "current": 1.188,
-                "performanceMode": true,
-                "driver": "PRUSA-BUDDY-TMC2209",
-                "stepper": "LDO-42STH40-1684AC"
+                "rotationDistance": 0
             }
         ]
     }

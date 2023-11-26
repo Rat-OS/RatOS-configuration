@@ -25,27 +25,41 @@
         "rails": [
             {
                 "axis": "x",
+                "axisDescription": "The X axis motor moves the print head left and right.",
                 "current": 0.4,
                 "driver": "PRUSA-EINSY-RAMBO-TMC2130",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-42STH40-1684AC",
+                "rotationDistance": 32,
+                "microstepping": 16,
+                "homingSpeed": 25
             },
             {
                 "axis": "y",
+                "axisDescription": "The Y axis motor moves the print bed forward and backward.",
                 "current": 0.4,
                 "driver": "PRUSA-EINSY-RAMBO-TMC2130",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-42STH40-1684AC",
+                "rotationDistance": 32,
+                "microstepping": 16,
+                "homingSpeed": 25
             },
             {
                 "axis": "z",
+                "axisDescription": "The Z axis motor moves the print head up and down.",
                 "current": 0.4,
                 "driver": "PRUSA-EINSY-RAMBO-TMC2130",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-42STH40-1684AC",
+                "rotationDistance": 8,
+                "microstepping": 16
             },
             {
                 "axis": "extruder",
+                "axisDescription": "The extruder motor used for your toolhead",
                 "current": 0.52,
                 "driver": "PRUSA-EINSY-RAMBO-TMC2130",
-                "stepper": "LDO-42STH40-1684AC"
+                "stepper": "LDO-42STH40-1684AC",
+                "rotationDistance": 0,
+                "microstepping": 16
             }
         ]
     }

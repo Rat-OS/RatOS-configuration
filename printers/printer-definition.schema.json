@@ -177,15 +177,42 @@
 								"type": "number"
 							},
 							"performanceMode": {
-								"description": "If performance mode is required for this rail. Will take precedence if true and performance mode is enabled.",
-								"type": "boolean"
+								"description": "Defaults when in performance mode",
+								"type": "object",
+								"properties": {
+									"voltage": {
+										"description":  "Default voltage for this rail. 24, 36, 48, 56 and 60 is supported. Default is 24.",
+										"type": "number"
+									},
+									"current": {
+										"description": "Default current for this rail in performance mode",
+										"type": "number"
+									},
+									"homingSpeed": {
+										"description": "Default homing speed for this rail in performance mode",
+										"type": "number"
+									}
+								},
+								"required": ["current"]
+							},
+							"rotationDistance": {
+								"description": "Default rotation distance for this rail. Note: extruder axis rotation_distance should be 0, will be overridden by the extruder include.",
+								"type": "number"
+							},
+							"gearRatio": {
+								"description": "Optional gear ratio for this rail.",
+								"type": "string"
+							},
+							"homingSpeed": {
+								"description": "Default homing speed for this rail.",
+								"type": "number"
 							},
 							"microstepping": {
 								"description": "Default microstepping for this rail. Default is 64.",
 								"type": "number"
 							}
 						},
-						"required": ["axis", "axisDescription", "driver", "stepper", "current"]
+						"required": ["axis", "axisDescription", "driver", "stepper", "current", "rotationDistance"]
 					}
 				}
 			},

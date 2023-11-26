@@ -36,74 +36,69 @@
         "rails": [
             {
                 "axis": "x",
+                "axisDescription": "The A motor in the CoreXY system, located at the rear left of the printer",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
+                "stepper": "LDO-42STH48-2504AC",
+                "rotationDistance": 40,
+                "homingSpeed": 50,
+                "performanceMode": {
+                    "current": 1.6
+                }
             },
             {
                 "axis": "y",
+                "axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
+                "stepper": "LDO-42STH48-2504AC",
+                "rotationDistance": 40,
+                "homingSpeed": 50,
+                "performanceMode": {
+                    "current": 1.6
+                }
             },
             {
                 "axis": "z",
+                "axisDescription": "The left Z motor for the kinematic bed",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
+                "stepper": "LDO-42STH48-2504AC",
+                "rotationDistance": 8,
+                "homingSpeed": 10,
+                "performanceMode": {
+                    "current": 1.6
+                }
             },
             {
                 "axis": "z1",
+                "axisDescription": "The rear Z motor for the kinematic bed",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
+                "stepper": "LDO-42STH48-2504AC",
+                "rotationDistance": 8,
+                "performanceMode": {
+                    "current": 1.6
+                }
             },
             {
                 "axis": "z2",
+                "axisDescription": "The right Z motor for the kinematic bed",
                 "current": 1.1,
                 "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
+                "stepper": "LDO-42STH48-2504AC",
+                "rotationDistance": 8,
+                "performanceMode": {
+                    "current": 1.6
+                }
             },
             {
                 "axis": "extruder",
+                "axisDescription": "The extruder motor used on your toolhead",
                 "current": 0.85,
+                "rotationDistance": 0,
                 "driver": "BTT-TMC2209-13",
                 "stepper": "LDO-42STH25-1404MAC"
-            },
-            {
-                "axis": "x",
-                "current": 1.6,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
-            },
-            {
-                "axis": "y",
-                "current": 1.6,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
-            },
-            {
-                "axis": "z",
-                "current": 1.6,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
-            },
-            {
-                "axis": "z1",
-                "current": 1.6,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
-            },
-            {
-                "axis": "z2",
-                "current": 1.6,
-                "performanceMode": true,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC"
             }
         ]
     }
