@@ -11,7 +11,8 @@ source "$SCRIPT_DIR"/ratos-common.sh
 install_dependencies()
 {
     report_status "Installing RatOS dependencies"
-    sudo apt-get update && sudo apt-get install -y "$PKGLIST"
+    # shellcheck disable=SC2086
+    sudo apt-get update && sudo apt-get install -y $PKGLIST
 }
 
 install_printer_config()
