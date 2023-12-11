@@ -17,5 +17,18 @@
 			"If the board was already connected and powered when you inserted the jumper, click the reset button on the board."
 		],
 		"hasBoot0Jumper": true
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PA15",
+		"hardware": {
+			"bus": "spi3"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PA5",
+			"mosi": "PA7",
+			"miso": "PA6"
+		}
 	}
 }

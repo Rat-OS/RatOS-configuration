@@ -18,5 +18,20 @@
 			"Release the BOOT button."
 		],
 		"hasBoot0Jumper": false
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PC4",
+		"software": {
+			"sclk": "PA5",
+			"mosi": "PA7",
+			"miso": "PA6"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PA5",
+			"mosi": "PA7",
+			"miso": "PA6"
+		}
 	}
 }

@@ -8,5 +8,20 @@
 	"flashScript": "flash.sh",
 	"flashInstructions": "Flashing only works if the SD card slot on the Manta is empty.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-e3ez",
-	"driverCount": 5
+	"driverCount": 5,
+	"ADXL345SPI": {
+		"cs_pin": "PB12",
+		"software": {
+			"sclk": "PB10",
+			"mosi": "PB11",
+			"miso": "PB2"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PB10",
+			"mosi": "PB11",
+			"miso": "PB2"
+		}
+	}
 }

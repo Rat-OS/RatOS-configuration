@@ -57,6 +57,103 @@
 			"description": "How many drivers this board has",
 			"type": "number"
 		},
+		"hasMcuTempSensor": {
+			"description": "Whether this board has an MCU temperature sensor, default is true",
+			"type": "boolean"
+		},
+		"outputPins": {
+			"description": "Output pin definitions. Some boards have safety features that require a pin to be pulled high to enable power, such as the SKR2.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"description": "The name of the feature",
+						"type": "string"
+					},
+					"pin": {
+						"type": "string"
+					},
+					"value": {
+						"type": "number",
+						"maximum": 1,
+						"minimum": 0
+					}
+				}
+			}
+		},
+		"stepperSPI": {
+			"description": "Which settings to use for SPI stepper drivers",
+			"type": "object",
+			"properties": {
+				"software": {
+					"description": "Whether to use software SPI",
+					"type": "object",
+					"properties": {
+						"sclk": {
+							"description": "The clock pin",
+							"type": "string"
+						},
+						"mosi": {
+							"description": "The mosi pin",
+							"type": "string"
+						},
+						"miso": {
+							"description": "The miso pin",
+							"type": "string"
+						}
+					}
+				},
+				"hardware": {
+					"description": "Which SPI bus to use if using hardware spi",
+					"type": "object",
+					"properties": {
+						"bus": {
+							"description": "The SPI bus to use",
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"ADXL345SPI": {
+			"description": "Which settings to use for the ADXL345 accelerometer",
+			"type": "object",
+			"properties": {
+				"software": {
+					"description": "Whether to use software SPI",
+					"type": "object",
+					"properties": {
+						"sclk": {
+							"description": "The clock pin",
+							"type": "string"
+						},
+						"mosi": {
+							"description": "The mosi pin",
+							"type": "string"
+						},
+						"miso": {
+							"description": "The miso pin",
+							"type": "string"
+						}
+					}
+				},
+				"hardware": {
+					"description": "Which SPI bus to use if using hardware spi",
+					"type": "object",
+					"properties": {
+						"bus": {
+							"description": "The SPI bus to use",
+							"type": "string"
+						}
+					}
+				},
+				"cs_pin": {
+					"description": "The chip select pin",
+					"type": "string"
+				}
+			}
+		},
 		"integratedDrivers": {
 			"description": "Describes the drivers integrated on this board, if any",
 			"type": "object",
@@ -137,5 +234,13 @@
 			"type": "string"
 		}
 	},
-	"required": ["serialPath", "name", "manufacturer", "firmwareBinaryName", "compileScript", "documentationLink", "driverCount"]
+	"required": [
+		"serialPath",
+		"name",
+		"manufacturer",
+		"firmwareBinaryName",
+		"compileScript",
+		"documentationLink",
+		"driverCount"
+	]
 }

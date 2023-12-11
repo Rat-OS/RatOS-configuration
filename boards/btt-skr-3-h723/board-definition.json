@@ -7,5 +7,20 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"driverCount": 5,
-	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-3"
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-3",
+	"ADXL345SPI": {
+		"cs_pin": "PB12",
+		"software": {
+			"sclk": "PB13",
+			"mosi": "PB15",
+			"miso": "PB14"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PE14",
+			"mosi": "PE13",
+			"miso": "PE15"
+		}
+	}
 }

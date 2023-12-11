@@ -11,6 +11,7 @@
 		"z": "PRUSA-BUDDY-TMC2209",
 		"extruder": "PRUSA-BUDDY-TMC2209"
 	},
+	"hasQuirksFiles": true,
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/buddy"

@@ -24,5 +24,13 @@
 			"Release the BOOT button."
 		],
 		"hasBoot0Jumper": false
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PB12",
+		"software": {
+			"sclk": "PB10",
+			"mosi": "PB11",
+			"miso": "PB2"
+		}
 	}
 }

@@ -75,6 +75,19 @@ register_klippy_extension() {
     fi
 }
 
+regenerate_config() {
+    report_status "Regenerating RatOS configuration via RatOS Configurator..."
+
+    if curl --fail -X POST 'http://localhost:3000/configure/api/trpc/printer.regenerateConfiguration' \
+		-H 'content-type: application/json' \
+		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\",\"errorIfExists\":$ERROR_IF_EXISTS}}"
+    then
+        echo "RatOS configuration regenerated..."
+    else
+        echo "ERROR: Failed to regenerate RatOS configuration"
+    fi
+}
+
 register_gcode_shell_command()
 {
     EXT_NAME="gcode_shell_extension"

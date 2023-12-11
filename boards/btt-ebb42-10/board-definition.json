@@ -23,5 +23,11 @@
 			"Release the BOOT button."
 		],
 		"hasBoot0Jumper": false
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PB12",
+		"hardware": {
+			"bus": "spi2"
+		}
 	}
 }

@@ -8,5 +8,20 @@
 	"flashScript": "flash.sh",
 	"flashInstructions": "Flashing only works if the SD card slot on the Manta is empty.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-m4p",
-	"driverCount": 4
+	"driverCount": 4,
+	"ADXL345SPI": {
+		"cs_pin": "PD9",
+		"software": {
+			"sclk": "PA5",
+			"mosi": "PA7",
+			"miso": "PA6"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PA5",
+			"mosi": "PA7",
+			"miso": "PA6"
+		}
+	}
 }

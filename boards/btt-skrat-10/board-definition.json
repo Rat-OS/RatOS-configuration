@@ -22,5 +22,18 @@
 		],
 		"reminder": "Remember to remove the USB_5V jumper if you installed it on the board.",
 		"hasBoot0Jumper": false
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PB12",
+		"hardware": {
+			"bus": "spi2"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PC10",
+			"mosi": "PC12",
+			"miso": "PC11"
+		}
 	}
 }

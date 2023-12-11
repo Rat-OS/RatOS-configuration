@@ -19,5 +19,19 @@
 			"Release the BOOT button."
 		],
 		"hasBoot0Jumper": false
+	},
+	"extruderlessConfig": "config-3z.cfg",
+	"ADXL345SPI": {
+		"cs_pin": "PB12",
+		"hardware": {
+			"bus": "spi2"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PE14",
+			"mosi": "PE13",
+			"miso": "PE15"
+		}
 	}
 }
