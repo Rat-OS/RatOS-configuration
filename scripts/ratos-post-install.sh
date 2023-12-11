@@ -21,7 +21,7 @@ symlink_klippy_extensions()
 	configurator_success=$?
 	if [ $configurator_success -eq 0 ]
 	then
-		echo "$symlink_result" | jq -r '.result.data.json'
+		echo "$symlink_result" | jq -r '.result.data'
 	else
 		echo "Failed to symlink klippy extensions. Is the RatOS configurator running?"
 		exit 1
@@ -35,7 +35,7 @@ symlink_moonraker_extensions()
 	configurator_success=$?
 	if [ $configurator_success -eq 0 ]
 	then
-		echo "$symlink_result" | jq -r '.result.data.json'
+		echo "$symlink_result" | jq -r '.result.data'
 	else
 		echo "Failed to symlink moonraker extensions. Is the RatOS configurator running?"
 		exit 1
