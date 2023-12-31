@@ -41,7 +41,7 @@
 			"type": "string"
 		},
 		"rails": {
-			"description": "Rails (steppers/drivers) needed for this printer, can be 'x', 'x1', 'y', 'y1', 'z', 'z1', 'z2', 'z3', 'extruder'.",
+			"description": "Rails (steppers/drivers) needed for this printer, can be 'x', 'x1', 'dual_carriage', 'y', 'y1', 'z', 'z1', 'z2', 'z3', 'extruder', 'extruder1'.",
 			"type": "array",
 			"items": {
 				"type": "string"
@@ -71,12 +71,7 @@
 							"type": "number"
 						}
 					},
-					"required": [
-						"velocity",
-						"accel",
-						"z_velocity",
-						"z_accel"
-					]
+					"required": ["velocity", "accel", "z_velocity", "z_accel"]
 				},
 				"performance": {
 					"type": "object",
@@ -98,53 +93,88 @@
 							"type": "number"
 						}
 					},
-					"required": [
-						"velocity",
-						"accel",
-						"z_velocity",
-						"z_accel"
-					]
+					"required": ["velocity", "accel", "z_velocity", "z_accel"]
 				}
 			},
-			"required": [
-				"basic"
-			]
+			"required": ["basic"]
 		},
 		"defaults": {
 			"description": "Default hardware for this printer",
 			"type": "object",
 			"properties": {
-				"extruder": {
-					"description": "Default extruder for this printer. Should be the name of the config without the file extension.",
-					"type": "string"
+				"toolheads": {
+					"type": "array",
+					"description": "Default toolheads for this printer",
+					"items": {
+						"type": "object",
+						"properties": {
+							"axis": {
+								"description": "Motion axis for this toolhead.",
+								"type": "string",
+								"enum": ["x", "dual_carriage"]
+							},
+							"description": {
+								"description": "Description of the toolhead such as where it's located on the printer",
+								"type": "string"
+							},
+							"hotend": {
+								"description": "Default hotend for this toolhead. Should be the name of the config without the file extension.",
+								"type": "string"
+							},
+							"probe": {
+								"description": "Default probe for this toolhead. Should be the name of the config without the file extension.",
+								"type": "string"
+							},
+							"partFan": {
+								"description": "Default part fan for this toolhead.",
+								"type": "string",
+								"enum": [
+									"2pin",
+									"4pin",
+									"4pin-dedicated",
+									"2pin-toolboard",
+									"4pin-toolboard",
+									"4pin-dedicated-toolboard"
+								]
+							},
+							"hotendFan": {
+								"description": "Default hotend fan for this toolhead.",
+								"type": "string",
+								"enum": [
+									"2pin",
+									"4pin",
+									"4pin-dedicated",
+									"2pin-toolboard",
+									"4pin-toolboard",
+									"4pin-dedicated-toolboard"
+								]
+							},
+							"xEndstop": {
+								"description": "Default x endstop for this toolhead",
+								"type": "string",
+								"enum": ["sensorless", "endstop", "endstop-toolboard"]
+							},
+							"yEndstop": {
+								"description": "Default y endstop for this toolhead",
+								"type": "string",
+								"enum": ["sensorless", "endstop"]
+							},
+							"extruder": {
+								"description": "Default extruder for this toolhead. Should be the name of the config without the file extension.",
+								"type": "string"
+							},
+							"toolboard": {
+								"description": "Default board for this toolhead. Should be the name of the board directory.",
+								"type": "string"
+							}
+						},
+						"required": ["extruder", "hotend", "xEndstop", "yEndstop", "axis", "partFan", "hotendFan"]
+					},
+					"minItems": 1
 				},
 				"board": {
 					"description": "Default board for this printer. Should be the name of the board directory.",
 					"type": "string"
-				},
-				"hotend": {
-					"description": "Default hotend for this printer. Should be the name of the config without the file extension.",
-					"type": "string"
-				},
-				"probe": {
-					"description": "Default probe for this printer. Should be the name of the config without the file extension.",
-					"type": "string"
-				},
-				"xEndstop": {
-					"description": "Default x endstop for this printer",
-					"type": "string",
-					"enum": [
-						"sensorless",
-						"endstop"
-					]
-				},
-				"yEndstop": {
-					"description": "Default y endstop for this printer",
-					"type": "string",
-					"enum": [
-						"sensorless",
-						"endstop"
-					]
 				},
 				"rails": {
 					"description": "Default rails for this printer.",
@@ -153,8 +183,9 @@
 						"type": "object",
 						"properties": {
 							"axis": {
-								"description": "Axis for this rail. Can be 'x', 'x1', 'y', 'y1', 'z', 'z1', 'z2', 'z3', 'extruder'",
-								"type": "string"
+								"description": "Axis for this rail.",
+								"type": "string",
+								"enum": ["x", "x1", "dual_carriage", "y", "y1", "z", "z1", "z2", "z3", "extruder", "extruder1"]
 							},
 							"axisDescription": {
 								"description": "Description of the axis for this rail such as where it's located on the printer",
@@ -181,7 +212,7 @@
 								"type": "object",
 								"properties": {
 									"voltage": {
-										"description":  "Default voltage for this rail. 24, 36, 48, 56 and 60 is supported. Default is 24.",
+										"description": "Default voltage for this rail. 24, 36, 48, 56 and 60 is supported. Default is 24.",
 										"type": "number"
 									},
 									"current": {
@@ -216,14 +247,7 @@
 					}
 				}
 			},
-			"required": [
-				"extruder",
-				"board",
-				"hotend",
-				"xEndstop",
-				"yEndstop",
-				"rails"
-			]
+			"required": ["board", "rails", "toolheads"]
 		}
 	},
 	"required": [

@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "Spider v1.1",
 	"manufacturer": "Fysetc",
-	"serialPath": "/dev/fysetc-spider",
+	"id": "fysetc-spider",
 	"firmwareBinaryName": "firmware-fysetc-spider.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

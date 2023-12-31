@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "Octopus V1.1",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-octopus-11",
+	"id": "btt-octopus-11",
 	"firmwareBinaryName": "firmware-btt-octopus-11.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

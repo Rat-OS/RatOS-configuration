@@ -1,12 +1,12 @@
 {
 	"$schema": "../printer-definition.schema.json",
-	"name": "V-Core 3",
-	"description": "Rat Rig's current flagship CoreXY printer which comes in 4 sizes",
+	"name": "V-Core 3 IDEX",
+	"description": "IDEX version of Rat Rig's current flagship CoreXY printer which comes in 4 sizes",
 	"manufacturer": "Rat Rig",
-	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-3",
-	"image": "rat-rig-v-core-3.png",
+	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-3-idex",
+	"image": "rat-rig-v-core-3-idex.jpg",
 	"template": "v-core-3-printer.template.cfg",
-	"driverCountRequired": 6,
+	"driverCountRequired": 9,
 	"sizes": [200, 300, 400, 500],
 	"speedLimits": {
 		"basic": {
@@ -27,19 +27,45 @@
 		"toolheads": [
 			{
 				"axis": "x",
+				"description": "The left toolhead",
 				"extruder": "lgx-lite",
+				"toolboard": "btt-ebb42-12",
 				"hotend": "rapido",
-				"partFan": "4pin",
-				"hotendFan": "2pin",
+				"partFan": "4pin-toolboard",
+				"hotendFan": "2pin-toolboard",
 				"probe": "superpinda",
-				"xEndstop": "endstop",
+				"xEndstop": "endstop-toolboard",
+				"yEndstop": "endstop"
+			},
+			{
+				"axis": "dual_carriage",
+				"description": "The right toolhead",
+				"extruder": "lgx-lite",
+				"toolboard": "btt-ebb42-12",
+				"hotend": "rapido",
+				"partFan": "4pin-toolboard",
+				"hotendFan": "2pin-toolboard",
+				"probe": "superpinda",
+				"xEndstop": "endstop-toolboard",
 				"yEndstop": "endstop"
 			}
 		],
 		"rails": [
 			{
 				"axis": "x",
-				"axisDescription": "The A motor in the CoreXY system, located at the rear left of the printer",
+				"axisDescription": "The X axis motor for the left toolhead, located at the rear left of the printer",
+				"current": 1.1,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2504AC",
+				"rotationDistance": 40,
+				"homingSpeed": 50,
+				"performanceMode": {
+					"current": 1.6
+				}
+			},
+			{
+				"axis": "dual_carriage",
+				"axisDescription": "The X axis motor for the right toolhead, located at the rear right of the printer",
 				"current": 1.1,
 				"driver": "BTT-TMC2209-13",
 				"stepper": "LDO-42STH48-2504AC",
@@ -51,6 +77,18 @@
 			},
 			{
 				"axis": "y",
+				"axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
+				"current": 1.1,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2504AC",
+				"rotationDistance": 40,
+				"homingSpeed": 50,
+				"performanceMode": {
+					"current": 1.6
+				}
+			},
+			{
+				"axis": "y1",
 				"axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
 				"current": 1.1,
 				"driver": "BTT-TMC2209-13",
@@ -97,7 +135,15 @@
 			},
 			{
 				"axis": "extruder",
-				"axisDescription": "The extruder motor used on your toolhead",
+				"axisDescription": "The extruder motor used on the right toolhead",
+				"rotationDistance": 0,
+				"current": 0.707,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-36STH20-1004AHG"
+			},
+			{
+				"axis": "extruder1",
+				"axisDescription": "The extruder motor used on the left toolhead",
 				"rotationDistance": 0,
 				"current": 0.707,
 				"driver": "BTT-TMC2209-13",

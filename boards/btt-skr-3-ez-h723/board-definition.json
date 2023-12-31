@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "SKR 3 EZ H723",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-skr-3-ez-h723",
+	"id": "btt-skr-3-ez-h723",
 	"firmwareBinaryName": "firmware-btt-skr-3-ez-h723.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

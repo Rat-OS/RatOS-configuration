@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "Manta M4P",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-manta-m4p",
+	"id": "btt-manta-m4p",
 	"firmwareBinaryName": "firmware-btt-manta-m4p.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

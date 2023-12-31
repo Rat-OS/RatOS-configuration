@@ -1,6 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"name": "Pi",
+	"id": "klipper_host_mcu",
 	"manufacturer": "Raspberry",
 	"isHost": true,
 	"serialPath": "/tmp/klipper_host_mcu",

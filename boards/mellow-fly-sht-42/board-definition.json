@@ -3,7 +3,7 @@
 	"isToolboard": true,
 	"name": "FLY-SHT42",
 	"manufacturer": "Mellow",
-	"serialPath": "/dev/mellow-fly-sht-42",
+	"id": "mellow-fly-sht-42",
 	"firmwareBinaryName": "firmware-mellow-fly-sht-42.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

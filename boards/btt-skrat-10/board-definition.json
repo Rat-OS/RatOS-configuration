@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "SKRat v1.0",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-skrat-10",
+	"id": "btt-skrat-10",
 	"firmwareBinaryName": "firmware-btt-skrat-10.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

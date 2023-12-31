@@ -5,7 +5,7 @@
 	"description": "A 3d printer control board",
 	"type": "object",
 	"properties": {
-		"serialPath": {
+		"id": {
 			"description": "The path for serial communication with this MCU",
 			"type": "string"
 		},
@@ -45,6 +45,10 @@
 			"description": "Whether this is the host computer RatOS is running on (used for Pi)",
 			"type": "boolean"
 		},
+		"serialPath": {
+			"description": "This property is only required for host boards. It is the path to the serial port to use for communication with the host mcu",
+			"type": "string"
+		},
 		"disableAutoFlash": {
 			"description": "Whether to disable automatic flashing of this board",
 			"type": "boolean"
@@ -52,6 +56,10 @@
 		"hasQuirksFiles": {
 			"description": "Whether this board has a quirks file that needs to be loaded (must be called quirks.cfg and quirks-toolboard.cfg)",
 			"type": "boolean"
+		},
+		"alternativePT1000Resistor": {
+			"description": "The value of the resistor used for PT1000 sensors, if different from the default",
+			"type": "number"
 		},
 		"driverCount": {
 			"description": "How many drivers this board has",
@@ -234,13 +242,5 @@
 			"type": "string"
 		}
 	},
-	"required": [
-		"serialPath",
-		"name",
-		"manufacturer",
-		"firmwareBinaryName",
-		"compileScript",
-		"documentationLink",
-		"driverCount"
-	]
+	"required": ["id", "name", "manufacturer", "firmwareBinaryName", "compileScript", "documentationLink", "driverCount"]
 }

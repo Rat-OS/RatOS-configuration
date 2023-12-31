@@ -1,105 +1,108 @@
 {
 	"$schema": "../printer-definition.schema.json",
-    "name": "V-Core Pro v1.3",
-    "manufacturer": "Rat Rig",
-    "documentationLink": "https://os.ratrig.com/docs/printers/v-core-pro",
-    "description": "Discontinued CoreXY printer from Rat Rig which comes in 3 sizes",
-    "image": "rat-rig-v-core-pro-13.jpg",
-    "template": "v-core-pro-printer.template.cfg",
-    "driverCountRequired": 6,
-    "sizes": [
-        300,
-        400,
-        500
-    ],
-    "speedLimits": {
-        "basic": {
-            "accel": 3000,
-            "velocity": 300,
-            "z_accel": 15,
-            "z_velocity": 30
-        },
-        "performance": {
-            "accel": 10000,
-            "velocity": 800,
-            "z_accel": 150,
-            "z_velocity": 20
-        }
-    },
-    "defaults": {
-        "board": "btt-skr-pro-12",
-        "extruder": "bmg",
-        "hotend": "v6",
-        "probe": "probe",
-        "xEndstop": "sensorless",
-        "yEndstop": "sensorless",
-        "rails": [
-            {
-                "axis": "x",
-                "axisDescription": "The A motor in the CoreXY system, located at the rear left of the printer",
-                "current": 1.1,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC",
-                "rotationDistance": 40,
-                "homingSpeed": 50,
-                "performanceMode": {
-                    "current": 1.6
-                }
-            },
-            {
-                "axis": "y",
-                "axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
-                "current": 1.1,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC",
-                "rotationDistance": 40,
-                "homingSpeed": 50,
-                "performanceMode": {
-                    "current": 1.6
-                }
-            },
-            {
-                "axis": "z",
-                "axisDescription": "The left Z motor for the kinematic bed",
-                "current": 1.1,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC",
-                "rotationDistance": 8,
-                "homingSpeed": 10,
-                "performanceMode": {
-                    "current": 1.6
-                }
-            },
-            {
-                "axis": "z1",
-                "axisDescription": "The rear Z motor for the kinematic bed",
-                "current": 1.1,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC",
-                "rotationDistance": 8,
-                "performanceMode": {
-                    "current": 1.6
-                }
-            },
-            {
-                "axis": "z2",
-                "axisDescription": "The right Z motor for the kinematic bed",
-                "current": 1.1,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2504AC",
-                "rotationDistance": 8,
-                "performanceMode": {
-                    "current": 1.6
-                }
-            },
-            {
-                "axis": "extruder",
-                "axisDescription": "The extruder motor used on your toolhead",
-                "current": 0.85,
-                "rotationDistance": 0,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH25-1404MAC"
-            }
-        ]
-    }
+	"name": "V-Core Pro v1.3",
+	"manufacturer": "Rat Rig",
+	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-pro",
+	"description": "Discontinued CoreXY printer from Rat Rig which comes in 3 sizes",
+	"image": "rat-rig-v-core-pro-13.jpg",
+	"template": "v-core-pro-printer.template.cfg",
+	"driverCountRequired": 6,
+	"sizes": [300, 400, 500],
+	"speedLimits": {
+		"basic": {
+			"accel": 3000,
+			"velocity": 300,
+			"z_accel": 15,
+			"z_velocity": 30
+		},
+		"performance": {
+			"accel": 10000,
+			"velocity": 800,
+			"z_accel": 150,
+			"z_velocity": 20
+		}
+	},
+	"defaults": {
+		"board": "btt-skr-pro-12",
+		"toolheads": [
+			{
+				"axis": "x",
+				"extruder": "bmg",
+				"hotend": "v6",
+				"partFan": "4pin",
+				"hotendFan": "2pin",
+				"probe": "probe",
+				"xEndstop": "sensorless",
+				"yEndstop": "sensorless"
+			}
+		],
+		"rails": [
+			{
+				"axis": "x",
+				"axisDescription": "The A motor in the CoreXY system, located at the rear left of the printer",
+				"current": 1.1,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2504AC",
+				"rotationDistance": 40,
+				"homingSpeed": 50,
+				"performanceMode": {
+					"current": 1.6
+				}
+			},
+			{
+				"axis": "y",
+				"axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
+				"current": 1.1,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2504AC",
+				"rotationDistance": 40,
+				"homingSpeed": 50,
+				"performanceMode": {
+					"current": 1.6
+				}
+			},
+			{
+				"axis": "z",
+				"axisDescription": "The left Z motor for the kinematic bed",
+				"current": 1.1,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2504AC",
+				"rotationDistance": 8,
+				"homingSpeed": 10,
+				"performanceMode": {
+					"current": 1.6
+				}
+			},
+			{
+				"axis": "z1",
+				"axisDescription": "The rear Z motor for the kinematic bed",
+				"current": 1.1,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2504AC",
+				"rotationDistance": 8,
+				"performanceMode": {
+					"current": 1.6
+				}
+			},
+			{
+				"axis": "z2",
+				"axisDescription": "The right Z motor for the kinematic bed",
+				"current": 1.1,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2504AC",
+				"rotationDistance": 8,
+				"performanceMode": {
+					"current": 1.6
+				}
+			},
+			{
+				"axis": "extruder",
+				"axisDescription": "The extruder motor used on your toolhead",
+				"current": 0.85,
+				"rotationDistance": 0,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH25-1404MAC"
+			}
+		]
+	}
 }

@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "Octopus Pro 446",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-octopus-pro-446",
+	"id": "btt-octopus-pro-446",
 	"firmwareBinaryName": "firmware-btt-octopus-pro-446.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

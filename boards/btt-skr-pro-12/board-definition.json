@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "SKR Pro v1.2",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-skr-pro-12",
+	"id": "btt-skr-pro-12",
 	"firmwareBinaryName": "firmware-btt-skr-pro-12.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

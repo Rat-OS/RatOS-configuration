@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "Octopus Pro H723",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-octopus-pro-h723",
+	"id": "btt-octopus-pro-h723",
 	"firmwareBinaryName": "firmware-btt-octopus-pro-h723.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",

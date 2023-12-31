@@ -1,119 +1,122 @@
 {
 	"$schema": "../printer-definition.schema.json",
-    "name": "V2.4",
-    "description": "CoreXY printer with floating gantry from Voron Design, which comes in 3 sizes",
-    "manufacturer": "Voron Design",
-    "documentationLink": "https://os.ratrig.com/docs/printers/v-24",
-    "image": "voron-v24.png",
-    "template": "voron-v24-printer.template.cfg",
-    "driverCountRequired": 7,
-    "sizes": [
-        250,
-        300,
-        350
-    ],
-    "speedLimits": {
-        "basic": {
-            "accel": 3000,
-            "velocity": 300,
-            "z_accel": 350,
-            "z_velocity": 20
-        },
-        "performance": {
-            "accel": 12000,
-            "velocity": 650,
-            "z_accel": 500,
-            "z_velocity": 60
-        }
-    },
-    "defaults": {
-        "board": "btt-octopus-11",
-        "extruder": "clockwork-2",
-        "hotend": "dragon-high-flow",
-        "probe": "probe",
-        "xEndstop": "endstop",
-        "yEndstop": "endstop",
-        "rails": [
-            {
-                "axis": "x",
-                "axisDescription": "The A motor in the CoreXY system located on the right side of the printer",
-                "current": 0.8,
-                "performanceMode": {
-                    "current": 1.3
-                },
-                "homingSpeed": 50,
-                "rotationDistance": 40,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2004MAH"
-            },
-            {
-                "axis": "y",
-                "axisDescription": "The B motor in the CoreXY system located on the left side of the printer",
-                "current": 0.8,
-                "performanceMode": {
-                    "current": 1.3
-                },
-                "homingSpeed": 50,
-                "rotationDistance": 40,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2004MAH"
-            },
-            {
-                "axis": "z",
-                "axisDescription": "The Z motor located on the front left of the bottom of the printer",
-                "current": 0.8,
-                "performanceMode": {
-                    "current": 1.3
-                },
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2004AC",
-                "rotationDistance": 40,
-                "gearRatio": "80:16"
-            },
-            {
-                "axis": "z1",
-                "axisDescription": "The Z motor located on the rear left of the bottom of the printer",
-                "current": 0.8,
-                "performanceMode": {
-                    "current": 1.3
-                },
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2004AC",
-                "rotationDistance": 40,
-                "gearRatio": "80:16"
-            },
-            {
-                "axis": "z2",
-                "axisDescription": "The Z motor located on the rear right of the bottom of the printer",
-                "current": 0.8,
-                "performanceMode": {
-                    "current": 1.3
-                },
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2004AC",
-                "rotationDistance": 40,
-                "gearRatio": "80:16"
-            },
-            {
-                "axis": "z3",
-                "axisDescription": "The Z motor located on the front right of the bottom of the printer",
-                "current": 0.8,
-                "performanceMode": {
-                    "current": 1.3
-                },
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-42STH48-2004AC",
-                "rotationDistance": 40,
-                "gearRatio": "80:16"
-            },
-            {
-                "axis": "extruder",
-                "axisDescription": "The extruder motor used for your toolhead",
-                "current": 0.707,
-                "driver": "BTT-TMC2209-13",
-                "stepper": "LDO-36STH20-1004AHG",
-                "rotationDistance": 0
-            }
-        ]
-    }
+	"name": "V2.4",
+	"description": "CoreXY printer with floating gantry from Voron Design, which comes in 3 sizes",
+	"manufacturer": "Voron Design",
+	"documentationLink": "https://os.ratrig.com/docs/printers/v-24",
+	"image": "voron-v24.png",
+	"template": "voron-v24-printer.template.cfg",
+	"driverCountRequired": 7,
+	"sizes": [250, 300, 350],
+	"speedLimits": {
+		"basic": {
+			"accel": 3000,
+			"velocity": 300,
+			"z_accel": 350,
+			"z_velocity": 20
+		},
+		"performance": {
+			"accel": 12000,
+			"velocity": 650,
+			"z_accel": 500,
+			"z_velocity": 60
+		}
+	},
+	"defaults": {
+		"board": "btt-octopus-11",
+		"toolheads": [
+			{
+				"axis": "x",
+				"extruder": "clockwork-2",
+				"hotend": "dragon-high-flow",
+				"partFan": "4pin",
+				"hotendFan": "2pin",
+				"probe": "probe",
+				"xEndstop": "endstop",
+				"yEndstop": "endstop"
+			}
+		],
+		"rails": [
+			{
+				"axis": "x",
+				"axisDescription": "The A motor in the CoreXY system located on the right side of the printer",
+				"current": 0.8,
+				"performanceMode": {
+					"current": 1.3
+				},
+				"homingSpeed": 50,
+				"rotationDistance": 40,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2004MAH"
+			},
+			{
+				"axis": "y",
+				"axisDescription": "The B motor in the CoreXY system located on the left side of the printer",
+				"current": 0.8,
+				"performanceMode": {
+					"current": 1.3
+				},
+				"homingSpeed": 50,
+				"rotationDistance": 40,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2004MAH"
+			},
+			{
+				"axis": "z",
+				"axisDescription": "The Z motor located on the front left of the bottom of the printer",
+				"current": 0.8,
+				"performanceMode": {
+					"current": 1.3
+				},
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2004AC",
+				"rotationDistance": 40,
+				"gearRatio": "80:16"
+			},
+			{
+				"axis": "z1",
+				"axisDescription": "The Z motor located on the rear left of the bottom of the printer",
+				"current": 0.8,
+				"performanceMode": {
+					"current": 1.3
+				},
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2004AC",
+				"rotationDistance": 40,
+				"gearRatio": "80:16"
+			},
+			{
+				"axis": "z2",
+				"axisDescription": "The Z motor located on the rear right of the bottom of the printer",
+				"current": 0.8,
+				"performanceMode": {
+					"current": 1.3
+				},
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2004AC",
+				"rotationDistance": 40,
+				"gearRatio": "80:16"
+			},
+			{
+				"axis": "z3",
+				"axisDescription": "The Z motor located on the front right of the bottom of the printer",
+				"current": 0.8,
+				"performanceMode": {
+					"current": 1.3
+				},
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH48-2004AC",
+				"rotationDistance": 40,
+				"gearRatio": "80:16"
+			},
+			{
+				"axis": "extruder",
+				"axisDescription": "The extruder motor used for your toolhead",
+				"current": 0.707,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-36STH20-1004AHG",
+				"rotationDistance": 0
+			}
+		]
+	}
 }

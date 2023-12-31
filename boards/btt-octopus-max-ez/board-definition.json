@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"name": "Octopus Max EZ V1.0",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-octopus-max-ez",
+	"id": "btt-octopus-max-ez",
 	"firmwareBinaryName": "firmware-btt-octopus-max-ez.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
@@ -10,6 +10,7 @@
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/btt-octopus-max-ez",
 	"driverCount": 10,
 	"driverVoltages": [24, 48],
+	"fourPinFanConnectorCount": 3,
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.drawio.png",

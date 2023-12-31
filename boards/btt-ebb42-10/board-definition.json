@@ -3,7 +3,7 @@
 	"isToolboard": true,
 	"name": "EBB42 v1.0",
 	"manufacturer": "BIGTREETECH",
-	"serialPath": "/dev/btt-ebb42-10",
+	"id": "btt-ebb42-10",
 	"firmwareBinaryName": "firmware-btt-ebb42-10.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
@@ -12,6 +12,7 @@
 	"integratedDrivers": {
 		"extruder": "BTT-TMC2209-13"
 	},
+	"alternativePT1000Resistor": 2200,
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",
