@@ -1,0 +1,5 @@
+# BTT Manta M8P version 2.0 w/ STM32H723
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="614e",  ATTRS{idVendor}=="1d50", ATTRS{serial}=="btt-manta-m8p-120, ACTION=="add", SYMLINK+="btt-manta-m8p-20", RUN+="/home/pi/printer_data/config/RatOS/scripts/klipper-mcu-added.sh"
+
+ACTION=="remove", ENV{DEVLINKS}=="/dev/btt-manta-m8p-20"
+
