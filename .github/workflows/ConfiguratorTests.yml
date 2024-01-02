@@ -68,5 +68,5 @@ jobs:
       - uses: actions/upload-artifact@v3 # upload test results
         if: success() || failure() # run this step even if previous step failed
         with:
-          name: Upload test results
+          name: test-results
           path: ratos-configurator/src/report.xml
