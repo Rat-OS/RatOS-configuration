@@ -45,8 +45,34 @@ install_beacon()
 
 	# update link to beacon.py
 	echo "beacon: registering beacon with the configurator."
-	register_klippy_extension "beacon" "$BEACON_DIR" "beacon.py"
+	_register_klippy_extension "beacon" "$BEACON_DIR" "beacon.py"
 
+}
+
+_register_klippy_extension() {
+	EXT_NAME=$1
+    EXT_PATH=$2
+    EXT_FILE=$3
+	ERROR_IF_EXISTS=$4
+	[[ "$ERROR_IF_EXISTS" == "false" ]] && ERROR_IF_EXISTS="false" || ERROR_IF_EXISTS="true"
+
+    report_status "Registering klippy extension '$EXT_NAME' with the RatOS Configurator..."
+    if [ ! -e "$EXT_PATH/$EXT_FILE" ]
+    then
+        echo "ERROR: The file you're trying to register does not exist"
+        exit 1
+    fi
+
+    
+    if curl --fail -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.register' \
+		-H 'content-type: application/json' \
+		--data-raw "{\"json\":{\"extensionName\":\"$EXT_NAME\",\"path\":\"$EXT_PATH\",\"fileName\":\"$EXT_FILE\",\"errorIfExists\":$ERROR_IF_EXISTS}}"
+    then
+        echo "Registered $EXT_NAME successfully."
+    else
+        echo "ERROR: Failed to register $EXT_NAME. Is the RatOS configurator running?"
+        exit 1
+    fi
 }
 
 regenerate_config() {
@@ -67,7 +93,7 @@ register_gcode_shell_command()
     EXT_NAME="gcode_shell_extension"
     EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
     EXT_FILE="gcode_shell_command.py"
-    register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE
+    _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE
 }
 
 register_ratos_homing()
@@ -76,7 +102,7 @@ register_ratos_homing()
     EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
     EXT_FILE="ratos_homing.py"
 	# Don't error if extension is already registered
-    register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
+    _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }
 
 install_hooks()
