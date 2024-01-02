@@ -13,21 +13,12 @@ on:
     branches:
       - "development-idex"
       - "development"
-    paths:
-      - "boards/**"
-      - "scripts/**"
-      # Add workflow itself for now
-      - ".github/workflows/ShellCheck.yml"
 
   pull_request:
     types: [opened, edited, reopened, synchronize]
     branches:
       - "development-idex"
       - "development"
-    paths:
-      - "config/**"
-      - "src/**"
-      - "!src/version"
 
   workflow_dispatch:
 
