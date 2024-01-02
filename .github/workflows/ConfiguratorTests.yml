@@ -1,4 +1,4 @@
-name: "Linter: shellcheck"
+name: "Testing: configuration"
 env:
   RATOS_CONFIGURATION_PATH=: ${{ github.workspace }}/ratos-configuration
   KLIPPER_CONFIG_PATH: ${{ github.workspace }}/config
