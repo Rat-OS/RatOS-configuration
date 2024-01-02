@@ -1,5 +1,5 @@
 #!/bin/bash
-MCU=/dev/btt-manta-m8p-20
+MCU=/dev/btt-manta-m8p-h723-20
 if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
