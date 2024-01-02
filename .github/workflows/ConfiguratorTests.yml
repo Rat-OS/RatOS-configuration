@@ -1,6 +1,6 @@
 name: "Testing: configuration"
 env:
-  RATOS_CONFIGURATION_PATH=: ${{ github.workspace }}/ratos-configuration
+  RATOS_CONFIGURATION_PATH: ${{ github.workspace }}/ratos-configuration
   KLIPPER_CONFIG_PATH: ${{ github.workspace }}/config
   RATOS_SCRIPT_DIR: ${{ github.workspace }}/ratos-configurator/src/scripts
   KLIPPER_DIR: ${{ github.workspace }}/klipper
@@ -72,4 +72,12 @@ jobs:
             
       - name: Run configuration tests
         working-directory: ratos-configurator/src
-        run: pnpm run test:ci:config --outputFile=./report.json
+        run: pnpm run test:ci:config --outputFile=./report.xml
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: JEST Tests            # Name of the check run which will be created
+          path: report.xml    # Path to test results
+          reporter: jest-junit        # Format of test results
