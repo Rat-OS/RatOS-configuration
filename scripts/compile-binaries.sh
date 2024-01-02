@@ -63,6 +63,24 @@ compile_skr_2_429() {
     cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-skr-2-429.bin
 }
 
+compile_btt_manta_m8p_11() {
+    echo "Compiling firmware for BTT manta-m8p v1.1"
+    cp -f /home/pi/printer_data/config/RatOS/boards/btt-manta-m8p-11/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-manta-m8p-11.bin
+}
+
+compile_btt_manta_m8p_20() {
+    echo "Compiling firmware for BTT manta-m8p v2.0"
+    cp -f /home/pi/printer_data/config/RatOS/boards/btt-manta-m8p-20/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-manta-m8p-20.bin
+}
+
 compile_btt_ebb42_10() {
     echo "Compiling firmware for BTT EBB42 v1.0"
     cp -f /home/pi/printer_data/config/RatOS/boards/btt-ebb42-10/firmware.config /home/pi/klipper/.config
@@ -115,6 +133,15 @@ compile_btt_ebb36_12() {
     make clean
     make
     cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-ebb36-12.bin
+}
+
+compile_btt_sb2209_10() {
+    echo "Compiling firmware for BTT SB209 v1.0"
+    cp -f /home/pi/printer_data/config/RatOS/boards/btt-sb2209-10/firmware.config /home/pi/klipper/.config
+    make olddefconfig
+    make clean
+    make
+    cp /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb2209-10.bin
 }
 
 compile_mellow_fly_sht_42() {
@@ -191,6 +218,9 @@ compile_btt_octopus_11_407
 compile_fysetc_spider
 compile_skr_pro_12
 compile_skr_2_429
+compile_btt_manta_m8p_11
+compile_btt_manta_m8p_20
+compile_btt_sb2209_10
 compile_btt_ebb42_10
 compile_btt_ebb36_10
 compile_btt_ebb42_11
