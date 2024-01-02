@@ -1,0 +1,83 @@
+name: "Linter: shellcheck"
+env:
+  RATOS_CONFIGURATION_PATH=: ${{ github.workspace }}/ratos-configuration
+  KLIPPER_CONFIG_PATH: ${{ github.workspace }}/config
+  RATOS_SCRIPT_DIR: ${{ github.workspace }}/ratos-configurator/src/scripts
+  KLIPPER_DIR: ${{ github.workspace }}/klipper
+  KLIPPER_ENV: ${{ github.workspace }}/klippy-env
+  MOONRAKER_DIR: ${{ github.workspace }}/moonraker
+  LOG_FILE: ${{ github.workspace }}/ratos-configurator.log
+  RATOS_DATA_DIR: ${{ github.workspace }}/ratos-data
+on:
+  push:
+    branches:
+      - "development-idex"
+      - "development"
+    paths:
+      - "boards/**"
+      - "scripts/**"
+      # Add workflow itself for now
+      - ".github/workflows/ShellCheck.yml"
+
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+    branches:
+      - "development-idex"
+      - "development"
+    paths:
+      - "config/**"
+      - "src/**"
+      - "!src/version"
+
+  workflow_dispatch:
+
+jobs:
+  test_configuration:
+    name: Test RatOS Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Repository
+        uses: actions/checkout@v4
+        with:
+          path: 'ratos-configuration'
+          
+      - name: Fetch Configurator Repository
+        uses: actions/checkout@v4
+        with:
+          path: 'ratos-configurator'
+          ref: ${{ github.ref_name }}
+          
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.0.1
+        with:
+          # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
+          node-version: 18.x
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install all dependencies
+        working-directory: ./ratos-configurator/src
+        run: pnpm install --frozen-lockfile
+            
+      - name: Run configuration tests
+        working-directory: ./ratos-configurator/src
+        run: pnpm run test:ci:config --outputFile=./report.json
