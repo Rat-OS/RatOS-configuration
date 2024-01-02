@@ -1,4 +1,4 @@
-name: "Testing: configuration"
+name: "CI"
 env:
   RATOS_CONFIGURATION_PATH: ${{ github.workspace }}/ratos-configuration
   KLIPPER_CONFIG_PATH: ${{ github.workspace }}/config
@@ -10,16 +10,7 @@ env:
   RATOS_DATA_DIR: ${{ github.workspace }}/ratos-data
 on:
   push:
-    branches:
-      - "development-idex"
-      - "development"
-
   pull_request:
-    types: [opened, edited, reopened, synchronize]
-    branches:
-      - "development-idex"
-      - "development"
-
   workflow_dispatch:
 
 jobs:
@@ -74,11 +65,8 @@ jobs:
         working-directory: ratos-configurator/src
         run: pnpm run test:ci:config --outputFile=./report.xml
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
+      - uses: actions/upload-artifact@v3 # upload test results
         if: success() || failure() # run this step even if previous step failed
         with:
-          name: JEST Tests # Name of the check run which will be created
-          path: src/report.xml # Path to test results
-          reporter: jest-junit # Format of test results
-          working-directory: ratos-configurator
+          name: Upload test results
+          path: ratos-configurator/src/report.xml
