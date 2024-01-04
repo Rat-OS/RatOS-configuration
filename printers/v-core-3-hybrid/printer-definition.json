@@ -1,9 +1,9 @@
 {
 	"$schema": "../printer-definition.schema.json",
-	"name": "V-Core 3 IDEX",
-	"description": "IDEX version of Rat Rig's current flagship CoreXY printer which comes in 4 sizes",
+	"name": "V-Core 3 Hybrid",
+	"description": "Hybrid CoreXY version of Rat Rig's current flagship CoreXY printer which comes in 4 sizes",
 	"manufacturer": "Rat Rig",
-	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-3-idex",
+	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-3-Hybrid",
 	"image": "rat-rig-v-core-3-idex.jpg",
 	"template": "v-core-3-hybrid-printer.template.cfg",
 	"driverCountRequired": 8,
