@@ -54,7 +54,7 @@ _register_klippy_extension() {
     EXT_PATH=$2
     EXT_FILE=$3
 	ERROR_IF_EXISTS=$4
-	[[ "$ERROR_IF_EXISTS" == "false" ]] && ERROR_IF_EXISTS="" || ERROR_IF_EXISTS="-e"
+	[[ "$ERROR_IF_EXISTS" == "false" ]] && ERROR_IF_EXISTS="" || ERROR_IF_EXISTS="-e "
 
     report_status "Registering klippy extension '$EXT_NAME' with the RatOS Configurator..."
     if [ ! -e "$EXT_PATH/$EXT_FILE" ]
@@ -63,7 +63,8 @@ _register_klippy_extension() {
         exit 1
     fi
 
-    if ! ratos extensions register klipper "$ERROR_IF_EXISTS" "$EXT_NAME" "$EXT_PATH"/"$EXT_FILE"
+    # shellcheck disable=SC2086
+    if ! ratos extensions register klipper $ERROR_IF_EXISTS"$EXT_NAME" "$EXT_PATH"/"$EXT_FILE"
     then
         echo "ERROR: Failed to register $EXT_NAME. Is the RatOS configurator running?"
         exit 1
