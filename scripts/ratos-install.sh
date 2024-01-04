@@ -2,7 +2,7 @@
 # This script install additional dependencies
 # for RatOS.
 
-PKGLIST="python3-numpy python3-matplotlib jq curl"
+PKGLIST="python3-numpy python3-matplotlib curl"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # shellcheck source=./scripts/ratos-common.sh

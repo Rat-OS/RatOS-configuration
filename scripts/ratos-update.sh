@@ -37,29 +37,15 @@ restart_klipper()
   service klipper restart
 }
 
-symlink_klippy_extensions()
+symlink_extensions()
 {
 	report_status "Symlinking klippy extensions"
-	symlink_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/klippy-extensions.symlink' -H 'content-type: application/json')
+	ratos extensions symlink
 	configurator_success=$?
-	if [ $configurator_success -eq 0 ]
+	if [ ! $configurator_success -eq 0 ]
 	then
-		echo "$symlink_result" | jq -r '.result.data.json'
-	else
-		echo "Failed to symlink klippy extensions. Is the RatOS configurator running? Ignore this if not on RatOS 2.0 yet"
-	fi
-}
-
-symlink_moonraker_extensions()
-{
-	report_status "Symlinking moonraker extensions"
-	symlink_result=$(curl --fail --silent -X POST 'http://localhost:3000/configure/api/trpc/moonraker-extensions.symlink' -H 'content-type: application/json')
-	configurator_success=$?
-	if [ $configurator_success -eq 0 ]
-	then
-		echo "$symlink_result" | jq -r '.result.data.json'
-	else
-		echo "Failed to symlink moonraker extensions. Is the RatOS configurator running? Ignore this if not on RatOS 2.0 yet"
+		echo "Failed to symlink klippy extensions. Is the RatOS configurator running?"
+		exit 1
 	fi
 }
 # Run update symlinks
@@ -70,6 +56,5 @@ install_beacon
 install_hooks
 ensure_node_18
 register_ratos_homing
-symlink_klippy_extensions
-symlink_moonraker_extensions
+symlink_extensions
 regenerate_config
