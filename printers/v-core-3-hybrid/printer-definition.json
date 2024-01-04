@@ -6,7 +6,7 @@
 	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-3-idex",
 	"image": "rat-rig-v-core-3-idex.jpg",
 	"template": "v-core-3-hybrid-printer.template.cfg",
-	"driverCountRequired": 9,
+	"driverCountRequired": 8,
 	"sizes": [200, 300, 400, 500],
 	"speedLimits": {
 		"basic": {
