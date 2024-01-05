@@ -1,0 +1,4 @@
+# Ldo leviathan version 1.2 w/ STM32F446
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="614e",  ATTRS{idVendor}=="1d50", ATTRS{serial}=="ldo-leviathan-12", ACTION=="add", SYMLINK+="ldo-leviathan-12", RUN+="/home/pi/printer_data/config/RatOS/scripts/klipper-mcu-added.sh"
+
+ACTION=="remove", ENV{DEVLINKS}=="/dev/ldo-leviathan-12"
