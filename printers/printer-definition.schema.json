@@ -185,7 +185,7 @@
 							"axis": {
 								"description": "Axis for this rail.",
 								"type": "string",
-								"enum": ["x", "x1", "dual_carriage", "y", "y1", "z", "z1", "z2", "z3", "extruder", "extruder1"]
+								"enum": ["x", "x1", "dual_carriage", "y", "y1", "y2", "z", "z1", "z2", "z3", "extruder", "extruder1"]
 							},
 							"axisDescription": {
 								"description": "Description of the axis for this rail such as where it's located on the printer",
