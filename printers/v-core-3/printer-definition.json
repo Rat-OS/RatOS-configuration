@@ -97,7 +97,7 @@
 			},
 			{
 				"axis": "extruder",
-				"axisDescription": "The extruder motor used on your toolhead",
+				"axisDescription": "The extruder motor used for pushing filament through the toolhead",
 				"rotationDistance": 0,
 				"current": 0.707,
 				"driver": "BTT-TMC2209-13",

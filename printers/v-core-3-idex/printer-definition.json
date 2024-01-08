@@ -135,7 +135,7 @@
 			},
 			{
 				"axis": "extruder",
-				"axisDescription": "The extruder motor used on the right toolhead",
+				"axisDescription": "The extruder motor used for pushing filament through the left toolhead (T0)",
 				"rotationDistance": 0,
 				"current": 0.707,
 				"driver": "BTT-TMC2209-13",
@@ -143,7 +143,7 @@
 			},
 			{
 				"axis": "extruder1",
-				"axisDescription": "The extruder motor used on the left toolhead",
+				"axisDescription": "The extruder motor used for pushing filament through the right toolhead (T1)",
 				"rotationDistance": 0,
 				"current": 0.707,
 				"driver": "BTT-TMC2209-13",
