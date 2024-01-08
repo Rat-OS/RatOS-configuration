@@ -69,6 +69,12 @@
 						},
 						"square_corner_velocity": {
 							"type": "number"
+						},
+						"travel_velocity": {
+							"type": "number"
+						},
+						"travel_accel": {
+							"type": "number"
 						}
 					},
 					"required": ["velocity", "accel", "z_velocity", "z_accel"]
@@ -90,6 +96,12 @@
 							"type": "number"
 						},
 						"square_corner_velocity": {
+							"type": "number"
+						},
+						"travel_velocity": {
+							"type": "number"
+						},
+						"travel_accel": {
 							"type": "number"
 						}
 					},

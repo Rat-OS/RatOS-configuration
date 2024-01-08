@@ -12,14 +12,18 @@
 			"accel": 2000,
 			"velocity": 200,
 			"z_accel": 45,
-			"z_velocity": 15
+			"z_velocity": 15,
+			"travel_accel": 2000,
+			"travel_velocity": 200
 		},
 		"performance": {
 			"accel": 12000,
 			"velocity": 600,
 			"z_accel": 45,
 			"z_velocity": 15,
-			"square_corner_velocity": 6
+			"square_corner_velocity": 6,
+			"travel_accel": 8000,
+			"travel_velocity": 600
 		}
 	},
 	"defaults": {
