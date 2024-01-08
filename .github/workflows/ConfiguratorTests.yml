@@ -33,7 +33,7 @@ jobs:
         with:
           path: "ratos-configurator"
           repository: Rat-OS/RatOS-configurator
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.base_ref || github.ref_name }}
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4.0.1
