@@ -20,6 +20,112 @@
 		],
 		"hasBoot0Jumper": true
 	},
+	"motorSlots": {
+		"MOTOR0": {
+			"title": "MOTOR 0",
+			"enable_pin": "PF14",
+			"step_pin": "PF13",
+			"dir_pin": "PF12",
+			"uart_pin": "PC4",
+			"cs_pin": "PC4",
+			"diag_pin": "PG6",
+			"endstop_pin": "PG6",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR1": {
+			"title": "MOTOR 1",
+			"enable_pin": "PF15",
+			"step_pin": "PG0",
+			"dir_pin": "PG1",
+			"uart_pin": "PD11",
+			"cs_pin": "PD11",
+			"diag_pin": "PG9",
+			"endstop_pin": "PG9",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR2": {
+			"title": "MOTOR 2",
+			"enable_pin": "PG5",
+			"step_pin": "PF11",
+			"dir_pin": "PG3",
+			"uart_pin": "PC6",
+			"cs_pin": "PC6",
+			"diag_pin": "PG10",
+			"endstop_pin": "PG10",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR3": {
+			"title": "MOTOR 3",
+			"enable_pin": "PA2",
+			"step_pin": "PG4",
+			"dir_pin": "PC1",
+			"uart_pin": "PC7",
+			"cs_pin": "PC7",
+			"diag_pin": "PG11",
+			"endstop_pin": "PG11",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR4": {
+			"title": "MOTOR 4",
+			"enable_pin": "PG2",
+			"step_pin": "PF9",
+			"dir_pin": "PF10",
+			"uart_pin": "PF2",
+			"cs_pin": "PF2",
+			"diag_pin": "PG12",
+			"endstop_pin": "PG12",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR5": {
+			"title": "MOTOR 5",
+			"enable_pin": "PF1",
+			"step_pin": "PC13",
+			"dir_pin": "PF0",
+			"uart_pin": "PE4",
+			"cs_pin": "PE4",
+			"diag_pin": "PG13",
+			"endstop_pin": "PG13",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR6": {
+			"title": "MOTOR 6",
+			"enable_pin": "PD4",
+			"step_pin": "PE2",
+			"dir_pin": "PE3",
+			"uart_pin": "PE1",
+			"cs_pin": "PE1",
+			"diag_pin": "PG14",
+			"endstop_pin": "PG14",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR7": {
+			"title": "MOTOR 7",
+			"enable_pin": "PE0",
+			"step_pin": "PE6",
+			"dir_pin": "PA14",
+			"uart_pin": "PD3",
+			"cs_pin": "PD3",
+			"diag_pin": "PG15",
+			"endstop_pin": "PG15",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		}
+	},
 	"ADXL345SPI": {
 		"cs_pin": "PA15",
 		"hardware": {
