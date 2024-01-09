@@ -20,8 +20,8 @@
 		"performance": {
 			"accel": 10000,
 			"velocity": 800,
-			"z_accel": 150,
-			"z_velocity": 20,
+			"z_accel": 600,
+			"z_velocity": 30,
 			"travel_velocity": 600,
 			"travel_accel": 8000
 		}

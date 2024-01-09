@@ -13,13 +13,15 @@
 			"accel": 3000,
 			"velocity": 300,
 			"z_accel": 15,
-			"z_velocity": 30
+			"z_velocity": 30,
+			"travel_accel": 3000,
+			"travel_velocity": 300
 		},
 		"performance": {
 			"accel": 10000,
 			"velocity": 800,
-			"z_accel": 150,
-			"z_velocity": 20,
+			"z_accel": 600,
+			"z_velocity": 50,
 			"travel_velocity": 600,
 			"travel_accel": 8000
 		}
