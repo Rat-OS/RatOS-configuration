@@ -7,9 +7,10 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ## but this has been reliable for me so far…
 sleep 10
 
-outdir="${SCRIPT_DIR}"../../input_shaper
+outdir="${SCRIPT_DIR}"/../../input_shaper
 if [ ! -d "${outdir}" ]; then
     mkdir "${outdir}"
+    chown pi:pi "$SCRIPT_DIR"/../../input_shaper
 fi
 
 ~/klipper/scripts/graph_accelerometer.py \
