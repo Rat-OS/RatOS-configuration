@@ -32,9 +32,9 @@ ensure_node_18()
 	fi
 }
 
-restart_klipper()
+restart_configurator()
 {
-  service klipper restart
+  systemctl restart ratos-configurator
 }
 
 symlink_extensions()
