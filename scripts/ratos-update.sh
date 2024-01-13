@@ -34,6 +34,7 @@ ensure_node_18()
 
 restart_configurator()
 {
+  report_status "Restarting configurator..."
   systemctl restart ratos-configurator
 }
 
