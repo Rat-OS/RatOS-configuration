@@ -4,7 +4,12 @@
 	"title": "Printer",
 	"description": "A RatOS supported 3d printer",
 	"type": "object",
+	"additionalProperties": false,
 	"properties": {
+		"$schema": {
+			"description": "The schema used for this file",
+			"type": "string"
+		},
 		"name": {
 			"description": "The name of the printer",
 			"type": "string"
@@ -29,6 +34,25 @@
 			"description": "Amount of drivers required for this printer",
 			"type": "number"
 		},
+		"bedMargin": {
+			"description": "Margin around the bed in mm that is reachable by the toolhead, but not printable",
+			"type": "object",
+			"properties": {
+				"x": {
+					"description": "X margin in mm eg [0, 55], for 0 at the left and 55 at the right",
+					"type": "array"
+				},
+				"y": {
+					"description": "Y margin in mm eg [0, 55], for 0 at the front and 55 at the back",
+					"type": "array",
+					"items": {
+						"type": "number"
+					}
+				}
+			},
+			"required": ["x", "y"],
+			"additionalProperties": false
+		},
 		"sizes": {
 			"description": "Size options for this printer",
 			"type": "array",
@@ -49,10 +73,12 @@
 		},
 		"speedLimits": {
 			"type": "object",
+			"additionalProperties": false,
 			"description": "Speed limits for this printer",
 			"properties": {
 				"basic": {
 					"type": "object",
+					"additionalProperties": false,
 					"description": "Standard speed limits",
 					"properties": {
 						"velocity": {
@@ -81,6 +107,7 @@
 				},
 				"performance": {
 					"type": "object",
+					"additionalProperties": false,
 					"description": "Performance speed limits",
 					"properties": {
 						"velocity": {
@@ -113,12 +140,14 @@
 		"defaults": {
 			"description": "Default hardware for this printer",
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"toolheads": {
 					"type": "array",
 					"description": "Default toolheads for this printer",
 					"items": {
 						"type": "object",
+						"additionalProperties": false,
 						"properties": {
 							"axis": {
 								"description": "Motion axis for this toolhead.",
@@ -193,6 +222,7 @@
 					"type": "array",
 					"items": {
 						"type": "object",
+						"additionalProperties": false,
 						"properties": {
 							"axis": {
 								"description": "Axis for this rail.",
@@ -222,6 +252,7 @@
 							"performanceMode": {
 								"description": "Defaults when in performance mode",
 								"type": "object",
+								"additionalProperties": false,
 								"properties": {
 									"voltage": {
 										"description": "Default voltage for this rail. 24, 36, 48, 56 and 60 is supported. Default is 24.",
