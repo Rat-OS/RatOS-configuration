@@ -57,4 +57,5 @@ install_hooks
 ensure_node_18
 register_ratos_homing
 symlink_extensions
+restart_configurator
 # regenerate_config # moonraker now restarts the configurator which results in a regen
