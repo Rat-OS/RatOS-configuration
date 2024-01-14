@@ -128,8 +128,10 @@
 	},
 	"ADXL345SPI": {
 		"cs_pin": "PA15",
-		"hardware": {
-			"bus": "spi3"
+		"software": {
+			"sclk": "PB3",
+			"mosi": "PB5",
+			"miso": "PB4"
 		}
 	},
 	"stepperSPI": {
