@@ -1,10 +1,11 @@
 #!/bin/bash
 
 pushd /home/pi/klipper || exit
-service klipper stop
+systemctl stop klipper
 make flash
 # Reset ownership
 chown pi:pi -R /home/pi/klipper
 
-service klipper start
+systemctl start klipper
+systemctl restart klipper_mcu
 popd || exit
