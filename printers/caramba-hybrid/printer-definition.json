@@ -30,6 +30,7 @@
 			"travel_accel": 8000
 		}
 	},
+	"kinematics": "hybrid-corexy",
 	"defaults": {
 		"board": "btt-octopus-11",
 		"toolheads": [
