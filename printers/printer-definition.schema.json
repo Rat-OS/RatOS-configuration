@@ -34,6 +34,11 @@
 			"description": "Amount of drivers required for this printer",
 			"type": "number"
 		},
+		"kinematics": {
+			"description": "Kinematics for this printer",
+			"type": "string",
+			"enum": ["hybrid-corexy", "hybrid-corexy-idex", "corexy", "cartesian"]
+		},
 		"bedMargin": {
 			"description": "Margin around the bed in mm that is reachable by the toolhead, but not printable",
 			"type": "object",
