@@ -5,7 +5,7 @@
 	"manufacturer": "Raspberry",
 	"isHost": true,
 	"serialPath": "/tmp/klipper_host_mcu",
-	"firmwareBinaryName": "~/klipper/out/klipper.elf",
+	"firmwareBinaryName": "rpi.elf",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"driverCount": 0,
