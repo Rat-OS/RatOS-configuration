@@ -1,4 +1,6 @@
 {
 	"shellcheck.useWorkspaceRootAsCwd": true,
-	"prettier.useTabs": true
+	"prettier.useTabs": true,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false
 }
