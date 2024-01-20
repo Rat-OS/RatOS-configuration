@@ -1,3 +1,4 @@
 {
-	"shellcheck.useWorkspaceRootAsCwd": true
+	"shellcheck.useWorkspaceRootAsCwd": true,
+	"prettier.useTabs": true
 }
