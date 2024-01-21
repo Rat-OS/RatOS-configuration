@@ -80,7 +80,7 @@ then
 		fi
 	fi
 
-	/home/pi/klipper/scripts/graph_accelerometer.py -c /tmp/*_y_belt_tension.csv -o /home/pi/printer_data/config/input_shaper/y_tension_comparison_$DATE.png
+	/home/pi/klipper/scripts/graph_accelerometer.py -c /tmp/*_y_belt_tension.csv -o /home/pi/printer_data/config/input_shaper/y_tension_comparison_"$DATE".png
 fi
 if [ $DISABLE_X -eq 0 ]
 then
@@ -107,5 +107,5 @@ then
 		cp /tmp/raw_data_x_toolboardb_t1.csv /tmp/right_x_belt_tension.csv
 	fi
 
-	/home/pi/klipper/scripts/graph_accelerometer.py -c /tmp/*_x_belt_tension.csv -o /home/pi/printer_data/config/input_shaper/x_tension_comparison_$DATE.png
+	/home/pi/klipper/scripts/graph_accelerometer.py -c /tmp/*_x_belt_tension.csv -o /home/pi/printer_data/config/input_shaper/x_tension_comparison_"$DATE".png
 fi
