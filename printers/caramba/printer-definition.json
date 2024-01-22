@@ -7,6 +7,10 @@
 	"image": "caramba.webp",
 	"template": "caramba-printer.template.cfg",
 	"driverCountRequired": 6,
+	"bedMargin": {
+		"x": [60, 60],
+		"y": [0, 0]
+	},
 	"sizes": [300, 400, 500],
 	"speedLimits": {
 		"basic": {
