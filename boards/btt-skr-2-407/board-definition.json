@@ -26,5 +26,72 @@
 			"mosi": "PE14",
 			"miso": "PA14"
 		}
+	},
+	"motorSlots": {
+		"X": {
+			"title": "X",
+			"enable_pin": "PE3",
+			"step_pin": "PE2",
+			"dir_pin": "PE1",
+			"uart_pin": "PE0",
+			"cs_pin": "PE0",
+			"diag_pin": "PC1",
+			"endstop_pin": "PC1",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PA14",
+			"spi_software_sclk_pin": "PE15"
+		},
+		"Y": {
+			"title": "Y",
+			"enable_pin": "PD6",
+			"step_pin": "PD5",
+			"dir_pin": "PD4",
+			"uart_pin": "PD3",
+			"cs_pin": "PD3",
+			"diag_pin": "PC3",
+			"endstop_pin": "PC3",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PA14",
+			"spi_software_sclk_pin": "PE15"
+		},
+		"Z": {
+			"title": "Z",
+			"enable_pin": "PD1",
+			"step_pin": "PA15",
+			"dir_pin": "PA8",
+			"uart_pin": "PD0",
+			"cs_pin": "PD0",
+			"diag_pin": "PC0",
+			"endstop_pin": "PC0",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PA14",
+			"spi_software_sclk_pin": "PE15"
+		},
+		"E0": {
+			"title": "E0",
+			"enable_pin": "PC7",
+			"step_pin": "PD15",
+			"dir_pin": "PD14",
+			"uart_pin": "PC6",
+			"cs_pin": "PC6",
+			"diag_pin": "PC2",
+			"endstop_pin": "PC2",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PA14",
+			"spi_software_sclk_pin": "PE15"
+		},
+		"E1": {
+			"title": "E1",
+			"enable_pin": "PD13",
+			"step_pin": "PD11",
+			"dir_pin": "PD10",
+			"uart_pin": "PD12",
+			"cs_pin": "PD12",
+			"diag_pin": "PA0",
+			"endstop_pin": "PA0",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PA14",
+			"spi_software_sclk_pin": "PE15"
+		}
 	}
 }
