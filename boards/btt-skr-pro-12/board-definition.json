@@ -9,6 +9,7 @@
 	"driverCount": 6,
 	"flashInstructions": "Flashing only works if there's a properly formatted (FAT16 or FAT32 with a small blocksize) micro SD card in the SKR Pro's SD Card slot. The smaller the SD card the better, a cheap 128mb TF-card is perfect.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-pro-12",
+	"driverVoltages": [24, 36],
 	"ADXL345SPI": {
 		"cs_pin": "PB12",
 		"hardware": {
@@ -20,6 +21,86 @@
 			"sclk": "PC10",
 			"mosi": "PC12",
 			"miso": "PC11"
+		}
+	},
+	"motorSlots": {
+		"X": {
+			"title": "X",
+			"enable_pin": "PF2",
+			"step_pin": "PE9",
+			"dir_pin": "PF1",
+			"uart_pin": "PC13",
+			"cs_pin": "PC13",
+			"diag_pin": "PB10",
+			"endstop_pin": "PB10",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"Y": {
+			"title": "Y",
+			"enable_pin": "PD7",
+			"step_pin": "PE11",
+			"dir_pin": "PE8",
+			"uart_pin": "PD11",
+			"cs_pin": "PD11",
+			"diag_pin": "PE12",
+			"endstop_pin": "PE12",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"Z": {
+			"title": "Z",
+			"enable_pin": "PC0",
+			"step_pin": "PE13",
+			"dir_pin": "PC2",
+			"uart_pin": "PC6",
+			"cs_pin": "PC6",
+			"diag_pin": "PG8",
+			"endstop_pin": "PG8",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"E0": {
+			"title": "E0",
+			"enable_pin": "PC3",
+			"step_pin": "PE14",
+			"dir_pin": "PA0",
+			"uart_pin": "PC7",
+			"cs_pin": "PC7",
+			"diag_pin": "PE15",
+			"endstop_pin": "PE15",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"E1": {
+			"title": "E1",
+			"enable_pin": "PA3",
+			"step_pin": "PD15",
+			"dir_pin": "PE7",
+			"uart_pin": "PF2",
+			"cs_pin": "PF2",
+			"diag_pin": "PE10",
+			"endstop_pin": "PE10",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"E2": {
+			"title": "E2",
+			"enable_pin": "PF0",
+			"step_pin": "PD13",
+			"dir_pin": "PG9",
+			"uart_pin": "PE4",
+			"cs_pin": "PE4",
+			"diag_pin": "PG5",
+			"endstop_pin": "PG5",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		}
 	}
 }
