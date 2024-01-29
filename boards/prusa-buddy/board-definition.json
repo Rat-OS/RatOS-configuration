@@ -5,6 +5,7 @@
 	"id": "prusa-buddy",
 	"firmwareBinaryName": "firmware-prusa-buddy.bin",
 	"driverCount": 4,
+	"driverVoltages": [24],
 	"fourPinFanConnectorCount": 2,
 	"integratedDrivers": {
 		"x": "PRUSA-BUDDY-TMC2209",
@@ -16,4 +17,42 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/buddy"
+	"motorSlots": {
+		"X": {
+			"title": "X",
+			"enable_pin": "PD3",
+			"step_pin": "PD1",
+			"dir_pin": "PD1",
+			"uart_pin": "PD5",
+			"uart_address": "1",
+			"diag_pin": "PE2",
+		},
+		"Y": {
+			"title": "Y",
+			"enable_pin": "PD14",
+			"step_pin": "PD13",
+			"dir_pin": "PD12",
+			"uart_pin": "PD5",
+			"uart_address": "3",
+			"diag_pin": "PE1",
+		},
+		"Z": {
+			"title": "Z",
+			"enable_pin": "PD2",
+			"step_pin": "PD4",
+			"dir_pin": "PD15",
+			"uart_pin": "PD5",
+			"uart_address": "0",
+			"diag_pin": "PE3",
+		},
+		"E0": {
+			"title": "E0",
+			"enable_pin": "PD10",
+			"step_pin": "PD9",
+			"dir_pin": "PD8",
+			"uart_pin": "PD5",
+			"uart_address": "2",
+			"diag_pin": "PA15",
+		}
+	}
 }
