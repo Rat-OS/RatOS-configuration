@@ -125,8 +125,6 @@
 			"dir_pin": "PD2",
 			"uart_pin": "PD7",
 			"cs_pin": "PD7",
-			"diag_pin": "null",
-			"endstop_pin": "null",
 			"spi_software_mosi_pin": "PE14",
 			"spi_software_miso_pin": "PE13",
 			"spi_software_sclk_pin": "PE12"
@@ -138,8 +136,6 @@
 			"dir_pin": "PA9",
 			"uart_pin": "PD6",
 			"cs_pin": "PD6",
-			"diag_pin": "null",
-			"endstop_pin": "null",
 			"spi_software_mosi_pin": "PE14",
 			"spi_software_miso_pin": "PE13",
 			"spi_software_sclk_pin": "PE12"
@@ -151,8 +147,6 @@
 			"dir_pin": "PC7",
 			"uart_pin": "PG8",
 			"cs_pin": "PG8",
-			"diag_pin": "null",
-			"endstop_pin": "null",
 			"spi_software_mosi_pin": "PE14",
 			"spi_software_miso_pin": "PE13",
 			"spi_software_sclk_pin": "PE12"
@@ -164,8 +158,6 @@
 			"dir_pin": "PC6",
 			"uart_pin": "PG7",
 			"cs_pin": "PG7",
-			"diag_pin": "null",
-			"endstop_pin": "null",
 			"spi_software_mosi_pin": "PE14",
 			"spi_software_miso_pin": "PE13",
 			"spi_software_sclk_pin": "PE12"
