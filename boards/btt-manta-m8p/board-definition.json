@@ -107,6 +107,8 @@
 			"dir_pin": "PD11",
 			"uart_pin": "PD14",
 			"cs_pin": "PD14",
+			"diag_pin": "null",
+			"endstop_pin": "null",
 			"spi_software_mosi_pin": "PA7",
 			"spi_software_miso_pin": "PA6",
 			"spi_software_sclk_pin": "PA5"
@@ -118,6 +120,8 @@
 			"dir_pin": "PD8",
 			"uart_pin": "PD10",
 			"cs_pin": "PD10",
+			"diag_pin": "null",
+			"endstop_pin": "null",
 			"spi_software_mosi_pin": "PA7",
 			"spi_software_miso_pin": "PA6",
 			"spi_software_sclk_pin": "PA5"
