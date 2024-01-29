@@ -9,6 +9,7 @@
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-m8p",
 	"fourPinFanConnectorCount": 3,
 	"driverCount": 8,
+	"driverVoltages": [24, 36, 48, 56],
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",
@@ -20,6 +21,107 @@
 		],
 		"hasBoot0Jumper": false
 	},
+	"motorSlots": {
+		"MOTOR1": {
+			"title": "MOTOR 1",
+			"enable_pin": "PC11",
+			"step_pin": "PE2",
+			"dir_pin": "PB4",
+			"uart_pin": "PC10",
+			"cs_pin": "PC10",
+			"diag_pin": "PF3",
+			"endstop_pin": "PF3",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR2": {
+			"title": "MOTOR 2",
+			"enable_pin": "PB3",
+			"step_pin": "PF12",
+			"dir_pin": "PF11",
+			"uart_pin": "PF13",
+			"cs_pin": "PF13",
+			"diag_pin": "PF4",
+			"endstop_pin": "PF4",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR3": {
+			"title": "MOTOR 3",
+			"enable_pin": "PF10",
+			"step_pin": "PD7",
+			"dir_pin": "PD6",
+			"uart_pin": "PF9",
+			"cs_pin": "PF9",
+			"diag_pin": "PF5",
+			"endstop_pin": "PF5",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR4": {
+			"title": "MOTOR 4",
+			"enable_pin": "PD2",
+			"step_pin": "PD3",
+			"dir_pin": "PD2",
+			"uart_pin": "PD4",
+			"cs_pin": "PD4",
+			"diag_pin": "PC0",
+			"endstop_pin": "PC0",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR5": {
+			"title": "MOTOR 5",
+			"enable_pin": "PD1",
+			"step_pin": "PC9",
+			"dir_pin": "PC8",
+			"uart_pin": "PD0",
+			"cs_pin": "PD0",
+			"diag_pin": "PC1",
+			"endstop_pin": "PC1",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR6": {
+			"title": "MOTOR 6",
+			"enable_pin": "PA15 ",
+			"step_pin": "PA10",
+			"dir_pin": "PD15",
+			"uart_pin": "PF8",
+			"cs_pin": "PF8",
+			"diag_pin": "PC2",
+			"endstop_pin": "PC2",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR7": {
+			"title": "MOTOR 7",
+			"enable_pin": "PD14",
+			"step_pin": "PD12",
+			"dir_pin": "PD11",
+			"uart_pin": "PD14",
+			"cs_pin": "PD14",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		},
+		"MOTOR8": {
+			"title": "MOTOR 8",
+			"enable_pin": "PD9",
+			"step_pin": "PD10",
+			"dir_pin": "PD8",
+			"uart_pin": "PD10",
+			"cs_pin": "PD10",
+			"spi_software_mosi_pin": "PA7",
+			"spi_software_miso_pin": "PA6",
+			"spi_software_sclk_pin": "PA5"
+		}
 	"ADXL345SPI": {
 		"cs_pin": "PB15",
 		"software": {

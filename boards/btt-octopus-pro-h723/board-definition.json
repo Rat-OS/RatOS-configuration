@@ -9,6 +9,7 @@
 	"disableAutoFlash": true,
 	"flashInstructions": "Flashing only works if the SD card slot on the Octopus Pro is empty.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-pro-h723",
+	"driverVoltages": [24, 36, 48, 56],
 	"driverCount": 8,
 	"dfu": {
 		"flashDevice": "0483:df11",
