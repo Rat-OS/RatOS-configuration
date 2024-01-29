@@ -22,40 +22,39 @@
 	},
 	"motorSlots": {
 		"X": {
-			"title": "X",
-			"enable_pin": "PD3",
-			"step_pin": "PD1",
-			"dir_pin": "PD1",
-			"uart_pin": "PD5",
-			"uart_address": "1",
-			"diag_pin": "PE2"
+			"title": "X", 
+			"enable_pin": "PA7",
+			"step_pin": "PC0",
+			"dir_pin": "PL0",
+			"cs_pin": "PG0",
+			"endstop_pin": "PB6",
+			"diag_pin": "PK2"
 		},
 		"Y": {
 			"title": "Y",
-			"enable_pin": "PD14",
-			"step_pin": "PD13",
-			"dir_pin": "PD12",
-			"uart_pin": "PD5",
-			"uart_address": "3",
-			"diag_pin": "PE1"
+			"enable_pin": "PA6",
+			"step_pin": "PC1",
+			"dir_pin": "PL1",
+			"cs_pin": "PG2",
+			"endstop_pin": "PB5",
+			"diag_pin": "PK7"
 		},
 		"Z": {
 			"title": "Z",
-			"enable_pin": "PD2",
-			"step_pin": "PD4",
-			"dir_pin": "PD15",
-			"uart_pin": "PD5",
-			"uart_address": "0",
-			"diag_pin": "PE3"
+			"enable_pin": "PA5",
+			"step_pin": "PC2",
+			"dir_pin": "PL2",
+			"cs_pin": "PK5",
+			"endstop_pin": "PB4",
+			"diag_pin": "PK6"
 		},
 		"E0": {
 			"title": "E0",
-			"enable_pin": "PD10",
-			"step_pin": "PD9",
-			"dir_pin": "PD8",
-			"uart_pin": "PD5",
-			"uart_address": "2",
-			"diag_pin": "PA15"
+			"enable_pin": "PA4",
+			"step_pin": "PC3",
+			"dir_pin": "PL6",
+			"cs_pin": "PK4",
+			"diag_pin": "PK3"
 		}
 	}
 }

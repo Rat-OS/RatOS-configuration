@@ -22,7 +22,7 @@
 			"title": "X",
 			"enable_pin": "PD3",
 			"step_pin": "PD1",
-			"dir_pin": "PD1",
+			"dir_pin": "PD0",
 			"uart_pin": "PD5",
 			"uart_address": "1",
 			"diag_pin": "PE2"
