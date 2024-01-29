@@ -14,7 +14,7 @@
 	"motorSlots": {
 		"MOTOR0": {
 			"title": "MOTOR 0",
-			"enable_pin": "!PA13",
+			"enable_pin": "PA13",
 			"step_pin": "PA14",
 			"dir_pin": "PA10",
 			"uart_pin": "PB8",
@@ -27,7 +27,7 @@
 		},
 		"MOTOR1": {
 			"title": "MOTOR 1",
-			"enable_pin": "!PC14",
+			"enable_pin": "PC14",
 			"step_pin": "PC8",
 			"dir_pin": "PA15",
 			"uart_pin": "PC9",
@@ -40,7 +40,7 @@
 		},
 		"MOTOR2": {
 			"title": "MOTOR 2",
-			"enable_pin": "!PD3",
+			"enable_pin": "PD3",
 			"step_pin": "PD2",
 			"dir_pin": "PD4",
 			"uart_pin": "PD0",
@@ -53,9 +53,9 @@
 		},
 		"MOTOR3": {
 			"title": "MOTOR 3",
-			"enable_pin": "!PB3",
+			"enable_pin": "PB3",
 			"step_pin": "PD5",
-			"dir_pin": "!PD6",
+			"dir_pin": "PD6",
 			"uart_pin": "PD1",
 			"cs_pin": "PD1",
 			"diag_pin": "PB1",
@@ -66,7 +66,7 @@
 		},
 		"MOTOR4": {
 			"title": "MOTOR 4",
-			"enable_pin": "!PB4",
+			"enable_pin": "PB4",
 			"step_pin": "PB7",
 			"dir_pin": "PB6",
 			"uart_pin": "PB5",
