@@ -9,6 +9,74 @@
 	"flashInstructions": "Flashing only works if the SD card slot on the Manta is empty.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-e3ez",
 	"driverCount": 5,
+	"driverVoltages": [24, 36, 48, 56],
+	"motorSlots": {
+		"MOTOR0": {
+			"title": "MOTOR 0",
+			"enable_pin": "PA13",
+			"step_pin": "PA14",
+			"dir_pin": "PA10",
+			"uart_pin": "PB8",
+			"cs_pin": "PB8",
+			"diag_pin": "PC4",
+			"endstop_pin": "PC4",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"MOTOR1": {
+			"title": "MOTOR 1",
+			"enable_pin": "PC14",
+			"step_pin": "PC8",
+			"dir_pin": "PA15",
+			"uart_pin": "PC9",
+			"cs_pin": "PC9",
+			"diag_pin": "PB0",
+			"endstop_pin": "PB0",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"MOTOR2": {
+			"title": "MOTOR 2",
+			"enable_pin": "PD3",
+			"step_pin": "PD2",
+			"dir_pin": "PD4",
+			"uart_pin": "PD0",
+			"cs_pin": "PD0",
+			"diag_pin": "PC6",
+			"endstop_pin": "PC6",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"MOTOR3": {
+			"title": "MOTOR 3",
+			"enable_pin": "PB3",
+			"step_pin": "PD5",
+			"dir_pin": "PD6",
+			"uart_pin": "PD1",
+			"cs_pin": "PD1",
+			"diag_pin": "PB1",
+			"endstop_pin": "PB1",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"MOTOR4": {
+			"title": "MOTOR 4",
+			"enable_pin": "PB4",
+			"step_pin": "PB7",
+			"dir_pin": "PB6",
+			"uart_pin": "PB5",
+			"cs_pin": "PB5",
+			"diag_pin": "PC5",
+			"endstop_pin": "PC5",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		}
+	},
 	"ADXL345SPI": {
 		"cs_pin": "PB12",
 		"software": {
