@@ -33,7 +33,7 @@
 			"uart_pin": "PC11",
 			"tx_pin": "PC10",
 			"diag_pin": "PC0",
-			"endstop_pin": "PC0",
+			"endstop_pin": "PC0"
 		},
 		"Y": {
 			"title": "Y",
@@ -43,7 +43,7 @@
 			"uart_pin": "PC11",
 			"tx_pin": "PC10",
 			"diag_pin": "PC1",
-			"endstop_pin": "PC1",
+			"endstop_pin": "PC1"
 		},
 		"Z": {
 			"title": "Z",
@@ -53,7 +53,7 @@
 			"uart_pin": "PC11",
 			"tx_pin": "PC10",
 			"diag_pin": "PC2",
-			"endstop_pin": "PC2",
+			"endstop_pin": "PC2"
 		},
 		"E0": {
 			"title": "E0",
@@ -63,7 +63,7 @@
 			"uart_pin": "PC11",
 			"tx_pin": "PC10",
 			"diag_pin": "PC15",
-			"endstop_pin": "PC15",
+			"endstop_pin": "PC15"
 		}
 	}
 }
