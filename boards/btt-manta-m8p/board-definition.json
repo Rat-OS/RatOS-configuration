@@ -122,6 +122,7 @@
 			"spi_software_miso_pin": "PA6",
 			"spi_software_sclk_pin": "PA5"
 		}
+	},
 	"ADXL345SPI": {
 		"cs_pin": "PB15",
 		"software": {

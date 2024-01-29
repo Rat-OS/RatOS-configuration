@@ -122,6 +122,7 @@
 			"spi_software_miso_pin": "spi1",
 			"spi_software_sclk_pin": "spi1"
 		}
+	},
 	"ADXL345SPI": {
 		"cs_pin": "PC4",
 		"software": {
