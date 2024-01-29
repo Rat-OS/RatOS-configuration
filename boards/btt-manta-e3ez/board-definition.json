@@ -10,7 +10,6 @@
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-e3ez",
 	"driverCount": 5,
 	"driverVoltages": [24, 36, 48, 56],
-	},
 	"motorSlots": {
 		"MOTOR0": {
 			"title": "MOTOR 0",
