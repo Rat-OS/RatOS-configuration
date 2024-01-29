@@ -6,7 +6,7 @@
 	"firmwareBinaryName": "firmware-prusa-einsy.elf.hex",
 	"driverCount": 4,
 	"driverVoltages": [24],
-	"hasMcuTempSensor": [false],
+	"hasMcuTempSensor": false,
 	"fourPinFanConnectorCount": 2,
 	"integratedDrivers": {
 		"x": "PRUSA-EINSY-RAMBO-TMC2130",
@@ -25,7 +25,7 @@
 			"dir_pin": "PD1",
 			"uart_pin": "PD5",
 			"uart_address": "1",
-			"diag_pin": "PE2",
+			"diag_pin": "PE2"
 		},
 		"Y": {
 			"title": "Y",
@@ -34,7 +34,7 @@
 			"dir_pin": "PD12",
 			"uart_pin": "PD5",
 			"uart_address": "3",
-			"diag_pin": "PE1",
+			"diag_pin": "PE1"
 		},
 		"Z": {
 			"title": "Z",
@@ -43,7 +43,7 @@
 			"dir_pin": "PD15",
 			"uart_pin": "PD5",
 			"uart_address": "0",
-			"diag_pin": "PE3",
+			"diag_pin": "PE3"
 		},
 		"E0": {
 			"title": "E0",
@@ -52,7 +52,7 @@
 			"dir_pin": "PD8",
 			"uart_pin": "PD5",
 			"uart_address": "2",
-			"diag_pin": "PA15",
+			"diag_pin": "PA15"
 		}
 	},
 	"stepperSPI": {
