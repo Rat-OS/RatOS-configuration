@@ -16,7 +16,7 @@
 	"hasQuirksFiles": true,
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
-	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/buddy"
+	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/buddy",
 	"motorSlots": {
 		"X": {
 			"title": "X",
@@ -55,4 +55,5 @@
 			"diag_pin": "PA15"
 		}
 	}
+
 }

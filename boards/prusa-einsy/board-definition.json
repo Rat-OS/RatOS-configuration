@@ -17,6 +17,11 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/prusa/einsy",
+	"stepperSPI": {
+		"hardware": {
+			"bus": "spi"
+		}
+	},
 	"motorSlots": {
 		"X": {
 			"title": "X",
@@ -53,11 +58,6 @@
 			"uart_pin": "PD5",
 			"uart_address": "2",
 			"diag_pin": "PA15"
-		}
-	},
-	"stepperSPI": {
-		"hardware": {
-			"bus": "spi"
 		}
 	}
 }
