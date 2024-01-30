@@ -54,6 +54,7 @@
 			"step_pin": "PC3",
 			"dir_pin": "PL6",
 			"cs_pin": "PK4",
+			"endstop_pin": "PK3",
 			"diag_pin": "PK3"
 		}
 	}
