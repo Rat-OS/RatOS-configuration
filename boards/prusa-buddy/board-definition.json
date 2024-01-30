@@ -55,7 +55,6 @@
 			"dir_pin": "PD8",
 			"uart_pin": "PD5",
 			"uart_address": "2",
-			"endstop_pin": "PA15",
 			"diag_pin": "PA15"
 		}
 	}
