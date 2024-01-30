@@ -5,6 +5,7 @@
 	"id": "prusa-einsy",
 	"firmwareBinaryName": "firmware-prusa-einsy.elf.hex",
 	"driverCount": 4,
+	"driverVoltages": [24],
 	"fourPinFanConnectorCount": 2,
 	"integratedDrivers": {
 		"x": "PRUSA-EINSY-RAMBO-TMC2130",

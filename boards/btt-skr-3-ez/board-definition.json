@@ -8,7 +8,7 @@
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-3-ez",
 	"driverCount": 5,
-	"driverVoltages": [24, 36],
+	"driverVoltages": [24, 36, 48, 56],
 	"alternativePT1000Resistor": 1000,
 	"dfu": {
 		"flashDevice": "0483:df11",

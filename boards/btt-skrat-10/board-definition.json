@@ -8,9 +8,9 @@
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skrat-10",
 	"driverCount": 5,
+	"driverVoltages": [24],
 	"extruderlessConfig": "config-3z.cfg",
 	"fourPinFanConnectorCount": 2,
-	"driverVoltages": [24, 36],
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",

@@ -5,9 +5,9 @@
 	"id": "btt-skr-2-407",
 	"firmwareBinaryName": "firmware-btt-skr-2-407.bin",
 	"driverCount": 5,
+	"driverVoltages": [24],
 	"compileScript": "compile.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-2-429",
-	"driverVoltages": [24, 36],
 	"outputPins": [
 		{
 			"name": "Motor_Power",

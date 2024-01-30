@@ -7,8 +7,8 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"driverCount": 5,
+	"driverVoltages": [24],
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-3",
-	"driverVoltages": [24, 36],
 	"alternativePT1000Resistor": 1000,
 	"ADXL345SPI": {
 		"cs_pin": "PB12",

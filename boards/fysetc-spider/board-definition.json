@@ -7,7 +7,7 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"driverCount": 8,
-	"driverVoltages": [24, 36],
+	"driverVoltages": [24],
 	"flashInstructions": "Flashing only works if Fysetc's 32-bit bootloader is installed on the MCU (default since Spider v1.1).",
 	"documentationLink": "https://os.ratrig.com/docs/boards/fysetc/spider-11",
 	"ADXL345SPI": {
