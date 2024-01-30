@@ -25,6 +25,7 @@
 			"dir_pin": "PD0",
 			"uart_pin": "PD5",
 			"uart_address": "1",
+			"endstop_pin": "PE2",
 			"diag_pin": "PE2"
 		},
 		"Y": {
@@ -34,6 +35,7 @@
 			"dir_pin": "PD12",
 			"uart_pin": "PD5",
 			"uart_address": "3",
+			"endstop_pin": "PE1",
 			"diag_pin": "PE1"
 		},
 		"Z": {
@@ -43,6 +45,7 @@
 			"dir_pin": "PD15",
 			"uart_pin": "PD5",
 			"uart_address": "0",
+			"endstop_pin": "PE3",
 			"diag_pin": "PE3"
 		},
 		"E0": {
@@ -52,6 +55,7 @@
 			"dir_pin": "PD8",
 			"uart_pin": "PD5",
 			"uart_address": "2",
+			"endstop_pin": "PA15",
 			"diag_pin": "PA15"
 		}
 	}
