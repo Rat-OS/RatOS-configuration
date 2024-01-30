@@ -9,7 +9,7 @@
 	"flashInstructions": "Flashing only works if the SD card slot on the Octopus is empty.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/btt-octopus-max-ez",
 	"driverCount": 10,
-	"driverVoltages": [24, 36, 48, 56],
+	"driverVoltages": [24, 48],
 	"fourPinFanConnectorCount": 3,
 	"alternativePT1000Resistor": 2200,
 	"dfu": {
