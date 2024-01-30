@@ -23,7 +23,7 @@
 			"mosi": "PD3",
 			"miso": "PD4"
 		}
-	}
+	},
 	"motorSlots": {
 		"X": {
 			"title": "X",
