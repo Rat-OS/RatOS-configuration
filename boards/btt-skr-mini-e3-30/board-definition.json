@@ -7,6 +7,7 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"driverCount": 4,
+	"driverVoltages": [24, 36],
 	"hasQuirksFiles": true,
 	"integratedDrivers": {
 		"x": "BTT-TMC2209-13",
@@ -21,6 +22,48 @@
 			"sclk": "PD2",
 			"mosi": "PD3",
 			"miso": "PD4"
+		}
+	}
+	"motorSlots": {
+		"X": {
+			"title": "X",
+			"enable_pin": "PB14",
+			"step_pin": "PB13",
+			"dir_pin": "PB12",
+			"uart_pin": "PC11",
+			"tx_pin": "PC10",
+			"diag_pin": "PC0",
+			"endstop_pin": "PC0"
+		},
+		"Y": {
+			"title": "Y",
+			"enable_pin": "PB11",
+			"step_pin": "PB10",
+			"dir_pin": "PB2",
+			"uart_pin": "PC11",
+			"tx_pin": "PC10",
+			"diag_pin": "PC1",
+			"endstop_pin": "PC1"
+		},
+		"Z": {
+			"title": "Z",
+			"enable_pin": "PB1",
+			"step_pin": "PB0",
+			"dir_pin": "PC5",
+			"uart_pin": "PC11",
+			"tx_pin": "PC10",
+			"diag_pin": "PC2",
+			"endstop_pin": "PC2"
+		},
+		"E0": {
+			"title": "E0",
+			"enable_pin": "PD1",
+			"step_pin": "PB3",
+			"dir_pin": "PB4",
+			"uart_pin": "PC11",
+			"tx_pin": "PC10",
+			"diag_pin": "PC15",
+			"endstop_pin": "PC15"
 		}
 	}
 }
