@@ -10,6 +10,7 @@
 	"driverCount": 5,
 	"extruderlessConfig": "config-3z.cfg",
 	"fourPinFanConnectorCount": 2,
+	"driverVoltages": [24, 36],
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",
@@ -34,6 +35,73 @@
 			"sclk": "PC10",
 			"mosi": "PC12",
 			"miso": "PC11"
+		}
+	},
+	"motorSlots": {
+		"X": {
+			"title": "X",
+			"enable_pin": "PD6",
+			"step_pin": "PF9",
+			"dir_pin": "PD7",
+			"uart_pin": "PF10",
+			"cs_pin": "PF10",
+			"diag_pin": "PB5",
+			"endstop_pin": "PB5",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"Y": {
+			"title": "Y",
+			"enable_pin": "PD5",
+			"step_pin": "PD3",
+			"dir_pin": "PD2",
+			"uart_pin": "PD4",
+			"cs_pin": "PD4",
+			"diag_pin": "PC1",
+			"endstop_pin": "PC1",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"Z": {
+			"title": "Z",
+			"enable_pin": "PC9",
+			"step_pin": "PA15",
+			"dir_pin": "PF8",
+			"uart_pin": "PC8",
+			"cs_pin": "PC8",
+			"diag_pin": "PC0",
+			"endstop_pin": "PC0",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"E0": {
+			"title": "E0",
+			"enable_pin": "PD9",
+			"step_pin": "PC7",
+			"dir_pin": "PC6",
+			"uart_pin": "PD8",
+			"cs_pin": "PD8",
+			"diag_pin": "PF4",
+			"endstop_pin": "PF4",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
+		},
+		"E1": {
+			"title": "E1",
+			"enable_pin": "PA8",
+			"step_pin": "PB10",
+			"dir_pin": "PE15",
+			"uart_pin": "PB11",
+			"cs_pin": "PB11",
+			"diag_pin": "PF5",
+			"endstop_pin": "PF5",
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		}
 	}
 }
