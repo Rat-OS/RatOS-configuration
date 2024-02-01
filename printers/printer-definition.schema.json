@@ -222,6 +222,19 @@
 					"description": "Default board for this printer. Should be the name of the board directory.",
 					"type": "string"
 				},
+				"controllerFan": {
+					"description": "Default controller fan for this printer.",
+					"type": "string",
+					"enum": [
+						"2pin",
+						"4pin",
+						"4pin-dedicated",
+						"2pin-toolboard",
+						"4pin-toolboard",
+						"4pin-dedicated-toolboard",
+						"none"
+					]
+				},
 				"rails": {
 					"description": "Default rails for this printer.",
 					"type": "array",

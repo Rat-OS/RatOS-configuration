@@ -17,6 +17,7 @@
 	},
 	"defaults": {
 		"board": "prusa-einsy",
+		"controllerFan": "none",
 		"toolheads": [
 			{
 				"axis": "x",
