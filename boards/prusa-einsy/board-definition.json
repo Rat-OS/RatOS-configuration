@@ -5,6 +5,7 @@
 	"id": "prusa-einsy",
 	"firmwareBinaryName": "firmware-prusa-einsy.elf.hex",
 	"driverCount": 4,
+	"driverVoltages": [24],
 	"fourPinFanConnectorCount": 2,
 	"integratedDrivers": {
 		"x": "PRUSA-EINSY-RAMBO-TMC2130",
@@ -18,6 +19,43 @@
 	"stepperSPI": {
 		"hardware": {
 			"bus": "spi"
+		}
+	},
+	"motorSlots": {
+		"X": {
+			"title": "X", 
+			"enable_pin": "PA7",
+			"step_pin": "PC0",
+			"dir_pin": "PL0",
+			"cs_pin": "PG0",
+			"endstop_pin": "PB6",
+			"diag_pin": "PK2"
+		},
+		"Y": {
+			"title": "Y",
+			"enable_pin": "PA6",
+			"step_pin": "PC1",
+			"dir_pin": "PL1",
+			"cs_pin": "PG2",
+			"endstop_pin": "PB5",
+			"diag_pin": "PK7"
+		},
+		"Z": {
+			"title": "Z",
+			"enable_pin": "PA5",
+			"step_pin": "PC2",
+			"dir_pin": "PL2",
+			"cs_pin": "PK5",
+			"endstop_pin": "PB4",
+			"diag_pin": "PK6"
+		},
+		"E0": {
+			"title": "E0",
+			"enable_pin": "PA4",
+			"step_pin": "PC3",
+			"dir_pin": "PL6",
+			"cs_pin": "PK4",
+			"diag_pin": "PK3"
 		}
 	}
 }

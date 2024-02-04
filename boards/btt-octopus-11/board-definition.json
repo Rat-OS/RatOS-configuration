@@ -9,6 +9,7 @@
 	"flashInstructions": "Flashing only works if the SD card slot on the Octopus is empty.",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-11",
 	"driverCount": 8,
+	"driverVoltages": [24],
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.png",

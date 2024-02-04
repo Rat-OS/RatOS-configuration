@@ -23,6 +23,7 @@
 	},
 	"defaults": {
 		"board": "prusa-buddy",
+		"controllerFan": "none",
 		"toolheads": [
 			{
 				"axis": "x",
