@@ -1,0 +1,142 @@
+
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Manta M8P v2.0",
+	"manufacturer": "BIGTREETECH",
+	"id": "btt-manta-m8p-20",
+	"firmwareBinaryName": "firmware-btt-manta-m8p-20.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-m8p-11",
+	"fourPinFanConnectorCount": 2,
+	"driverCount": 8,
+	"driverVoltages": [24, 36, 48, 56],
+	"dfu": {
+		"flashDevice": "0483:df11",
+		"dfuBootImage": "dfubooting.png",
+		"instructions": [
+			"Make sure the board is powered on",
+			"Press and hold the BOOT 0 button on the board.",
+			"Press and release the RESET button on the board.",
+			"Release the BOOT 0 button."
+		],
+		"hasBoot0Jumper": false
+	},
+	"motorSlots": {
+		"MOTOR1": {
+			"title": "MOTOR 1",
+			"enable_pin": "PC14",
+			"step_pin": "PE6",
+			"dir_pin": "PE5",
+			"uart_pin": "PC13",
+			"cs_pin": "PC13",
+			"diag_pin": "PF4",
+			"endstop_pin": "PF4",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		},
+		"MOTOR2": {
+			"title": "MOTOR 2",
+			"enable_pin": "PE4",
+			"step_pin": "PE2",
+			"dir_pin": "PE1",
+			"uart_pin": "PE3",
+			"cs_pin": "PE3",
+			"diag_pin": "PF3",
+			"endstop_pin": "PF3",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		},
+		"MOTOR3": {
+			"title": "MOTOR 3",
+			"enable_pin": "PE0",
+			"step_pin": "PB8",
+			"dir_pin": "PB7",
+			"uart_pin": "PB9",
+			"cs_pin": "PB9",
+			"diag_pin": "PF2",
+			"endstop_pin": "PF2",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		},
+		"MOTOR4": {
+			"title": "MOTOR 4",
+			"enable_pin": "PB6",
+			"step_pin": "PB4",
+			"dir_pin": "PB3",
+			"uart_pin": "PB5",
+			"cs_pin": "PB5",
+			"diag_pin": "PF1",
+			"endstop_pin": "PF1",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		},
+		"MOTOR5": {
+			"title": "MOTOR 5",
+			"enable_pin": "PG15",
+			"step_pin": "PG13",
+			"dir_pin": "PG12",
+			"uart_pin": "PG14",
+			"cs_pin": "PG14",
+			"diag_pin": "PF0",
+			"endstop_pin": "PF0",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		},
+		"MOTOR6": {
+			"title": "MOTOR 6",
+			"enable_pin": "PG11",
+			"step_pin": "PG9",
+			"dir_pin": "PD7",
+			"uart_pin": "PG10",
+			"cs_pin": "PG10",
+			"diag_pin": "PC15",
+			"endstop_pin": "PC15",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		},
+		"MOTOR7": {
+			"title": "MOTOR 7",
+			"enable_pin": "PD6",
+			"step_pin": "PD4",
+			"dir_pin": "PD3",
+			"uart_pin": "PD5",
+			"cs_pin": "PD5",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		},
+		"MOTOR8": {
+			"title": "MOTOR 8",
+			"enable_pin": "PD2",
+			"step_pin": "PC7",
+			"dir_pin": "PC8",
+			"uart_pin": "PC6",
+			"cs_pin": "PC6",
+			"spi_software_mosi_pin": "PG6",
+			"spi_software_miso_pin": "PG7",
+			"spi_software_sclk_pin": "PG8"
+		}
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PA15",
+		"software": {
+			"sclk": "PC10",
+			"mosi": "PC12",
+			"miso": "PC11"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PG8",
+			"mosi": "PG6",
+			"miso": "PG7"
+		}	
+	}
+}
