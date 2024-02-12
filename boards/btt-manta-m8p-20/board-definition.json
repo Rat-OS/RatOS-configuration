@@ -32,9 +32,9 @@
 			"cs_pin": "PC13",
 			"diag_pin": "PF4",
 			"endstop_pin": "PF4",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		},
 		"MOTOR2": {
 			"title": "MOTOR 2",
@@ -45,9 +45,9 @@
 			"cs_pin": "PE3",
 			"diag_pin": "PF3",
 			"endstop_pin": "PF3",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		},
 		"MOTOR3": {
 			"title": "MOTOR 3",
@@ -58,9 +58,9 @@
 			"cs_pin": "PB9",
 			"diag_pin": "PF2",
 			"endstop_pin": "PF2",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		},
 		"MOTOR4": {
 			"title": "MOTOR 4",
@@ -71,9 +71,9 @@
 			"cs_pin": "PB5",
 			"diag_pin": "PF1",
 			"endstop_pin": "PF1",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		},
 		"MOTOR5": {
 			"title": "MOTOR 5",
@@ -84,9 +84,9 @@
 			"cs_pin": "PG14",
 			"diag_pin": "PF0",
 			"endstop_pin": "PF0",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		},
 		"MOTOR6": {
 			"title": "MOTOR 6",
@@ -97,9 +97,9 @@
 			"cs_pin": "PG10",
 			"diag_pin": "PC15",
 			"endstop_pin": "PC15",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		},
 		"MOTOR7": {
 			"title": "MOTOR 7",
@@ -108,9 +108,9 @@
 			"dir_pin": "PD3",
 			"uart_pin": "PD5",
 			"cs_pin": "PD5",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		},
 		"MOTOR8": {
 			"title": "MOTOR 8",
@@ -119,13 +119,13 @@
 			"dir_pin": "PC8",
 			"uart_pin": "PC6",
 			"cs_pin": "PC6",
-			"spi_software_mosi_pin": "PG6",
-			"spi_software_miso_pin": "PG7",
-			"spi_software_sclk_pin": "PG8"
+			"spi_software_mosi_pin": "PC12",
+			"spi_software_miso_pin": "PC11",
+			"spi_software_sclk_pin": "PC10"
 		}
 	},
 	"ADXL345SPI": {
-		"cs_pin": "PA15",
+		"cs_pin": "PB12",
 		"software": {
 			"sclk": "PC10",
 			"mosi": "PC12",
@@ -134,9 +134,9 @@
 	},
 	"stepperSPI": {
 		"software": {
-			"sclk": "PG8",
-			"mosi": "PG6",
-			"miso": "PG7"
+			"sclk": "PC10",
+			"mosi": "PC12",
+			"miso": "PC11"
 		}	
 	}
 }
