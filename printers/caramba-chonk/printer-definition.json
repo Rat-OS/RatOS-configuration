@@ -73,14 +73,14 @@
 			{
 				"axis": "z",
 				"axisDescription": "The left Z motor for the kinematic bed",
-				"current": 1.1,
+				"current": 0.8,
+				"performanceMode": {
+					"current": 1.188
+				},
 				"driver": "BTT-TMC2209-13",
 				"stepper": "LDO-42STH40-1684AC",
 				"rotationDistance": 4,
-				"homingSpeed": 10,
-				"performanceMode": {
-					"current": 1.6
-				}
+				"homingSpeed": 10
 			},
 			{
 				"axis": "extruder",
