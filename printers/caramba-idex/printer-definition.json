@@ -10,7 +10,7 @@
 	"sizes": [300, 400, 500],
 	"bedMargin": {
 		"x": [60, 60],
-		"y": [0, 0]
+		"y": [15, 0]
 	},
 	"speedLimits": {
 		"basic": {
