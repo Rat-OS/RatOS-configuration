@@ -182,7 +182,7 @@
 			stroke="#545454" stroke-width="4" stroke-miterlimit="10" pointer-events="all" />
 		<rect x="155.62" y="692" width="114" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="212.12" y="732">24V PSU</text>
 		</g>
@@ -204,30 +204,30 @@
 			pointer-events="stroke" />
 		<rect x="1476" y="447.38" width="276" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="1613.5" y="487.38">5V INDUCTIVE PROBE</text>
 		</g>
 		<rect x="1320" y="849" width="129" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="1384" y="889">BLTOUCH</text>
 		</g>
 		<rect x="1257" y="189" width="153" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="1333" y="229">X ENDSTOP</text>
 		</g>
 		<rect x="740.24" y="1098" width="111" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="795.24" y="1138">HEATER</text>
 		</g>
 		<rect x="735" y="996" width="174" height="51" fill="none" stroke="none" pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="821.5" y="1036">THERMISTOR</text>
 		</g>
@@ -454,7 +454,7 @@
 			stroke="#545454" stroke-width="4" stroke-miterlimit="10" pointer-events="all" />
 		<rect x="1410" y="189" width="153" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="1486" y="229">Y ENDSTOP</text>
 		</g>
@@ -491,7 +491,7 @@
 		<path d="M 625 94.53 L 620 84.53 L 625 87.03 L 630 84.53 Z" fill="#545454" stroke="#545454"
 			stroke-width="4" stroke-miterlimit="10" pointer-events="all" />
 		<rect x="590.5" y="0" width="69" height="51" fill="none" stroke="none" pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="624.5" y="40">LEFT</text>
 		</g>
@@ -500,7 +500,7 @@
 		<path d="M 727.09 94.53 L 722.3 84.43 L 727.25 87.03 L 732.3 84.64 Z" fill="#545454"
 			stroke="#545454" stroke-width="4" stroke-miterlimit="10" pointer-events="all" />
 		<rect x="681" y="0" width="93" height="51" fill="none" stroke="none" pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="727" y="40">RIGHT</text>
 		</g>
@@ -509,7 +509,7 @@
 		<path d="M 828 91.53 L 823 81.53 L 828 84.03 L 833 81.53 Z" fill="#545454" stroke="#545454"
 			stroke-width="4" stroke-miterlimit="10" pointer-events="all" />
 		<rect x="770" y="0" width="141" height="51" fill="none" stroke="none" pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="840" y="40">EXTRUDER</text>
 		</g>
@@ -518,7 +518,7 @@
 		<path d="M 1168 91.53 L 1163 81.53 L 1168 84.03 L 1173 81.53 Z" fill="#545454"
 			stroke="#545454" stroke-width="4" stroke-miterlimit="10" pointer-events="all" />
 		<rect x="1111" y="0" width="114" height="51" fill="none" stroke="none" pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="1167.5" y="40">RIGHT Z</text>
 		</g>
@@ -547,7 +547,7 @@
 			stroke="#545454" stroke-width="4" stroke-miterlimit="10" pointer-events="all" />
 		<rect x="155.62" y="750" width="117" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="213.62" y="790">24V BED</text>
 		</g>
@@ -596,7 +596,7 @@
 			preserveAspectRatio="none" transform="rotate(90,1057.29,931)" />
 		<rect x="1032" y="1041" width="123" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="1093" y="1081">ADXL345</text>
 		</g>
@@ -675,12 +675,12 @@
 			xlink:href="https://os.ratrig.com/img/diagram/nema17.svg" preserveAspectRatio="none" />
 		<rect x="1015.51" y="0" width="102" height="51" fill="none" stroke="none"
 			pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="1066.01" y="40">REAR Z</text>
 		</g>
 		<rect x="922" y="0" width="90" height="51" fill="none" stroke="none" pointer-events="all" />
-		<g fill="#FFFFFF" font-family="Oswald, Ubuntu Condensed, Impact, sans-serif"
+		<g fill="#FFFFFF" font-family="Oswald, Haettenschweiler Regular, Ubuntu Condensed, Impact, sans-serif"
 			text-anchor="middle" font-size="32px">
 			<text x="966.5" y="40">LEFT Z</text>
 		</g>
