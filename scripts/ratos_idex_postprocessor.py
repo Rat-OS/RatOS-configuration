@@ -86,7 +86,7 @@ def process_file(args, sourcefile):
 					for s in range(len(split)):
 						if split[s].lower().startswith("x"):
 							try:
-								x = float(split[1].lower().replace("x", ""))
+								x = float(split[s].lower().replace("x", ""))
 								if x > first_x:
 									first_x = x
 							except Exception as exc:
@@ -95,7 +95,7 @@ def process_file(args, sourcefile):
 								sys.exit(1)
 						if split[s].lower().startswith("y"):
 							try:
-								y = float(split[2].lower().replace("y", ""))
+								y = float(split[s].lower().replace("y", ""))
 								if y > first_y:
 									first_y = y
 							except Exception as exc:
@@ -110,7 +110,7 @@ def process_file(args, sourcefile):
 					for s in range(len(split)):
 						if split[s].lower().startswith("x"):
 							try:
-								x = float(split[1].lower().replace("x", ""))
+								x = float(split[s].lower().replace("x", ""))
 								if x < min_x:
 									min_x = x
 								if x > max_x:
