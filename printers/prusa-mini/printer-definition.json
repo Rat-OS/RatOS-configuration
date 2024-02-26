@@ -21,6 +21,17 @@
 			"z_velocity": 15
 		}
 	},
+	"bedMargin": {
+		"x": [2, 0.4],
+		"y": [3, 0]
+	},
+	"sizes": {
+		"180": {
+			"x": 180,
+			"y": 180,
+			"z": 210
+		}
+	},
 	"defaults": {
 		"board": "prusa-buddy",
 		"controllerFan": "none",

@@ -7,6 +7,13 @@
 	"image": "rat-rig-v-minion.jpeg",
 	"template": "v-minion-printer.template.cfg",
 	"driverCountRequired": 4,
+	"sizes": {
+		"180": {
+			"x": 180,
+			"y": 180,
+			"z": 180
+		}
+	},
 	"speedLimits": {
 		"basic": {
 			"accel": 3000,

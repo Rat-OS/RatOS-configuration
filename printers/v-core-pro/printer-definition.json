@@ -7,7 +7,23 @@
 	"image": "rat-rig-v-core-pro-13.jpg",
 	"template": "v-core-pro-printer.template.cfg",
 	"driverCountRequired": 6,
-	"sizes": [300, 400, 500],
+	"sizes": {
+		"300": {
+			"x": 300,
+			"y": 300,
+			"z": 300
+		},
+		"400": {
+			"x": 400,
+			"y": 400,
+			"z": 400
+		},
+		"500": {
+			"x": 500,
+			"y": 500,
+			"z": 500
+		}
+	},
 	"speedLimits": {
 		"basic": {
 			"accel": 3000,
