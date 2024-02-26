@@ -57,6 +57,6 @@ install_beacon
 install_hooks
 ensure_node_18
 register_ratos_homing
+register_z_offset_probe
 symlink_extensions
 restart_configurator
-# regenerate_config # moonraker now restarts the configurator which results in a regen

@@ -7,6 +7,13 @@
 	"image": "voron-v0.png",
 	"template": "voron-v01-printer.template.cfg",
 	"driverCountRequired": 4,
+	"sizes": {
+		"120": {
+			"x": 120,
+			"y": 120,
+			"z": 120
+		}
+	},
 	"speedLimits": {
 		"basic": {
 			"accel": 2000,

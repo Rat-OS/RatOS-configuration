@@ -15,6 +15,17 @@
 			"z_velocity": 15
 		}
 	},
+	"bedMargin": {
+		"x": [0, 5],
+		"y": [4, 2.5]
+	},
+	"sizes": {
+		"255": {
+			"x": 250,
+			"y": 210,
+			"z": 210
+		}
+	},
 	"defaults": {
 		"board": "prusa-einsy",
 		"controllerFan": "none",

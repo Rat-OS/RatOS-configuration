@@ -4,7 +4,9 @@
 	"title": "Control Board",
 	"description": "A 3d printer control board",
 	"type": "object",
+	"additionalProperties": false,
 	"properties": {
+		"$schema": { "type": "string" },
 		"id": {
 			"description": "The path for serial communication with this MCU",
 			"type": "string"
@@ -93,64 +95,72 @@
 		"motorSlots": {
 			"description": "A specification of the motor slots available on this board",
 			"type": "object",
-			"propertyNames": {
+			"patternProperties": {
 				"^\\S+$": {
-					"title": {
-						"type": "string"
+					"type": "object",
+					"description": "The settings for a motor slot",
+					"properties": {
+						"title": {
+							"type": "string"
+						},
+						"step_pin": {
+							"type": "string"
+						},
+						"dir_pin": {
+							"type": "string"
+						},
+						"enable_pin": {
+							"type": "string"
+						},
+						"diag_pin": {
+							"type": "string"
+						},
+						"endstop_pin": {
+							"type": "string"
+						},
+						"uart_pin": {
+							"type": "string"
+						},
+						"uart_address": {
+							"type": "string"
+						},
+						"rx_pin": {
+							"type": "string"
+						},
+						"tx_pin": {
+							"type": "string"
+						},
+						"cs_pin": {
+							"type": "string"
+						},
+						"spi_bus": {
+							"type": "string"
+						},
+						"spi_software_mosi_pin": {
+							"type": "string"
+						},
+						"spi_software_miso_pin": {
+							"type": "string"
+						},
+						"spi_software_sclk_pin": {
+							"type": "string"
+						}
 					},
-					"step_pin": {
-						"type": "string"
-					},
-					"dir_pin": {
-						"type": "string"
-					},
-					"enable_pin": {
-						"type": "string"
-					},
-					"diag_pin": {
-						"type": "string"
-					},
-					"endstop_pin": {
-						"type": "string"
-					},
-					"uart_pin": {
-						"type": "string"
-					},
-					"uart_address": {
-						"type": "string"
-					},
-					"rx_pin": {
-						"type": "string"
-					},
-					"tx_pin": {
-						"type": "string"
-					},
-					"cs_pin": {
-						"type": "string"
-					},
-					"spi_bus": {
-						"type": "string"
-					},
-					"spi_software_mosi_pin": {
-						"type": "string"
-					},
-					"spi_software_miso_pin": {
-						"type": "string"
-					},
-					"spi_software_sclk_pin": {
-						"type": "string"
-					}
-				},
-				"required": ["step_pin", "dir_pin", "enable_pin", "title", "diag_pin", "endstop_pin", "uart_pin", "cs_pin"]
+					"additionalProperties": false,
+					"required": ["step_pin", "dir_pin", "enable_pin", "title", "diag_pin", "endstop_pin", "uart_pin", "cs_pin"]
+				}
 			}
 		},
 		"stepperSPI": {
 			"description": "Which settings to use for SPI stepper drivers",
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"software": {
 					"description": "Whether to use software SPI",
 					"type": "object",
+					"additionalProperties": false,
+					"required": ["sclk", "mosi", "miso"],
 					"properties": {
 						"sclk": {
 							"description": "The clock pin",
@@ -169,6 +179,8 @@
 				"hardware": {
 					"description": "Which SPI bus to use if using hardware spi",
 					"type": "object",
+					"required": ["bus"],
+					"additionalProperties": false,
 					"properties": {
 						"bus": {
 							"description": "The SPI bus to use",
@@ -181,10 +193,13 @@
 		"ADXL345SPI": {
 			"description": "Which settings to use for the ADXL345 accelerometer",
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"software": {
 					"description": "Whether to use software SPI",
 					"type": "object",
+
+					"additionalProperties": false,
 					"properties": {
 						"sclk": {
 							"description": "The clock pin",
@@ -203,6 +218,7 @@
 				"hardware": {
 					"description": "Which SPI bus to use if using hardware spi",
 					"type": "object",
+					"additionalProperties": false,
 					"properties": {
 						"bus": {
 							"description": "The SPI bus to use",
@@ -219,6 +235,7 @@
 		"integratedDrivers": {
 			"description": "Describes the drivers integrated on this board, if any",
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"x": {
 					"description": "The driver for the X axis",
@@ -264,6 +281,7 @@
 		"dfu": {
 			"description": "DFU Flashing details",
 			"type": "object",
+			"additionalProperties": false,
 			"properties": {
 				"dfuBootImage": {
 					"description": "Path to a picture for locating the buttons and/or jumpers required to boot into DFU mode",

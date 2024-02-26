@@ -94,6 +94,15 @@ register_ratos_homing()
     _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }
 
+register_z_offset_probe()
+{
+    EXT_NAME="z_offset_probe_extension"
+    EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
+    EXT_FILE="z_offset_probe.py"
+	# Don't error if extension is already registered
+    _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
+}
+
 install_hooks()
 {
     report_status "Installing git hooks"

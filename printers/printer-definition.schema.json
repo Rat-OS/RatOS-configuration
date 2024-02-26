@@ -60,9 +60,24 @@
 		},
 		"sizes": {
 			"description": "Size options for this printer",
-			"type": "array",
-			"items": {
-				"type": "number"
+			"type": "object",
+			"patternProperties": {
+				"^\\S+$": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"x": {
+							"type": "number"
+						},
+						"y": {
+							"type": "number"
+						},
+						"z": {
+							"type": "number"
+						}
+					},
+					"required": ["x", "y", "z"]
+				}
 			}
 		},
 		"template": {
