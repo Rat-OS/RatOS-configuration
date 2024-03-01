@@ -55,8 +55,6 @@ def process_file(args, sourcefile):
 		max_x = 0
 		first_x = -1
 		first_y = -1
-		t0_count = 0
-		t1_count = 0
 		toolshift_count = 0
 		tower_line = -1
 		start_print_line = 0
@@ -74,10 +72,8 @@ def process_file(args, sourcefile):
 
 			# count toolshifts
 			if start_print_line > 0:
-				if lines[line].rstrip().startswith("T0"):
-					t0_count += 1
-				if lines[line].rstrip().startswith("T1"):
-					t1_count += 1
+				if lines[line].rstrip().startswith("T0") or lines[line].rstrip().startswith("T1"):
+					toolshift_count += 1
 
 			# get first XY coordinates
 			if start_print_line > 0 and first_x < 0 and first_y < 0:
@@ -145,11 +141,10 @@ def process_file(args, sourcefile):
 										if zhop > 0.0:
 											zhop_line = line-i2-1
 
-					# toolchange
+					# toolchange line
 					toolchange_line = 0
 					for i2 in range(20):
-						if lines[line+i2].rstrip().startswith("T0") or lines[line+i2].rstrip().startswith("T1"):
-							toolshift_count = toolshift_count + 1
+						if lines[line + i2].rstrip().startswith("T0") or lines[line + i2].rstrip().startswith("T1"):
 							toolchange_line = line + i2
 							break
 
@@ -225,9 +220,9 @@ def process_file(args, sourcefile):
 
 		# add START_PRINT parameters 
 		if start_print_line > 0:
-			if t0_count > 0 or t1_count > 0 :
+			if toolshift_count > 0 :
 				file_has_changed = True
-				lines[start_print_line] = lines[start_print_line].rstrip() + ' T0_COUNT=' + str(t0_count) + ' T1_COUNT=' + str(t1_count) + '\n'
+				lines[start_print_line] = lines[start_print_line].rstrip() + ' TOTAL_TOOLSHIFTS=' + str(toolshift_count - 1) + '\n'
 			if first_x >= 0 and first_y >= 0:
 				file_has_changed = True
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' FIRST_X=' + str(first_x) + ' FIRST_Y=' + str(first_y) + '\n'
