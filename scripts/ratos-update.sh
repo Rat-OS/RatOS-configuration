@@ -56,7 +56,7 @@ ensure_service_permission
 install_beacon
 install_hooks
 ensure_node_18
-register_ratos_homing
 register_z_offset_probe
+register_resonance_generator
 symlink_extensions
 restart_configurator

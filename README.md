@@ -1,7 +1,7 @@
 # RatOS Configuration
 [![CI](https://github.com/Rat-OS/RatOS-configuration/actions/workflows/ConfiguratorTests.yml/badge.svg)](https://github.com/Rat-OS/RatOS-configuration/actions/workflows/ConfiguratorTests.yml)
 
-This is the repository for the [RatOS](os.ratrig.com) modular configuration.
+This is the repository for the [RatOS](https://os.ratrig.com) modular configuration.
 
 ## Contributing
 

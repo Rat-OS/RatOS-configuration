@@ -26,7 +26,7 @@
 	},
 	"bedMargin": {
 		"x": [60, 60],
-		"y": [15, 0]
+		"y": [15, 34]
 	},
 	"speedLimits": {
 		"basic": {
