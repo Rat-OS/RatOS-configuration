@@ -6,7 +6,7 @@
 	"documentationLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 	"image": "caramba.webp",
 	"template": "caramba-chonk-printer.template.cfg",
-	"driverCountRequired": 4,
+	"driverCountRequired": 5,
 	"bedMargin": {
 		"x": [0, 0],
 		"y": [15, 0]
