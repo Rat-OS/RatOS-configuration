@@ -79,13 +79,19 @@
 			},
 			{
 				"axis": "z",
-				"axisDescription": "The left Z motor for the kinematic bed",
-				"current": 0.8,
-				"performanceMode": {
-					"current": 1.188
-				},
+				"axisDescription": "The front right and left Z motors for the kinematic bed",
+				"current": 0.85,
 				"driver": "BTT-TMC2209-13",
-				"stepper": "LDO-42STH40-1684AC",
+				"stepper": "LDO-42STH25-1404MAC",
+				"rotationDistance": 4,
+				"homingSpeed": 10
+			},
+			{
+				"axis": "z1",
+				"axisDescription": "The rear Z motor for the kinematic bed",
+				"current": 0.85,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH25-1404MAC",
 				"rotationDistance": 4,
 				"homingSpeed": 10
 			},
