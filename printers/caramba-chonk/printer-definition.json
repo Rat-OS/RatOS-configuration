@@ -67,7 +67,7 @@
 			},
 			{
 				"axis": "y",
-				"axisDescription": "The left Y motor used for cartesian Y control in Hybrid CoreXY, located at the rear left of the printer",
+				"axisDescription": "The B axis motor for the toolhead, located at the rear right of the printer",
 				"current": 1.1,
 				"driver": "BTT-TMC2209-13",
 				"stepper": "LDO-42STH48-2504AC",
