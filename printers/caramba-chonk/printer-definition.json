@@ -92,8 +92,7 @@
 				"current": 0.85,
 				"driver": "BTT-TMC2209-13",
 				"stepper": "LDO-42STH25-1404MAC",
-				"rotationDistance": 4,
-				"homingSpeed": 10
+				"rotationDistance": 4
 			},
 			{
 				"axis": "extruder",
