@@ -32,16 +32,16 @@ class VibrationGenerator:
         X, Y, Z, E = toolhead.get_position()
         sign = 1.
         freq = self.freq
-        # Override maximum acceleration and acceleration to
-        # deceleration based on the maximum test frequency
+        # Override maximum acceleration and min cruise ratio 
+        # based on the maximum test frequency
         systime = self.printer.get_reactor().monotonic()
         toolhead_info = toolhead.get_status(systime)
         old_max_accel = toolhead_info['max_accel']
-        old_max_accel_to_decel = toolhead_info['max_accel_to_decel']
+        old_minimum_cruise_ratio = toolhead_info['minimum_cruise_ratio']
         max_accel = self.freq * self.accel_per_hz
         self.gcode.run_script_from_command(
-                "SET_VELOCITY_LIMIT ACCEL=%.3f ACCEL_TO_DECEL=%.3f" % (
-                    max_accel, max_accel))
+                "SET_VELOCITY_LIMIT ACCEL=%.3f MINIMUM_CRUISE_RATIO=0" % (
+                    max_accel))
 
         input_shaper = self.printer.lookup_object('input_shaper', None)
         if input_shaper is not None and not gcmd.get_int('INPUT_SHAPING', 0):
@@ -69,8 +69,8 @@ class VibrationGenerator:
 
         # Restore the original acceleration values
         self.gcode.run_script_from_command(
-                "SET_VELOCITY_LIMIT ACCEL=%.3f ACCEL_TO_DECEL=%.3f" % (
-                    old_max_accel, old_max_accel_to_decel))
+                "SET_VELOCITY_LIMIT ACCEL=%.3f MINIMUM_CRUISE_RATIO=%.3f" % (
+                    old_max_accel, old_minimum_cruise_ratio))
 
         # Restore input shaper if it was disabled for resonance testing
         if input_shaper is not None:

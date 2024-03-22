@@ -6,7 +6,7 @@
 	"documentationLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 	"image": "caramba.webp",
 	"template": "caramba-chonk-printer.template.cfg",
-	"driverCountRequired": 4,
+	"driverCountRequired": 5,
 	"bedMargin": {
 		"x": [0, 0],
 		"y": [15, 0]
@@ -67,7 +67,7 @@
 			},
 			{
 				"axis": "y",
-				"axisDescription": "The left Y motor used for cartesian Y control in Hybrid CoreXY, located at the rear left of the printer",
+				"axisDescription": "The B axis motor for the toolhead, located at the rear right of the printer",
 				"current": 1.1,
 				"driver": "BTT-TMC2209-13",
 				"stepper": "LDO-42STH48-2504AC",
@@ -79,15 +79,20 @@
 			},
 			{
 				"axis": "z",
-				"axisDescription": "The left Z motor for the kinematic bed",
-				"current": 0.8,
-				"performanceMode": {
-					"current": 1.188
-				},
+				"axisDescription": "The front right and left Z motors for the kinematic bed",
+				"current": 0.85,
 				"driver": "BTT-TMC2209-13",
-				"stepper": "LDO-42STH40-1684AC",
+				"stepper": "LDO-42STH25-1404MAC",
 				"rotationDistance": 4,
 				"homingSpeed": 10
+			},
+			{
+				"axis": "z1",
+				"axisDescription": "The rear Z motor for the kinematic bed",
+				"current": 0.85,
+				"driver": "BTT-TMC2209-13",
+				"stepper": "LDO-42STH25-1404MAC",
+				"rotationDistance": 4
 			},
 			{
 				"axis": "extruder",

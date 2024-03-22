@@ -147,7 +147,7 @@
 						}
 					},
 					"additionalProperties": false,
-					"required": ["step_pin", "dir_pin", "enable_pin", "title", "diag_pin", "endstop_pin", "uart_pin", "cs_pin"]
+					"required": ["step_pin", "dir_pin", "enable_pin", "title", "uart_pin", "cs_pin"]
 				}
 			}
 		},
