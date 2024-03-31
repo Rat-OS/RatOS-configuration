@@ -57,6 +57,7 @@ install_beacon
 install_hooks
 ensure_node_18
 register_z_offset_probe
+register_rmmu
 register_resonance_generator
 symlink_extensions
 restart_configurator
