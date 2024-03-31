@@ -42,8 +42,8 @@ class RMMU:
 		# filament config
 		self.filament_homing_speed = self.config.getfloat('filament_homing_speed', 150.0)
 		self.filament_homing_accel = self.config.getfloat('filament_homing_accel', 500.0)
-		self.filament_homing_speed_mms = self.config.getfloat('filament_homing_speed_mms', 75.0)
 		self.filament_parking_speed_mms = self.config.getfloat('filament_parking_speed_mms', 50.0)
+		self.filament_parking_accel = self.config.getfloat('filament_parking_accel', 500)
 
 	def register_handle_connect(self):
 		self.printer.register_event_handler("klippy:connect", self.execute_handle_connect)
@@ -63,7 +63,8 @@ class RMMU:
 	def get_status(self, eventtime):
 		return {'name': self.name,
 		  'tool_count': self.tool_count,
-			'is_homed': self.is_homed}
+			'is_homed': self.is_homed,
+			'filament_changes': self.filament_changes}
 
 	# -----------------------------------------------------------------------------------------------------------------------------
 	# G-Code Registration
@@ -128,7 +129,7 @@ class RMMU:
 	def cmd_RMMU_START_PRINT(self, param):
 		self.cmd_origin = "rmmu"
 		self.mode = "native"
-		self.Filament_Changes = 0
+		self.filament_changes = 0
 		self.exchange_old_position = None
 
 		cooling_tube_retraction = param.get_float('COOLING_TUBE_RETRACTION', None, minval=0, maxval=999) 
@@ -258,17 +259,17 @@ class RMMU:
 	mode = "native"
 	cmd_origin = "rmmu"
 
-	Filament_Changes = 0
+	filament_changes = 0
 	exchange_old_position = None
 
 	def change_tool(self, tool):
 		self.cmd_origin = "rmmu"
-		if self.Filament_Changes > 0:
+		if self.filament_changes > 0:
 			self.before_change()
 			if not self.load_tool(tool, -1):
 				return False
 			self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
-		self.Filament_Changes = self.Filament_Changes + 1
+		self.filament_changes = self.filament_changes + 1
 		return True
 
 	def load_tool(self, tool, temp):
@@ -311,7 +312,7 @@ class RMMU:
 			return False
 		if not self.load_filament_from_toolhead_sensor_to_parking_position():
 			return False
-		if self.mode != "slicer" or self.Filament_Changes == 0:
+		if self.mode != "slicer" or self.filament_changes == 0:
 			if not self.load_filament_from_parking_position_to_nozzle():
 				self.gcode.respond_raw("could not load into nozzle!")
 				return False
@@ -320,7 +321,7 @@ class RMMU:
 		self.gcode.respond_raw("tool " + str(tool) + " loaded")
 
 		# send notification
-		self.gcode.run_script_from_command('_EXTRUDER_SELECTED EXTRUDER=' + str(tool))
+		self.gcode.run_script_from_command('_RMMU_ON_TOOL_HAS_CHANGED T=' + str(tool))
 
 		return True
 
@@ -416,7 +417,7 @@ class RMMU:
 	# -----------------------------------------------------------------------------------------------------------------------------
 
 	def unload_filament_from_nozzle_to_parking_position(self):
-		self.gcode.run_script_from_command('_UNLOAD_FROM_NOZZLE_TO_PARKING_POSITION PAUSE=3000')
+		self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_POSITION')
 		return True
 
 	def unload_filament_from_parking_position_to_toolhead_sensor(self):
@@ -424,7 +425,10 @@ class RMMU:
 		self.extruder_move(-(self.extruder_gear_to_parking_position_mm + 50), self.filament_parking_speed_mms)
 		self.gcode.run_script_from_command('M400')
 		self.select_idler(self.Selected_Filament)
-		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_extruder_gear_mm) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel))
+		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_extruder_gear_mm * 2) + ' SPEED=' + str(self.filament_parking_speed_mms) + ' ACCEL=' + str(self.filament_parking_accel) + ' STOP_ON_ENDSTOP=-2')
+		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-5 SPEED=' + str(self.filament_parking_speed_mms) + ' ACCEL=' + str(self.filament_parking_accel))
+		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
+			return False
 		return True
 
 	def unload_filament_from_toolhead_sensor(self):
