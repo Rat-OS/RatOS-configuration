@@ -21,27 +21,29 @@ class RMMU:
 	def load_settings(self):
 		self.rmmu_idler = None
 
+		# config
 		self.tool_count = self.config.getint('tool_count', 2)
-
-		if self.config.getfloat('extruder_push_and_pull_test', 1) == 1:
-			self.extruder_push_and_pull_test = True
-		else:
-			self.extruder_push_and_pull_test = False
-
-		self.mmu_idler_speed = self.config.getfloat('mmu_idler_speed', 100.0)
-		self.mmu_idler_accel = self.config.getfloat('mmu_idler_accel', 100.0)
-		self.mmu_filament_homing_speed = self.config.getfloat('mmu_filament_homing_speed', 75.0)
-		self.mmu_filament_homing_accel = self.config.getfloat('mmu_filament_homing_accel', 75.0)
-
+		self.extruder_push_and_pull_test = self.config.getfloat('extruder_push_and_pull_test', 1) == 1
 		self.nozzle_loading_speed_mms = self.config.getfloat('nozzle_loading_speed_mms', 10.0)
+		self.toolhead_sensor_to_bowden_cache_mm = self.config.getfloat('toolhead_sensor_to_bowden_cache_mm', 50.0)
+		self.reverse_bowden_length = self.config.getfloat('reverse_bowden_length', 100.0)
+		self.toolhead_sensor_to_extruder_gear_mm = self.config.getfloat('toolhead_sensor_to_extruder_gear_mm', 10.0)
+		self.extruder_gear_to_parking_position_mm = self.config.getfloat('extruder_gear_to_parking_position_mm', 40.0)
+		self.parking_position_to_nozzle_mm = self.config.getfloat('parking_position_to_nozzle_mm', 55.0)
+
+		# idler config
+		self.idler_speed = self.config.getfloat('idler_speed', 250.0)
+		self.idler_accel = self.config.getfloat('idler_accel', 1000.0)
+		self.idler_home_position = self.config.getfloat('idler_home_position', 0)
+		self.idler_homeing_speed = self.config.getfloat('idler_homeing_speed', 40)
+		self.idler_homeing_accel = self.config.getfloat('idler_homeing_accel', 200)
+		self.idler_positions = [102,76,50,24]
+
+		# filament config
+		self.filament_homing_speed = self.config.getfloat('filament_homing_speed', 150.0)
+		self.filament_homing_accel = self.config.getfloat('filament_homing_accel', 500.0)
 		self.filament_homing_speed_mms = self.config.getfloat('filament_homing_speed_mms', 75.0)
 		self.filament_parking_speed_mms = self.config.getfloat('filament_parking_speed_mms', 50.0)
-
-		self.toolhead_sensor_to_bowden_cache_mm = self.config.getfloat('toolhead_sensor_to_bowden_cache_mm', 100.0)
-		self.toolhead_sensor_to_bowden_parking_mm = self.config.getfloat('toolhead_sensor_to_bowden_parking_mm', 100.0)
-		self.toolhead_sensor_to_extruder_gear_mm = self.config.getfloat('toolhead_sensor_to_extruder_gear_mm', 45.0)
-		self.extruder_gear_to_parking_position_mm = self.config.getfloat('extruder_gear_to_parking_position_mm', 40.0)
-		self.parking_position_to_nozzle_mm = self.config.getfloat('parking_position_to_nozzle_mm', 65.0)
 
 	def register_handle_connect(self):
 		self.printer.register_event_handler("klippy:connect", self.execute_handle_connect)
@@ -156,10 +158,6 @@ class RMMU:
 	# Home
 	# -----------------------------------------------------------------------------------------------------------------------------
 	is_homed = False
-	idler_home_position = 0
-	idler_homeing_speed = 40
-	idler_homeing_accel = 200
-	idler_positions = [102,76,50,24]
 
 	def reset(self):
 		self.is_homed = False
@@ -252,7 +250,7 @@ class RMMU:
 
 	def eject_filament(self, tool):
 		self.select_tool(tool)
-		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_bowden_parking_mm + 100) + ' SPEED=' + str(self.mmu_filament_homing_speed) + ' ACCEL=' + str(self.mmu_filament_homing_accel))
+		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.reverse_bowden_length + 100) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel))
 
 	# -----------------------------------------------------------------------------------------------------------------------------
 	# Change Tool
@@ -361,7 +359,7 @@ class RMMU:
 	def select_idler(self, tool):
 		if tool >= 0:
 			self.MMU_Synced = True
-			self.stepper_move(self.rmmu_idler, self.idler_positions[tool], True, self.mmu_idler_speed, self.mmu_idler_accel)
+			self.stepper_move(self.rmmu_idler, self.idler_positions[tool], True, self.idler_speed, self.idler_accel)
 			for i in range(0, self.tool_count):
 				if tool == i:
 					self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
@@ -369,7 +367,7 @@ class RMMU:
 					self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
 		else:
 			self.MMU_Synced = False
-			self.stepper_move(self.rmmu_idler, self.idler_home_position, True, self.mmu_idler_speed, self.mmu_idler_accel)
+			self.stepper_move(self.rmmu_idler, self.idler_home_position, True, self.idler_speed, self.idler_accel)
 			for i in range(0, self.tool_count):
 				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
 
@@ -378,10 +376,10 @@ class RMMU:
 	# -----------------------------------------------------------------------------------------------------------------------------
 	def load_filament_from_reverse_bowden_to_toolhead_sensor(self):
 		step_distance = 100
-		max_step_count = int((self.toolhead_sensor_to_bowden_parking_mm * 1.2) / step_distance)
+		max_step_count = int((self.reverse_bowden_length * 1.2) / step_distance)
 		if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			for i in range(max_step_count):
-				self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=' + str(step_distance) + ' SPEED=' + str(self.mmu_filament_homing_speed) + ' ACCEL=' + str(self.mmu_filament_homing_accel) + ' STOP_ON_ENDSTOP=2')
+				self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=' + str(step_distance) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel) + ' STOP_ON_ENDSTOP=2')
 				if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 					break
 		if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
@@ -426,12 +424,12 @@ class RMMU:
 		self.extruder_move(-(self.extruder_gear_to_parking_position_mm + 50), self.filament_parking_speed_mms)
 		self.gcode.run_script_from_command('M400')
 		self.select_idler(self.Selected_Filament)
-		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_extruder_gear_mm) + ' SPEED=' + str(self.mmu_filament_homing_speed) + ' ACCEL=' + str(self.mmu_filament_homing_accel))
+		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_extruder_gear_mm) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel))
 		return True
 
 	def unload_filament_from_toolhead_sensor(self):
 		self.select_idler(self.Selected_Filament)
-		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_bowden_cache_mm) + ' SPEED=' + str(self.mmu_filament_homing_speed) + ' ACCEL=' + str(self.mmu_filament_homing_accel))
+		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_bowden_cache_mm) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel))
 		self.gcode.run_script_from_command('M400')
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			return False
