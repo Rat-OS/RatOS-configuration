@@ -11,7 +11,7 @@
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/skr-2-429",
 	"outputPins": [
 		{
-			"name": "Motor_Power",
+			"name": "_Motor_Power",
 			"pin": "PC13",
 			"value": 1
 		}
