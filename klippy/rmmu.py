@@ -327,8 +327,7 @@ class RMMU:
 
 	def unload_tool(self):
 		if self.mode != "slicer":
-			if not self.unload_filament_from_nozzle_to_parking_position():
-				return False
+			self.unload_filament_from_nozzle_to_parking_position()
 		self.select_tool(self.Selected_Filament)
 		if not self.unload_filament_from_parking_position_to_toolhead_sensor():
 			return False
@@ -417,8 +416,7 @@ class RMMU:
 	# -----------------------------------------------------------------------------------------------------------------------------
 
 	def unload_filament_from_nozzle_to_parking_position(self):
-		self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_POSITION')
-		return True
+		self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_POSITION T=' + str(self.Selected_Filament))
 
 	def unload_filament_from_parking_position_to_toolhead_sensor(self):
 		self.gcode.run_script_from_command('M400')
