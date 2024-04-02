@@ -325,7 +325,8 @@ class RMMU:
 		self.gcode.respond_raw("tool " + str(tool) + " loaded")
 
 		# send notification
-		self.gcode.run_script_from_command('_RMMU_ON_TOOL_HAS_CHANGED T=' + str(tool))
+		if self.filament_changes > 0:
+			self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED T=' + str(tool))
 
 		return True
 
