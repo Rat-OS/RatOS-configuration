@@ -90,7 +90,7 @@ class RMMU:
 		tool = param.get_int('TOOL', None, minval=0, maxval=self.tool_count)
 		temp = param.get_int('TEMP', None, minval=-1, maxval=self.heater.max_temp)
 		if not self.load_tool(tool, temp):
-			self.pause_rmmu()
+			self.on_loading_error()
 			return
 	
 	def cmd_RMMU_UNLOAD_TOOL(self, param):
@@ -113,7 +113,7 @@ class RMMU:
 	def cmd_RMMU_HOME(self, param):
 		self.is_homed = False
 		if not self.home():
-			self.gcode.respond_raw("Can not home RMMU!")
+			self.ratos_echo("Can not home RMMU!")
 
 	def cmd_RMMU_RESET(self, param):
 		self.reset()
@@ -121,7 +121,7 @@ class RMMU:
 	def cmd_RMMU_CHANGE_TOOL(self, param):
 		tool = param.get_int('TOOL', None, minval=0, maxval=self.tool_count)
 		if not self.change_tool(tool):
-			self.pause_rmmu()
+			self.on_loading_error()
 
 	def cmd_RMMU_END_PRINT(self, param):
 		self.cmd_origin = "gcode"
@@ -136,6 +136,7 @@ class RMMU:
 		self.filament_changes = 0
 		self.exchange_old_position = None
 
+		tool = param.get_int('INITIAL_TOOL', None, minval=0, maxval=self.tool_count)
 		cooling_tube_retraction = param.get_float('COOLING_TUBE_RETRACTION', None, minval=0, maxval=999) 
 		cooling_tube_length = param.get_float('COOLING_TUBE_LENGTH', None, minval=0, maxval=999) 
 		parking_pos_retraction = param.get_float('PARKING_POS_RETRACTION', None, minval=0, maxval=999) 
@@ -160,6 +161,8 @@ class RMMU:
 	is_homed = False
 
 	def reset(self):
+		self.ratos_debug_echo("RMMU", "reset")
+
 		self.is_homed = False
 		self.filament_changes = 0
 		self.exchange_old_position = None
@@ -167,36 +170,42 @@ class RMMU:
 		self.is_synced = False
 
 	def home(self):
-		self.gcode.respond_raw("Homing RMMU...")
+		self.ratos_debug_echo("RMMU", "home")
+
+		self.ratos_echo("Homing RMMU...")
 		self.reset()
 		if not self.can_home():
 			return False
 		self.home_idler()
 		self.is_homed = True
 		self.selected_filament = -1
-		self.gcode.respond_raw("Hello RMMU!")
+		self.ratos_echo("Hello RMMU!")
 		return True
 
 	def can_home(self):
+		self.ratos_debug_echo("RMMU", "can_home")
+
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			# check hotend temperature
 			if not self.extruder_can_extrude():
-				self.gcode.respond_raw("Preheat Nozzle to " + str(self.heater.min_extrude_temp + 10))
+				self.ratos_echo("Preheat Nozzle to " + str(self.heater.min_extrude_temp + 10))
 				self.extruder_set_temperature(self.heater.min_extrude_temp + 10, True)
 			# unload filament from nozzle
 			if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 				if not self.unload_tool():
-					self.gcode.respond_raw("Can not unload from nozzle!")
+					self.ratos_echo("Can not unload from nozzle!")
 					return False
 			# turn off hotend heater
 			self.extruder_set_temperature(0, False)
 			# check filament sensor
 			if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
-				self.gcode.respond_raw("Filament stuck in extruder!")
+				self.ratos_echo("Filament stuck in extruder!")
 				return False
 		return True
 
 	def home_idler(self):
+		self.ratos_debug_echo("RMMU", "home_idler")
+
 		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 ENABLE=1')
 		self.rmmu_idler.do_set_position(0.0)
 		self.stepper_move(self.rmmu_idler, 2, True, self.idler_homeing_speed, self.idler_homeing_accel)
@@ -205,11 +214,13 @@ class RMMU:
 		self.stepper_move(self.rmmu_idler, self.idler_home_position, True, self.idler_homeing_speed, self.idler_homeing_accel)
 
 	def home_filaments(self, tool):
+		self.ratos_debug_echo("RMMU", "home_filaments")
+
 		if tool >= 0:
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(tool) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
 			self.home_filament(tool)
 			if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
-				self.gcode.respond_raw("Toolhead filament sensor isssue detected! Filament homing stopped!")
+				self.ratos_echo("Toolhead filament sensor isssue detected! Filament homing stopped!")
 				self.gcode.run_script_from_command('MOVE_FILAMENT TOOLHEAD=' + str(i) + ' MOVE=-100 SPEED=150')
 		else:
 			for i in range(0, self.tool_count):
@@ -217,7 +228,7 @@ class RMMU:
 			for i in range(0, self.tool_count):
 				self.home_filament(i)
 				if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
-					self.gcode.respond_raw("Toolhead filament sensor isssue detected! Filament homing stopped!")
+					self.ratos_echo("Toolhead filament sensor isssue detected! Filament homing stopped!")
 					self.select_tool(i)
 					self.gcode.run_script_from_command('MOVE_FILAMENT TOOLHEAD=' + str(i) + ' MOVE=-100 SPEED=150')
 					break
@@ -225,15 +236,17 @@ class RMMU:
 		return True
 
 	def home_filament(self, filament):
+		self.ratos_debug_echo("RMMU", "home_filament")
+
 		self.select_tool(filament)
 		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
-			self.gcode.respond_raw("Filament " + str(filament) + " not found!")
+			self.ratos_echo("Filament " + str(filament) + " not found!")
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(filament) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 			return False
 		else:
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(filament) + ' VARIABLE=color VALUE=\'"' + "00FF00" + "\"\'")
 		if not self.unload_filament_from_toolhead_sensor():
-			self.gcode.respond_raw("Filament " + str(filament) + " stucks in filament sensor!")
+			self.ratos_echo("Filament " + str(filament) + " stucks in filament sensor!")
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(filament) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 			return False
 		return True
@@ -243,6 +256,8 @@ class RMMU:
 	# -----------------------------------------------------------------------------------------------------------------------------
 
 	def eject_filaments(self, tool):
+		self.ratos_debug_echo("RMMU", "eject_filaments")
+
 		if tool >= 0:
 			self.eject_filament(tool)
 		else:
@@ -251,6 +266,8 @@ class RMMU:
 		self.select_tool(-1)
 
 	def eject_filament(self, tool):
+		self.ratos_debug_echo("RMMU", "eject_filament")
+
 		self.select_tool(tool)
 		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.reverse_bowden_length + 100) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel))
 
@@ -264,6 +281,8 @@ class RMMU:
 	exchange_old_position = None
 
 	def change_tool(self, tool):
+		self.ratos_debug_echo("RMMU", "change_tool")
+
 		self.cmd_origin = "rmmu"
 		if self.filament_changes > 0:
 			self.before_change()
@@ -274,6 +293,8 @@ class RMMU:
 		return True
 
 	def load_tool(self, tool, temp):
+		self.ratos_debug_echo("RMMU", "load_tool")
+
 		# set hotend temperature
 		if temp > 0:
 			self.set_hotend_temperature(temp)
@@ -285,12 +306,12 @@ class RMMU:
 
 		# set temp if configured and wait for it
 		if temp > 0:
-			self.gcode.respond_raw("Waiting for heater...")
+			self.ratos_echo("Waiting for heater...")
 			self.extruder_set_temperature(temp, True)
 
 		# check hotend temperature
 		if not self.extruder_can_extrude():
-			self.gcode.respond_raw("Heat up nozzle to " + str(self.heater.min_extrude_temp))
+			self.ratos_echo("Heat up nozzle to " + str(self.heater.min_extrude_temp))
 			self.extruder_set_temperature(self.heater.min_extrude_temp, True)
 
 		# enable filament sensor
@@ -299,27 +320,34 @@ class RMMU:
 		# load filament
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			if not self.unload_tool():
-				self.gcode.respond_raw("could not unload tool!")
+				self.ratos_echo("could not unload tool!")
 				return False
 		else:
 			if self.cmd_origin == "rmmu":
-				self.gcode.respond_raw("Possible sensor failure!")
-				self.gcode.respond_raw("Filament sensor should be triggered but it isnt!")
+				self.ratos_echo("Possible sensor failure!")
+				self.ratos_echo("Filament sensor should be triggered but it isnt!")
 				return False
 
 		self.select_tool(tool)
 		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
-			self.gcode.respond_raw("could not load tool to sensor!")
+			self.ratos_echo("could not load tool to sensor!")
 			return False
 		if not self.load_filament_from_toolhead_sensor_to_parking_position():
 			return False
 		if self.mode != "slicer" or self.filament_changes == 0:
 			if not self.load_filament_from_parking_position_to_nozzle():
-				self.gcode.respond_raw("could not load into nozzle!")
+				self.ratos_echo("could not load into nozzle!")
 				return False
 
 		# success
-		self.gcode.respond_raw("tool " + str(tool) + " loaded")
+		self.ratos_echo("Filament " + str(tool) + " loaded.")
+
+		# update frontend
+		for i in range(0, self.tool_count):
+			if tool == i:
+				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
+			else:
+				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
 
 		# send notification
 		if self.filament_changes > 0:
@@ -328,6 +356,8 @@ class RMMU:
 		return True
 
 	def unload_tool(self):
+		self.ratos_debug_echo("RMMU", "unload_tool")
+
 		if self.mode != "slicer":
 			self.unload_filament_from_nozzle_to_parking_position()
 		self.select_tool(self.selected_filament)
@@ -336,9 +366,15 @@ class RMMU:
 		if not self.unload_filament_from_toolhead_sensor():
 			return False
 		self.select_idler(-1)
+
+		# update frontend
+		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(self.selected_filament) + " VARIABLE=active VALUE=False")
+
 		return True
 
 	def before_change(self):
+		self.ratos_debug_echo("RMMU", "before_change")
+
 		if self.mode == "native":
 			self.gcode.run_script_from_command('SAVE_GCODE_STATE NAME=PAUSE_state')
 			self.exchange_old_position = self.toolhead.get_position()
@@ -355,28 +391,27 @@ class RMMU:
 	is_synced = False
 
 	def select_tool(self, tool=-1):
+		self.ratos_debug_echo("RMMU", "select_tool")
+
 		self.select_idler(tool)
 		self.selected_filament = tool
 
 	def select_idler(self, tool):
+		self.ratos_debug_echo("RMMU", "select_idler")
+
 		if tool >= 0:
 			self.is_synced = True
 			self.stepper_move(self.rmmu_idler, self.idler_positions[tool], True, self.idler_speed, self.idler_accel)
-			for i in range(0, self.tool_count):
-				if tool == i:
-					self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
-				else:
-					self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
 		else:
 			self.is_synced = False
 			self.stepper_move(self.rmmu_idler, self.idler_home_position, True, self.idler_speed, self.idler_accel)
-			for i in range(0, self.tool_count):
-				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
 
 	# -----------------------------------------------------------------------------------------------------------------------------
 	# Load Filament
 	# -----------------------------------------------------------------------------------------------------------------------------
 	def load_filament_from_reverse_bowden_to_toolhead_sensor(self):
+		self.ratos_debug_echo("RMMU", "load_filament_from_reverse_bowden_to_toolhead_sensor")
+
 		step_distance = 100
 		max_step_count = int((self.reverse_bowden_length * 1.2) / step_distance)
 		if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
@@ -385,12 +420,14 @@ class RMMU:
 				if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 					break
 		if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
-			self.gcode.respond_raw("Could not find filament sensor!")
+			self.ratos_echo("Could not find filament sensor!")
 			return False
-		self.gcode.respond_raw("Filament " + str(self.selected_filament) + " found!")
+		self.ratos_echo("Filament " + str(self.selected_filament) + " found.")
 		return True
 
 	def load_filament_from_toolhead_sensor_to_parking_position(self):
+		self.ratos_debug_echo("RMMU", "load_filament_from_toolhead_sensor_to_parking_position")
+
 		self.extruder_move(self.toolhead_sensor_to_extruder_gear_mm + self.extruder_gear_to_parking_position_mm, self.filament_parking_speed_mms)
 		self.gcode.run_script_from_command('M400')
 		if self.extruder_push_and_pull_test:
@@ -398,7 +435,7 @@ class RMMU:
 			self.extruder_move(-(self.toolhead_sensor_to_extruder_gear_mm + self.extruder_gear_to_parking_position_mm - push_and_pull_offset), self.filament_parking_speed_mms)
 			self.gcode.run_script_from_command('M400')
 			if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
-				self.gcode.respond_raw("could not load filament into extruder!")
+				self.ratos_echo("could not load filament into extruder!")
 				return False
 			self.extruder_move(self.toolhead_sensor_to_extruder_gear_mm + self.extruder_gear_to_parking_position_mm - push_and_pull_offset, self.filament_parking_speed_mms)
 			self.gcode.run_script_from_command('M400')
@@ -406,6 +443,8 @@ class RMMU:
 		return True
 
 	def load_filament_from_parking_position_to_nozzle(self):
+		self.ratos_debug_echo("RMMU", "load_filament_from_parking_position_to_nozzle")
+
 		self.gcode.run_script_from_command('G92 E0')
 		self.gcode.run_script_from_command('G0 E' + str(self.parking_position_to_nozzle_mm) + ' F' + str(self.nozzle_loading_speed_mms * 60))
 		self.gcode.run_script_from_command('G4 P1000')
@@ -418,9 +457,13 @@ class RMMU:
 	# -----------------------------------------------------------------------------------------------------------------------------
 
 	def unload_filament_from_nozzle_to_parking_position(self):
+		self.ratos_debug_echo("RMMU", "unload_filament_from_nozzle_to_parking_position")
+
 		self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_POSITION T=' + str(self.selected_filament))
 
 	def unload_filament_from_parking_position_to_toolhead_sensor(self):
+		self.ratos_debug_echo("RMMU", "unload_filament_from_parking_position_to_toolhead_sensor")
+
 		self.gcode.run_script_from_command('M400')
 		self.extruder_move(-(self.extruder_gear_to_parking_position_mm + 50), self.filament_parking_speed_mms)
 		self.gcode.run_script_from_command('M400')
@@ -432,6 +475,8 @@ class RMMU:
 		return True
 
 	def unload_filament_from_toolhead_sensor(self):
+		self.ratos_debug_echo("RMMU", "unload_filament_from_toolhead_sensor")
+
 		self.select_idler(self.selected_filament)
 		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.toolhead_sensor_to_bowden_cache_mm) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel))
 		self.gcode.run_script_from_command('M400')
@@ -440,22 +485,20 @@ class RMMU:
 		return True
 
 	# -----------------------------------------------------------------------------------------------------------------------------
-	# Pause
+	# Evens
 	# -----------------------------------------------------------------------------------------------------------------------------
-	def pause_rmmu(self):
-		self.gcode.run_script_from_command("_PAUSE_RMMU")
-
-	def resume_rmmu(self):
-		if self.exchange_old_position != None:
-			self.gcode.run_script_from_command('G0 Z' + str(self.exchange_old_position[2] + 2) + ' F3600')
-			self.gcode.run_script_from_command('G0 X' + str(self.exchange_old_position[0]) + ' Y' + str(self.exchange_old_position[1]) + ' F3600')
-			self.gcode.run_script_from_command('M400')
-		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
-		self.gcode.run_script_from_command("_RESUME_RMMU")
+	def on_loading_error(self):
+		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR")
 
 	# -----------------------------------------------------------------------------------------------------------------------------
 	# Helper
 	# -----------------------------------------------------------------------------------------------------------------------------
+	def ratos_echo(self, msg):
+		self.gcode.run_script_from_command("RATOS_ECHO MSG='" + str(msg) + "'")
+
+	def ratos_debug_echo(self, prefix, msg):
+		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX='" + str(prefix) + "' MSG='" + str(msg) + "'")
+
 	def extruder_move(self, e, f):
 		self.gcode.run_script_from_command('G92 E0')
 		if self.is_synced:
@@ -478,15 +521,15 @@ class RMMU:
 
 	def set_hotend_temperature(self, temp):
 		if temp < self.heater.min_temp:
-			self.gcode.respond_raw("Selected temperature " + str(temp) + " too low, must be above " + str(self.heater.min_temp))
+			self.ratos_echo("Selected temperature " + str(temp) + " too low, must be above " + str(self.heater.min_temp))
 			return False
 		if temp > self.heater.max_temp:
-			self.gcode.respond_raw("Selected temperature " + str(temp) + "too high, must be below " + str(self.heater.max_temp))
+			self.ratos_echo("Selected temperature " + str(temp) + "too high, must be below " + str(self.heater.max_temp))
 			return False
 		if temp < self.heater.min_extrude_temp:
-			self.gcode.respond_raw("Selected temperature " + str(temp) + " below minimum extrusion temperature " + str(self.heater.min_extrude_temp))
+			self.ratos_echo("Selected temperature " + str(temp) + " below minimum extrusion temperature " + str(self.heater.min_extrude_temp))
 			return False
-		self.gcode.respond_raw("Heat up nozzle to " + str(temp))
+		self.ratos_echo("Heat up nozzle to " + str(temp))
 		self.extruder_set_temperature(temp, False)
 
 	def extruder_set_temperature(self, temperature, wait):
