@@ -161,8 +161,10 @@ class RMMU:
 
 	def reset(self):
 		self.is_homed = False
-		for i in range(0, self.tool_count):
-			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
+		self.filament_changes = 0
+		self.exchange_old_position = None
+		self.selected_filament = -1
+		self.is_synced = False
 
 	def home(self):
 		self.gcode.respond_raw("Homing RMMU...")
