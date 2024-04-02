@@ -71,6 +71,7 @@ class RMMU:
 	# -----------------------------------------------------------------------------------------------------------------------------
 	def register_commands(self):
 		self.gcode.register_command('RMMU_HOME', self.cmd_RMMU_HOME, desc=("RMMU_HOME"))
+		self.gcode.register_command('RMMU_RESET', self.cmd_RMMU_RESET, desc=("RMMU_RESET"))
 		self.gcode.register_command('RMMU_LOAD_TOOL', self.cmd_RMMU_LOAD_TOOL, desc=("RMMU_LOAD_TOOL"))
 		self.gcode.register_command('RMMU_SELECT_TOOL', self.cmd_RMMU_SELECT_TOOL, desc=("RMMU_SELECT_TOOL"))
 		self.gcode.register_command('RMMU_UNLOAD_TOOL', self.cmd_RMMU_UNLOAD_TOOL, desc=("RMMU_UNLOAD_TOOL"))
@@ -113,6 +114,9 @@ class RMMU:
 		self.is_homed = False
 		if not self.home():
 			self.gcode.respond_raw("Can not home RMMU!")
+
+	def cmd_RMMU_RESET(self, param):
+		self.reset()
 
 	def cmd_RMMU_CHANGE_TOOL(self, param):
 		tool = param.get_int('TOOL', None, minval=0, maxval=self.tool_count)
