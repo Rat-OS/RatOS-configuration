@@ -145,11 +145,6 @@ class RMMU:
 		else:
 			self.mode = "slicer"
 		
-		for i in range(0, self.tool_count):
-			filament_color = param.get('COLOR' + ("" if i == 0 else "_" + str(i)), None) 
-			if filament_color != "":
-				self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + str(filament_color) + "\"\'")
-
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
 
 	def cmd_RMMU_HOME_FILAMENT(self, param):
