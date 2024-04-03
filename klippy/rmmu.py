@@ -80,6 +80,7 @@ class RMMU:
 		self.gcode.register_command('RMMU_END_PRINT', self.cmd_RMMU_END_PRINT, desc=("RMMU_END_PRINT"))
 		self.gcode.register_command('RMMU_START_PRINT', self.cmd_RMMU_START_PRINT, desc=("RMMU_START_PRINT"))
 		self.gcode.register_command('RMMU_HOME_FILAMENT', self.cmd_RMMU_HOME_FILAMENT, desc=("RMMU_HOME_FILAMENT"))
+		self.gcode.register_command('RMMU_TEST_FILAMENTS', self.cmd_RMMU_TEST_FILAMENTS, desc=("RMMU_TEST_FILAMENTS"))
 
 	def cmd_RMMU_SELECT_TOOL(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
@@ -134,6 +135,18 @@ class RMMU:
 	def cmd_RMMU_START_PRINT(self, param):
 		self.filament_changes = 0
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
+
+	def cmd_RMMU_TEST_FILAMENTS(self, param):
+		self.ratos_echo("Testing needed filaments...")
+		if not self.is_homed:
+			self.home()
+		for i in range(0, self.tool_count):
+			toolhead_used = param.get('T' + str(i), "true") 
+			if toolhead_used == "true":
+				if not self.home_filament(i):
+					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_FILAMENT_TEST_FAILED TOOLHEAD=' + str(i))
+					return
+		self.ratos_echo("All needed filaments found!")
 
 	def cmd_RMMU_HOME_FILAMENT(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
@@ -377,7 +390,7 @@ class RMMU:
 	# Helper
 	# -----------------------------------------------------------------------------------------------------------------------------
 	def ratos_echo(self, msg):
-		self.gcode.run_script_from_command("RATOS_ECHO MSG='" + str(msg) + "'")
+		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='RMMU' MSG='" + str(msg) + "'")
 
 	def ratos_debug_echo(self, prefix, msg):
 		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX='" + str(prefix) + "' MSG='" + str(msg) + "'")
