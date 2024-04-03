@@ -1,7 +1,6 @@
 # /usr/bin/python3
 
 import sys
-import re
 import argparse
 from shutil import ReadError, copy2
 from os import path, remove, getenv
@@ -55,8 +54,7 @@ def process_file(args, sourcefile):
 		first_y = -1
 		start_print_line = 0
 		file_has_changed = False
-		found_m220 = False
-		found_layerchange = False
+		first_layer_override_done = False
 
 		for line in range(len(lines)):
 
@@ -93,17 +91,12 @@ def process_file(args, sourcefile):
 								print("line:" + lines[line].rstrip())
 								sys.exit(1)
 
-			# remove wipe tower speed override for the first layer
-			if start_print_line > 0 and not found_m220:
-				if not found_layerchange:
-					if lines[line].rstrip().startswith(";LAYER_CHANGE"):
-						found_layerchange = True
-
-				if found_layerchange:
-					if lines[line].rstrip().startswith("M220 S"):
-						file_has_changed = True
-						found_m220 = True
-						lines[line] = 'M220 S100\n'
+			# remove wipe tower speed override for the first layer to ensure first layer adhesion
+			if slicer == "superslicer":
+				if start_print_line > 0 and not first_layer_override_done:
+					if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
+						lines[line] = 'M220 S100 ' + lines[line]
+						first_layer_override_done = True
 
 		# add START_PRINT parameters 
 		if start_print_line > 0:
