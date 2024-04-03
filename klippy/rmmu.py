@@ -220,6 +220,7 @@ class RMMU:
 	def eject_filament(self, tool):
 		self.select_tool(tool)
 		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0 MOVE=-' + str(self.reverse_bowden_length + 100) + ' SPEED=' + str(self.filament_homing_speed) + ' ACCEL=' + str(self.filament_homing_accel))
+		self.gcode.run_script_from_command('M400')
 
 	# -----------------------------------------------------------------------------------------------------------------------------
 	# Change Tool
@@ -332,22 +333,19 @@ class RMMU:
 				if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 					break
 		if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
-			self.ratos_echo("Could not find filament sensor!")
+			self.ratos_echo("Could not find toolhead filament sensor!")
 			return False
-		self.ratos_echo("Filament " + str(self.selected_filament) + " found.")
+		self.ratos_echo("Filament T" + str(self.selected_filament) + " found.")
 		return True
 
 	def load_filament_from_toolhead_sensor_to_cooling_zone(self):
 		self.synced_move(self.toolhead_sensor_to_extruder_gears_distance + self.extruder_gears_to_cooling_zone_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-		self.gcode.run_script_from_command('M400')
 		push_and_pull_offset = 10
 		self.synced_move(-(self.toolhead_sensor_to_extruder_gears_distance + self.extruder_gears_to_cooling_zone_distance - push_and_pull_offset), self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-		self.gcode.run_script_from_command('M400')
 		if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			self.ratos_echo("could not load filament into extruder!")
 			return False
 		self.synced_move(self.toolhead_sensor_to_extruder_gears_distance + self.extruder_gears_to_cooling_zone_distance - push_and_pull_offset, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-		self.gcode.run_script_from_command('M400')
 		self.select_idler(-1)
 		return True
 
@@ -392,6 +390,7 @@ class RMMU:
 		self.gcode.run_script_from_command('G0 E' + str(move) + ' F' + str(speed * 60))
 		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SYNC=1')
 		self.gcode.run_script_from_command('MANUAL_STEPPER STEPPER=rmmu_pulley SET_POSITION=0')
+		self.gcode.run_script_from_command('M400')
 
 	def stepper_move(self, stepper, dist, wait, speed, accel):
 		stepper.do_move(dist, speed, accel, True)
