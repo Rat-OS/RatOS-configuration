@@ -145,7 +145,9 @@ class RMMU:
 			if toolhead_used == "true":
 				if not self.home_filament(i):
 					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_FILAMENT_TEST_FAILED TOOLHEAD=' + str(i))
+					self.select_tool(-1)
 					return
+		self.select_tool(-1)
 		self.ratos_echo("All needed filaments found!")
 
 	def cmd_RMMU_HOME_FILAMENT(self, param):
