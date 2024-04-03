@@ -28,19 +28,19 @@ class RMMU:
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
 
 		# idler config
+		self.idler_positions = [102,76,50,24]
 		self.idler_speed = self.config.getfloat('idler_speed', 300.0)
 		self.idler_accel = self.config.getfloat('idler_accel', 3000.0)
 		self.idler_home_position = self.config.getfloat('idler_home_position', 0)
 		self.idler_homeing_speed = self.config.getfloat('idler_homeing_speed', 40)
 		self.idler_homeing_accel = self.config.getfloat('idler_homeing_accel', 200)
-		self.idler_positions = [102,76,50,24]
 
 		# filament homing config
 		self.filament_homing_speed = self.config.getfloat('filament_homing_speed', 250.0)
 		self.filament_homing_accel = self.config.getfloat('filament_homing_accel', 2000.0)
 		self.filament_homing_parking_distance = self.config.getfloat('filament_homing_parking_distance', 50.0)
 
-		# filament parking config
+		# filament cooling zone config
 		self.cooling_zone_loading_speed = self.config.getfloat('cooling_zone_loading_speed', 50.0)
 		self.cooling_zone_loading_accel = self.config.getfloat('cooling_zone_loading_accel', 500)
 		self.cooling_zone_parking_distance = self.config.getfloat('cooling_zone_parking_distance', 130.0)
@@ -93,7 +93,7 @@ class RMMU:
 		if not self.is_homed:
 			self.home()
 		if not self.load_tool(tool, temp):
-			self.on_loading_error()
+			self.on_loading_error(tool)
 			return
 	
 	def cmd_RMMU_UNLOAD_TOOL(self, param):
@@ -123,7 +123,7 @@ class RMMU:
 	def cmd_RMMU_CHANGE_TOOL(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
 		if not self.change_tool(tool):
-			self.on_loading_error()
+			self.on_loading_error(tool)
 
 	def cmd_RMMU_END_PRINT(self, param):
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
@@ -289,7 +289,7 @@ class RMMU:
 
 		# send notification
 		if self.filament_changes > 0:
-			self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED TOOLHEAD=' + str(tool))
+			self.gcode.run_script_from_command('_RMMU_ON_TOOL_HAS_CHANGED TOOLHEAD=' + str(tool))
 
 		return True
 
@@ -371,9 +371,9 @@ class RMMU:
 	# -----------------------------------------------------------------------------------------------------------------------------
 	# Evens
 	# -----------------------------------------------------------------------------------------------------------------------------
-	def on_loading_error(self):
+	def on_loading_error(self, tool):
 		self.select_idler(-1)
-		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR")
+		self.gcode.run_script_from_command("_RMMU_ON_TOOL_LOADING_ERROR TOOLHEAD=" + str(tool))
 
 	# -----------------------------------------------------------------------------------------------------------------------------
 	# Helper
