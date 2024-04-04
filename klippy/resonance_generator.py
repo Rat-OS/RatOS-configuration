@@ -102,8 +102,6 @@ class ResonanceGenerator:
         gcmd.respond_info(
                 "Generating oscillations at (%.3f, %.3f, %.3f)" % tuple(toolhead.get_position()[:3]))
         for axis in axes:
-            toolhead.wait_moves()
-            toolhead.dwell(0.500)
             if len(axes) > 1:
                 gcmd.respond_info("Testing axis %s" % axis.get_name())
 
