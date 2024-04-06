@@ -67,10 +67,12 @@ class RMMU:
 		self.filament_cleaning_distance = self.config.getfloat('filament_cleaning_distance', 100.0)
 
 		# filament cooling zone config
-		self.cooling_zone_loading_pause = self.config.getfloat('cooling_zone_loading_pause', 1000.0)
-		self.cooling_zone_loading_speed = self.config.getfloat('cooling_zone_loading_speed', 25.0)
+		self.cooling_zone_loading_speed = self.config.getfloat('cooling_zone_loading_speed', 30.0)
 		self.cooling_zone_loading_accel = self.config.getfloat('cooling_zone_loading_accel', 500)
-		self.cooling_zone_parking_distance = self.config.getfloat('cooling_zone_parking_distance', 130.0)
+		self.cooling_zone_unloading_speed = self.config.getfloat('cooling_zone_unloading_speed', 50.0)
+		self.cooling_zone_unloading_accel = self.config.getfloat('cooling_zone_unloading_accel', 1000)
+		self.cooling_zone_unloading_pause = self.config.getfloat('cooling_zone_unloading_pause', 1000.0)
+		self.cooling_zone_unloading_distance = self.config.getfloat('cooling_zone_unloading_distance', 130.0)
 
 	#####
 	# Status
@@ -201,14 +203,20 @@ class RMMU:
 
 	def home_filaments(self, tool):
 		if tool >= 0:
+			# update frontend
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(tool) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
+
+			# home filament
 			self.home_filament(tool)
 			if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 				self.ratos_echo("Toolhead filament sensor isssue detected! Filament homing stopped!")
 				self.gcode.run_script_from_command('MOVE_FILAMENT TOOLHEAD=' + str(i) + ' MOVE=-100 SPEED=150')
 		else:
+			# update frontend
 			for i in range(0, self.tool_count):
 				self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
+
+			# home all filaments
 			for i in range(0, self.tool_count):
 				self.home_filament(i)
 				if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
@@ -216,6 +224,7 @@ class RMMU:
 					self.select_filament(i)
 					self.gcode.run_script_from_command('MOVE_FILAMENT TOOLHEAD=' + str(i) + ' MOVE=-100 SPEED=150')
 					break
+
 		self.select_filament(-1)
 		return True
 
@@ -256,10 +265,8 @@ class RMMU:
 		if not self.is_homed:
 			self.home()
 
-		# enable filament sensor
+		# toolhead filament sensor check
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = True
-
-		# load filament
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			if not self.unload_filament():
 				self.ratos_echo("could not unload tool!")
@@ -270,6 +277,7 @@ class RMMU:
 				self.ratos_echo("Filament sensor should be triggered but it isnt!")
 				return False
 
+		# load filament
 		self.select_filament(tool)
 		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
 			self.ratos_echo("could not load tool to sensor!")
@@ -295,15 +303,12 @@ class RMMU:
 		return True
 
 	def unload_filament(self):
-		self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.selected_filament) + ' PAUSE=' + str(self.cooling_zone_loading_pause))
+		self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.selected_filament) + ' PAUSE=' + str(self.cooling_zone_unloading_pause))
 		self.select_filament(self.selected_filament)
 		if not self.unload_filament_from_cooling_zone_to_reverse_bowden(self.selected_filament):
 			return False
 		self.select_idler(-1)
-
-		# update frontend
 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(self.selected_filament) + " VARIABLE=active VALUE=False")
-
 		return True
 
 	#####
@@ -363,7 +368,7 @@ class RMMU:
 	#####
 	def unload_filament_from_cooling_zone_to_reverse_bowden(self, tool):
 		self.ratos_echo("Unload filament T" + str(tool) + " from cooling zone to reverse bowden...")
-		self.stepper_synced_move(-(self.cooling_zone_parking_distance), self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+		self.stepper_synced_move(-(self.cooling_zone_unloading_distance), self.cooling_zone_unloading_speed, self.cooling_zone_unloading_accel)
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			self.ratos_echo("Could not unload filament T" + str(tool) + " from cooling zone to reverse bowden!")
 			if self.filament_cleaning_distance > 0:
