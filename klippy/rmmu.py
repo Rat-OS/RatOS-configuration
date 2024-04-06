@@ -46,6 +46,11 @@ class RMMU:
 		self.rmmu_idler = None
 		self.rmmu_pulley = None
 
+		# slicer profile settings
+		self.travel_speed = 0
+		self.travel_accel = 0
+		self.wipe_accel = 0
+
 		# mmu config
 		self.tool_count = self.config.getint('tool_count', 4)
 		self.reverse_bowden_length = self.config.getfloat('reverse_bowden_length', 400.0)
@@ -149,7 +154,9 @@ class RMMU:
 
 	def cmd_RMMU_CHANGE_FILAMENT(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
-		if not self.change_filament(tool):
+		x = param.get_float('X', None, minval=-1, maxval=999)
+		y = param.get_float('Y', None, minval=-1, maxval=999)
+		if not self.change_filament(tool, x, y):
 			self.on_loading_error(tool)
 
 	def cmd_RMMU_END_PRINT(self, param):
@@ -159,6 +166,9 @@ class RMMU:
 		self.reset()
 
 	def cmd_RMMU_START_PRINT(self, param):
+		self.travel_speed = param.get_int('TRAVEL_SPEED', None, minval=0, maxval=1000)
+		self.travel_accel = param.get_int('TRAVEL_ACCEL', None, minval=0, maxval=100000)
+		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
 		self.filament_changes = 0
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
 
@@ -250,9 +260,9 @@ class RMMU:
 	#####
 	# Change Filament
 	#####
-	def change_filament(self, tool):
+	def change_filament(self, tool, x, y):
 		if self.filament_changes > 0:
-			self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(tool))
+			self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(tool) + ' X=' + str(x) + ' Y=' + str(y) + ' TRAVEL_SPEED=' + str(self.travel_speed) + ' TRAVEL_ACCEL=' + str(self.travel_accel) + ' WIPE_ACCEL=' + str(self.wipe_accel))
 			if not self.load_filament(tool, "change_filament"):
 				return False
 			self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_CHANGE TOOLHEAD=' + str(tool))
