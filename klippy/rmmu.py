@@ -415,6 +415,7 @@ class RMMU:
 
 	def eject_filament(self, tool):
 		self.select_filament(tool)
+		self.rmmu_pulley.do_set_position(0.0)
 		self.stepper_move(self.rmmu_pulley, -(self.reverse_bowden_length + 100), True, self.filament_homing_speed, self.filament_homing_accel)
 
 	#####
