@@ -121,7 +121,7 @@ class RMMU:
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
 		if not self.is_homed:
 			self.home()
-		self.select_filament(tool)
+		self.select_idler(tool)
 
 	def cmd_RMMU_LOAD_FILAMENT(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
@@ -244,7 +244,7 @@ class RMMU:
 
 		# load filament into toolhead filament sensor
 		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
-			self.ratos_echo("Filament " + str(filament) + " not found!")
+			self.ratos_echo("Filament T" + str(filament) + " not found!")
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(filament) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 			return False
 		else:
@@ -252,7 +252,7 @@ class RMMU:
 
 		# unload filament from toolhead filament sensor to reverse bowden 
 		if not self.unload_filament_from_toolhead_sensor_to_reverse_bowden(filament):
-			self.ratos_echo("Filament " + str(filament) + " stucks in filament sensor!")
+			self.ratos_echo("Filament T" + str(filament) + " stucks in filament sensor!")
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(filament) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 			return False
 		return True
@@ -279,7 +279,7 @@ class RMMU:
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = True
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			if not self.unload_filament():
-				self.ratos_echo("could not unload tool!")
+				self.ratos_echo("Could not unload filament T" + str(tool) + "!")
 				return False
 		else:
 			if origin == "change_filament":
@@ -290,14 +290,14 @@ class RMMU:
 		# load filament
 		self.select_filament(tool)
 		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
-			self.ratos_echo("could not load tool to sensor!")
+			self.ratos_echo("Could not load filament T" + str(tool) + "into sensor!")
 			return False
 		if not self.load_filament_from_toolhead_sensor_to_cooling_zone():
 			return False
 		self.gcode.run_script_from_command('_LOAD_FILAMENT_FROM_COOLING_ZONE_TO_NOZZLE TOOLHEAD=0 PURGE=False')
 
 		# success
-		self.ratos_echo("Filament " + str(tool) + " loaded.")
+		self.ratos_echo("Filament T" + str(tool) + " loaded.")
 
 		# update frontend
 		for i in range(0, self.tool_count):
@@ -390,7 +390,7 @@ class RMMU:
 					return True
 				self.ratos_echo("Could not clean toolhead filament sensor!")
 			return False
-		self.ratos_echo("filament T" + str(tool) + " unloaded!")
+		self.ratos_echo("Filament T" + str(tool) + " unloaded!")
 		return True
 
 	def unload_filament_from_toolhead_sensor_to_reverse_bowden(self, tool):
