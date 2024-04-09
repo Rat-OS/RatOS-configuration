@@ -56,6 +56,7 @@ ensure_service_permission
 install_beacon
 install_hooks
 ensure_node_18
+patch_klipperscreen_service_restarts
 register_z_offset_probe
 register_resonance_generator
 symlink_extensions
