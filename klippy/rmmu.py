@@ -11,9 +11,25 @@ class RMMU:
 		self.printer = self.config.get_printer()
 		self.reactor = self.printer.get_reactor()
 		self.gcode = self.printer.lookup_object('gcode')
-		self.toolhead_filament_sensor_t0 = self.printer.lookup_object("filament_switch_sensor toolhead_filament_sensor_t0")
+
+		# endstops
+		self.toolboard_endstop_pin = "^!toolboard_t0:PB4"
 
 		self.load_settings()
+
+		# get toolhead sensor endstop
+		query_endstops = self.printer.load_object(self.config, 'query_endstops')
+		for i in range(0, len(query_endstops.endstops)):
+			if query_endstops.endstops[i][1] == "manual_stepper rmmu_pulley":
+				self.toolhead_sensor_endstop = query_endstops.endstops[i][0]
+				break
+
+		# create parking endstop
+		if self.parking_endstop_pin is not None:
+			ppins = self.printer.lookup_object('pins')
+			mcu_endstop = ppins.setup_pin('endstop', self.parking_endstop_pin)
+			self.parking_sensor_endstop = mcu_endstop
+	
 		self.register_commands()
 		self.register_handler()
 
@@ -25,15 +41,19 @@ class RMMU:
 		self.printer.register_event_handler("stepper_enable:motor_off", self._motor_off)
 
 	def _connect(self):
+		# get toolhead and extruder
 		self.toolhead = self.printer.lookup_object('toolhead')
 		self.extruder = self.printer.lookup_object('extruder')
 
-		for manual_stepper in self.printer.lookup_objects('manual_stepper'):
-			rail_name = manual_stepper[1].get_steppers()[0].get_name()
-			if rail_name == 'manual_stepper rmmu_idler':
-				self.rmmu_idler = manual_stepper[1]
-			if rail_name == 'manual_stepper rmmu_pulley':
-				self.rmmu_pulley = manual_stepper[1]
+		# get stepper
+		self.rmmu_idler = self.printer.lookup_object("manual_stepper rmmu_idler")
+		self.rmmu_pulley = self.printer.lookup_object("manual_stepper rmmu_pulley")
+
+		# get filament sensors
+		self.toolhead_filament_sensor_t0 = self.printer.lookup_object("filament_switch_sensor toolhead_filament_sensor_t0")
+		self.rmmu_parking_sensor = None
+		if self.config.has_section("filament_switch_sensor rmmu_parking_sensor"):
+			self.rmmu_parking_sensor = self.printer.lookup_object("filament_switch_sensor rmmu_parking_sensor")
 
 	def _motor_off(self, print_time):
 		self.reset()
@@ -43,9 +63,6 @@ class RMMU:
 	# Settings
 	#####
 	def load_settings(self):
-		self.rmmu_idler = None
-		self.rmmu_pulley = None
-
 		# slicer profile settings
 		self.travel_speed = 0
 		self.travel_accel = 0
@@ -56,6 +73,9 @@ class RMMU:
 		self.reverse_bowden_length = self.config.getfloat('reverse_bowden_length', 400.0)
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
+		self.parking_endstop_pin = None
+		if self.config.get('parking_endstop_pin', None) is not None:
+			self.parking_endstop_pin = self.config.get('parking_endstop_pin')
 
 		# idler config
 		self.idler_positions = [102,76,50,24]
@@ -70,6 +90,10 @@ class RMMU:
 		self.filament_homing_accel = self.config.getfloat('filament_homing_accel', 2000.0)
 		self.filament_homing_parking_distance = self.config.getfloat('filament_homing_parking_distance', 50.0)
 		self.filament_cleaning_distance = self.config.getfloat('filament_cleaning_distance', 100.0)
+
+		# filament parking config
+		self.filament_parking_speed = self.config.getfloat('filament_parking_speed', 300.0)
+		self.filament_parking_accel = self.config.getfloat('filament_parking_accel', 2000.0)
 
 		# filament cooling zone config
 		self.cooling_zone_loading_speed = self.config.getfloat('cooling_zone_loading_speed', 30.0)
@@ -193,6 +217,31 @@ class RMMU:
 		self.home_filaments(tool)
 
 	#####
+	# Endstops
+	#####
+	def register_endstop(self, endstop):
+		self._unregister_endstop()
+		self._register_endstop(endstop)
+
+	def _unregister_endstop(self):
+		remove_id = -1
+		query_endstops = self.printer.load_object(self.config, 'query_endstops')
+		for i in range(0, len(query_endstops.endstops)):
+			if query_endstops.endstops[i][1] == "manual_stepper rmmu_pulley":
+				remove_id = i
+				break
+		if remove_id != -1:
+			query_endstops.endstops.pop(remove_id)
+			self.rmmu_pulley.rail.endstop_map = {}
+			self.rmmu_pulley.rail.endstops.pop(0)
+
+	def _register_endstop(self, endstop):
+		query_endstops = self.printer.load_object(self.config, 'query_endstops')
+		query_endstops.register_endstop(endstop, "manual_stepper rmmu_pulley")
+		self.rmmu_pulley.rail.endstops.append((endstop, "manual_stepper rmmu_pulley"))
+		endstop.add_stepper(self.rmmu_pulley.get_steppers()[0])
+
+	#####
 	# Home
 	#####
 	def home(self):
@@ -242,8 +291,13 @@ class RMMU:
 		# select filament
 		self.select_filament(filament)
 
+		# unpark filament 
+		if self.rmmu_parking_sensor != None:
+			if not self.unpark_filament(filament):
+				return False
+
 		# load filament into toolhead filament sensor
-		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
+		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor(filament):
 			self.ratos_echo("Filament T" + str(filament) + " not found!")
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(filament) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 			return False
@@ -255,6 +309,12 @@ class RMMU:
 			self.ratos_echo("Filament T" + str(filament) + " stucks in filament sensor!")
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(filament) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 			return False
+
+		# park filament 
+		if self.rmmu_parking_sensor != None:
+			if not self.park_filament(filament):
+				return False
+
 		return True
 
 	#####
@@ -287,16 +347,19 @@ class RMMU:
 				self.ratos_echo("Filament sensor should be triggered but it isnt!")
 				return False
 
+		# unpark filament 
+		if self.rmmu_parking_sensor != None:
+			if not self.unpark_filament(tool):
+				return False
+
 		# load filament
 		self.select_filament(tool)
-		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
+		if not self.load_filament_from_reverse_bowden_to_toolhead_sensor(tool):
 			self.ratos_echo("Could not load filament T" + str(tool) + "into sensor!")
 			return False
-		if not self.load_filament_from_toolhead_sensor_to_cooling_zone():
+		if not self.load_filament_from_toolhead_sensor_to_cooling_zone(tool):
 			return False
 		self.gcode.run_script_from_command('_LOAD_FILAMENT_FROM_COOLING_ZONE_TO_NOZZLE TOOLHEAD=0 PURGE=False')
-
-		# success
 		self.ratos_echo("Filament T" + str(tool) + " loaded.")
 
 		# update frontend
@@ -310,15 +373,25 @@ class RMMU:
 		if self.filament_changes > 0:
 			self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED TOOLHEAD=' + str(tool))
 
+		# success 
 		return True
 
 	def unload_filament(self):
+
+		# unload filament 
 		self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.selected_filament) + ' PAUSE=' + str(self.cooling_zone_unloading_pause))
 		self.select_filament(self.selected_filament)
 		if not self.unload_filament_from_cooling_zone_to_reverse_bowden(self.selected_filament):
 			return False
 		self.select_idler(-1)
 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(self.selected_filament) + " VARIABLE=active VALUE=False")
+
+		# park filament 
+		if self.rmmu_parking_sensor != None:
+			if not self.park_filament(self.selected_filament):
+				return False
+
+		# success 
 		return True
 
 	#####
@@ -337,7 +410,7 @@ class RMMU:
 	#####
 	# Load Filament
 	#####
-	def load_filament_from_reverse_bowden_to_toolhead_sensor(self):
+	def load_filament_from_reverse_bowden_to_toolhead_sensor(self, tool):
 		step_distance = 100
 		max_step_count = int((self.reverse_bowden_length * 1.2) / step_distance)
 		if not bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
@@ -351,11 +424,11 @@ class RMMU:
 		self.ratos_echo("Filament T" + str(self.selected_filament) + " found.")
 		return True
 
-	def load_filament_from_toolhead_sensor_to_cooling_zone(self):
+	def load_filament_from_toolhead_sensor_to_cooling_zone(self, tool):
 		for i in range(1, 3):
 			if not self.push_and_pull_test(self.cooling_zone_loading_speed / i, self.cooling_zone_loading_accel / i):
 				self.stepper_synced_move(-100, self.cooling_zone_loading_speed / i, self.cooling_zone_loading_accel / i)
-				if not self.load_filament_from_reverse_bowden_to_toolhead_sensor():
+				if not self.load_filament_from_reverse_bowden_to_toolhead_sensor(tool):
 					self.stepper_synced_move(-100, self.cooling_zone_loading_speed / i, self.cooling_zone_loading_accel / i)
 					self.select_idler(-1)
 					return False
@@ -399,6 +472,45 @@ class RMMU:
 		self.stepper_move(self.rmmu_pulley, -self.filament_homing_parking_distance, True, self.filament_homing_speed, self.filament_homing_accel)
 		if bool(self.toolhead_filament_sensor_t0.runout_helper.filament_present):
 			self.ratos_echo("Could not unload filament T" + str(tool) + " from toolhead sensor to reverse bowden!")
+			return False
+		return True
+
+	#####
+	# Park Filament
+	#####
+	def park_filament(self, tool):
+
+		# move close to the parking sensor
+		self.select_idler(tool)
+		self.rmmu_pulley.do_set_position(0.0)
+		self.stepper_move(self.rmmu_pulley, - (self.reverse_bowden_length - 50), True, self.filament_parking_speed, self.filament_parking_accel)
+
+		# find parking sensor
+		accuracy_in_mm = 20
+		max_step_count = 20
+		for i in range(max_step_count):
+			self.rmmu_pulley.do_set_position(0.0)
+			self.stepper_move(self.rmmu_pulley, -accuracy_in_mm, True, self.filament_parking_speed, self.filament_parking_accel)
+			if not bool(self.rmmu_parking_sensor.runout_helper.filament_present):
+				break
+
+		# check parking success
+		if bool(self.rmmu_parking_sensor.runout_helper.filament_present):
+			self.ratos_echo("Could not park filament T" + str(tool) + "!")
+			return False
+
+		# move to final parking position
+		self.rmmu_pulley.do_set_position(0.0)
+		self.stepper_move(self.rmmu_pulley, -50, True, self.filament_parking_speed, self.filament_parking_accel)
+
+		return True
+
+	def unpark_filament(self, tool):
+		self.select_idler(tool)
+		self.rmmu_pulley.do_set_position(0.0)
+		self.stepper_move(self.rmmu_pulley, self.reverse_bowden_length + 100, True, self.filament_parking_speed, self.filament_parking_accel)
+		if not bool(self.rmmu_parking_sensor.runout_helper.filament_present):
+			self.ratos_echo("Could not unpark filament T" + str(tool) + "!")
 			return False
 		return True
 
