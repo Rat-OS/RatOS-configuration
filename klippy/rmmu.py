@@ -166,6 +166,7 @@ class RMMU:
 		self.gcode.register_command('RMMU_START_PRINT', self.cmd_RMMU_START_PRINT, desc=(self.desc_RMMU_START_PRINT))
 		self.gcode.register_command('RMMU_HOME_FILAMENT', self.cmd_RMMU_HOME_FILAMENT, desc=(self.desc_RMMU_HOME_FILAMENT))
 		self.gcode.register_command('RMMU_TEST_FILAMENTS', self.cmd_RMMU_TEST_FILAMENTS, desc=(self.desc_RMMU_TEST_FILAMENTS))
+		self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
 
 	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
 	def cmd_RMMU_SELECT_FILAMENT(self, param):
@@ -269,6 +270,10 @@ class RMMU:
 	desc_RMMU_HOME_FILAMENT = "Homes one or all filament(s) to their homing positions."
 	def cmd_RMMU_HOME_FILAMENT(self, param):
 		self.home_filaments(param)
+
+	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS feeder sensor runout detection."
+	def cmd_RMMU_FILAMENT_RUNOUT(self, param):
+		self.on_filament_runout(param)
 
 	#####
 	# Home
@@ -378,7 +383,6 @@ class RMMU:
 			self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(tool) + ' X=' + str(x) + ' Y=' + str(y) + ' TRAVEL_SPEED=' + str(self.travel_speed) + ' TRAVEL_ACCEL=' + str(self.travel_accel) + ' WIPE_ACCEL=' + str(self.wipe_accel))
 			if not self.load_filament(tool, "change_filament"):
 				return False
-			self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_CHANGE TOOLHEAD=' + str(tool))
 			self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
 		self.filament_changes = self.filament_changes + 1
 
@@ -909,6 +913,25 @@ class RMMU:
 	def on_loading_error(self, tool):
 		self.select_idler(-1)
 		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR TOOLHEAD=" + str(tool))
+
+	def on_filament_runout(self, param):
+		# parameter
+		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
+		clogged = param.get('CLOGGED', "true")
+
+		# run before runout macro
+		self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_RUNOUT TOOLHEAD=' + str(tool) + ' CLOGGED=' + str(clogged))
+
+		# unload filament and eject it if no clog has been detected
+		if clogged != "true":
+			# unload filament
+			if not self.unload_filament():
+				self.ratos_echo("Can not eject filament because it couldnt be unloaded!")
+				return
+			
+			# eject filament
+			self.eject_filament(tool)
+			self.ratos_echo("Load new filament T" + str(tool) + " into the hotend and resume the print!")
 
 	#####
 	# Endstop handling
