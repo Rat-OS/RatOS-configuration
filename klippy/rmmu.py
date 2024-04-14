@@ -932,12 +932,12 @@ class RMMU:
 			self.ratos_echo("No automatic filament insert actions available without Tx parking sensors!")
 			return
 
-		# sanity check before insert actions
+		# sanity check before insert action
 		if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			self.ratos_echo("Parking sensor T" + str(tool) + " triggered! Can not perform insert actions!")
+			self.ratos_echo("Parking sensor T" + str(tool) + " triggered! Can not perform insert action!")
 			return
 		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
-			self.ratos_echo("Toolhead Filament sensor triggered! Can not perform insert actions!")
+			self.ratos_echo("Toolhead Filament sensor triggered! Can not perform insert action!")
 			return
 
 		# echo
