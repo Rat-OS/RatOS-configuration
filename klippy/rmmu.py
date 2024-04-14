@@ -275,7 +275,7 @@ class RMMU:
 
 	desc_RMMU_FILAMENT_INSERT = "Called from the RatOS feeder sensor insert detection."
 	def cmd_RMMU_FILAMENT_INSERT(self, param):
-		self.on_filament_INSERT(param)
+		self.on_filament_insert(param)
 
 	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS feeder sensor runout detection."
 	def cmd_RMMU_FILAMENT_RUNOUT(self, param):
@@ -923,7 +923,7 @@ class RMMU:
 		self.select_idler(-1)
 		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR TOOLHEAD=" + str(tool))
 
-	def on_filament_INSERT(self, param):
+	def on_filament_insert(self, param):
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
 
