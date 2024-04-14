@@ -266,76 +266,6 @@ class RMMU:
 		self.home_filaments(param)
 
 	#####
-	# Endstop handling
-	#####
-	def set_pulley_endstop(self, endstop):
-		self._unregister_endstop()
-		self._register_endstop(endstop)
-
-	def _unregister_endstop(self):
-		remove_id = -1
-		query_endstops = self.printer.load_object(self.config, 'query_endstops')
-		for i in range(0, len(query_endstops.endstops)):
-			if query_endstops.endstops[i][1] == "manual_stepper rmmu_pulley":
-				remove_id = i
-				break
-		if remove_id != -1:
-			query_endstops.endstops.pop(remove_id)
-			self.rmmu_pulley.rail.endstop_map = {}
-			self.rmmu_pulley.rail.endstops.pop(0)
-
-	def _register_endstop(self, endstop):
-		query_endstops = self.printer.load_object(self.config, 'query_endstops')
-		query_endstops.register_endstop(endstop, "manual_stepper rmmu_pulley")
-		self.rmmu_pulley.rail.endstops.append((endstop, "manual_stepper rmmu_pulley"))
-		endstop.add_stepper(self.rmmu_pulley.get_steppers()[0])
-
-	#####
-	# Filament presence check
-	# used in the start print gcode macro to test if all demanded filaments are available before starting the print
- 	#####
-	def test_filaments(self, param):
-		# echo
-		self.ratos_echo("Testing needed filaments...")
-
-		# home if needed
-		if not self.is_homed and len(self.parking_t_sensor_endstop) != self.tool_count:
-			self.home()
-
-		# test filaments
-		for i in range(0, self.tool_count):
-			toolhead_used = param.get('T' + str(i), "true") 
-			if toolhead_used == "true":
-				if not self.test_filament(i):
-					self.select_filament(-1)
-					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_FILAMENT_TEST_FAILED TOOLHEAD=' + str(i))
-					return
-
-		# release idler
-		self.select_filament(-1)
-
-		# echo
-		self.ratos_echo("All needed filaments available!")
-
-	def test_filament(self, filament):
-		# echo
-		self.ratos_echo("Testing filament T" + str(filament) + "...")
-
-		# test filament
-		if len(self.parking_t_sensor_endstop) == self.tool_count or len(self.feeder_filament_sensors) == self.tool_count:
-			if len(self.parking_t_sensor_endstop) == self.tool_count:
-				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[filament]):
-					self.ratos_echo("Filament T" + str(filament) + " not detected!")
-					return False
-			if len(self.feeder_filament_sensors) == self.tool_count:
-				if not self.is_sensor_triggered(self.feeder_filament_sensors[filament]):
-					self.ratos_echo("Filament T" + str(filament) + " runout detected!")
-					return False
-			return True
-		else:
-			return self.home_filament(filament)
-
-	#####
 	# Home
 	#####
 	def home(self):
@@ -905,6 +835,51 @@ class RMMU:
 		return True
 
 	#####
+	# Filament presence check
+	# used in the start print gcode macro to test if all demanded filaments are available before starting the print
+ 	#####
+	def test_filaments(self, param):
+		# echo
+		self.ratos_echo("Testing needed filaments...")
+
+		# home if needed
+		if not self.is_homed and len(self.parking_t_sensor_endstop) != self.tool_count:
+			self.home()
+
+		# test filaments
+		for i in range(0, self.tool_count):
+			toolhead_used = param.get('T' + str(i), "true") 
+			if toolhead_used == "true":
+				if not self.test_filament(i):
+					self.select_filament(-1)
+					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_FILAMENT_TEST_FAILED TOOLHEAD=' + str(i))
+					return
+
+		# release idler
+		self.select_filament(-1)
+
+		# echo
+		self.ratos_echo("All needed filaments available!")
+
+	def test_filament(self, filament):
+		# echo
+		self.ratos_echo("Testing filament T" + str(filament) + "...")
+
+		# test filament
+		if len(self.parking_t_sensor_endstop) == self.tool_count or len(self.feeder_filament_sensors) == self.tool_count:
+			if len(self.parking_t_sensor_endstop) == self.tool_count:
+				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[filament]):
+					self.ratos_echo("Filament T" + str(filament) + " not detected!")
+					return False
+			if len(self.feeder_filament_sensors) == self.tool_count:
+				if not self.is_sensor_triggered(self.feeder_filament_sensors[filament]):
+					self.ratos_echo("Filament T" + str(filament) + " runout detected!")
+					return False
+			return True
+		else:
+			return self.home_filament(filament)
+
+	#####
 	# Eject Filament
 	#####
 	def eject_filaments(self, tool):
@@ -930,6 +905,31 @@ class RMMU:
 	def on_loading_error(self, tool):
 		self.select_idler(-1)
 		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR TOOLHEAD=" + str(tool))
+
+	#####
+	# Endstop handling
+	#####
+	def set_pulley_endstop(self, endstop):
+		self._unregister_endstop()
+		self._register_endstop(endstop)
+
+	def _unregister_endstop(self):
+		remove_id = -1
+		query_endstops = self.printer.load_object(self.config, 'query_endstops')
+		for i in range(0, len(query_endstops.endstops)):
+			if query_endstops.endstops[i][1] == "manual_stepper rmmu_pulley":
+				remove_id = i
+				break
+		if remove_id != -1:
+			query_endstops.endstops.pop(remove_id)
+			self.rmmu_pulley.rail.endstop_map = {}
+			self.rmmu_pulley.rail.endstops.pop(0)
+
+	def _register_endstop(self, endstop):
+		query_endstops = self.printer.load_object(self.config, 'query_endstops')
+		query_endstops.register_endstop(endstop, "manual_stepper rmmu_pulley")
+		self.rmmu_pulley.rail.endstops.append((endstop, "manual_stepper rmmu_pulley"))
+		endstop.add_stepper(self.rmmu_pulley.get_steppers()[0])
 
 	#####
 	# Helper
