@@ -95,9 +95,9 @@ class RMMU:
 		self.parking_endstop_pin = None
 		self.parking_t_endstop_pin = []
 		if self.config.get('parking_endstop_pin', None) is not None:
-			# ptfe adapter endstop pin
+			# ptfe adapter endstop pins
 			self.parking_endstop_pin = self.config.get('parking_endstop_pin')
-		elif len(self.parking_t_endstop_pin) == self.tool_count:
+		elif self.config.get('parking_t0_endstop_pin', None) is not None:
 			# Tx endstop pins
 			for i in range(0, self.tool_count):
 				if self.config.get('parking_t' + str(i) + '_endstop_pin', None) is not None:
