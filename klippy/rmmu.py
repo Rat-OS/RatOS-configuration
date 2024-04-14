@@ -950,8 +950,16 @@ class RMMU:
 		# select filament
 		self.select_filament(tool)
 
+		# enable parking sensor endstop
+		self.set_pulley_endstop(self.parking_t_sensor_endstop[tool])
+
 		# try to load filament into Tx parking sensor
-		self.stepper_homing_move(self.rmmu_pulley, 200, 20, 100, 2)
+		step_distance = 25
+		max_step_count = 10
+		for i in range(max_step_count):
+			self.stepper_homing_move(self.rmmu_pulley, step_distance, self.filament_homing_speed, self.filament_homing_accel, 2)
+			if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
+				break
 
 		# check sensor
 		if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
