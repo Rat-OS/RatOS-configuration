@@ -652,8 +652,8 @@ class RMMU:
 
 		# short homing moves in case long one wasnt successfull
 		if not self.is_endstop_triggered(self.toolhead_sensor_endstop):
-			step_distance = 20
-			max_step_count = 10
+			step_distance = 50
+			max_step_count = 5
 			if not self.is_endstop_triggered(self.toolhead_sensor_endstop):
 				for i in range(max_step_count):
 					self.rmmu_pulley.do_set_position(0.0)
@@ -773,8 +773,8 @@ class RMMU:
 
 		# short homing moves in case long one wasnt successfull
 		if not self.is_endstop_triggered(endstop):
-			step_distance = 20
-			max_step_count = 10
+			step_distance = 50
+			max_step_count = 5
 			if self.is_endstop_triggered(endstop):
 				for i in range(max_step_count):
 					self.rmmu_pulley.do_set_position(0.0)
