@@ -150,18 +150,19 @@ class RMMU:
 	# G-Code Commands
 	#####
 	def register_commands(self):
-		self.gcode.register_command('RMMU_HOME', self.cmd_RMMU_HOME, desc=("RMMU_HOME"))
-		self.gcode.register_command('RMMU_RESET', self.cmd_RMMU_RESET, desc=("RMMU_RESET"))
-		self.gcode.register_command('RMMU_LOAD_FILAMENT', self.cmd_RMMU_LOAD_FILAMENT, desc=("RMMU_LOAD_FILAMENT"))
-		self.gcode.register_command('RMMU_SELECT_FILAMENT', self.cmd_RMMU_SELECT_FILAMENT, desc=("RMMU_SELECT_FILAMENT"))
-		self.gcode.register_command('RMMU_UNLOAD_FILAMENT', self.cmd_RMMU_UNLOAD_FILAMENT, desc=("RMMU_UNLOAD_FILAMENT"))
-		self.gcode.register_command('RMMU_EJECT_FILAMENT', self.cmd_RMMU_EJECT_FILAMENT, desc=("RMMU_EJECT_FILAMENT"))
-		self.gcode.register_command('RMMU_CHANGE_FILAMENT', self.cmd_RMMU_CHANGE_FILAMENT, desc=("RMMU_CHANGE_FILAMENT"))
-		self.gcode.register_command('RMMU_END_PRINT', self.cmd_RMMU_END_PRINT, desc=("RMMU_END_PRINT"))
-		self.gcode.register_command('RMMU_START_PRINT', self.cmd_RMMU_START_PRINT, desc=("RMMU_START_PRINT"))
-		self.gcode.register_command('RMMU_HOME_FILAMENT', self.cmd_RMMU_HOME_FILAMENT, desc=("RMMU_HOME_FILAMENT"))
-		self.gcode.register_command('RMMU_TEST_FILAMENTS', self.cmd_RMMU_TEST_FILAMENTS, desc=("RMMU_TEST_FILAMENTS"))
+		self.gcode.register_command('RMMU_HOME', self.cmd_RMMU_HOME, desc=(self.desc_RMMU_HOME))
+		self.gcode.register_command('RMMU_RESET', self.cmd_RMMU_RESET, desc=(self.desc_RMMU_RESET))
+		self.gcode.register_command('RMMU_LOAD_FILAMENT', self.cmd_RMMU_LOAD_FILAMENT, desc=(self.desc_RMMU_LOAD_FILAMENT))
+		self.gcode.register_command('RMMU_SELECT_FILAMENT', self.cmd_RMMU_SELECT_FILAMENT, desc=(self.desc_RMMU_SELECT_FILAMENT))
+		self.gcode.register_command('RMMU_UNLOAD_FILAMENT', self.cmd_RMMU_UNLOAD_FILAMENT, desc=(self.desc_RMMU_UNLOAD_FILAMENT))
+		self.gcode.register_command('RMMU_EJECT_FILAMENT', self.cmd_RMMU_EJECT_FILAMENT, desc=(self.desc_RMMU_EJECT_FILAMENT))
+		self.gcode.register_command('RMMU_CHANGE_FILAMENT', self.cmd_RMMU_CHANGE_FILAMENT, desc=(self.desc_RMMU_CHANGE_FILAMENT))
+		self.gcode.register_command('RMMU_END_PRINT', self.cmd_RMMU_END_PRINT, desc=(self.desc_RMMU_END_PRINT))
+		self.gcode.register_command('RMMU_START_PRINT', self.cmd_RMMU_START_PRINT, desc=(self.desc_RMMU_START_PRINT))
+		self.gcode.register_command('RMMU_HOME_FILAMENT', self.cmd_RMMU_HOME_FILAMENT, desc=(self.desc_RMMU_HOME_FILAMENT))
+		self.gcode.register_command('RMMU_TEST_FILAMENTS', self.cmd_RMMU_TEST_FILAMENTS, desc=(self.desc_RMMU_TEST_FILAMENTS))
 
+	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
 	def cmd_RMMU_SELECT_FILAMENT(self, param):
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
@@ -173,6 +174,7 @@ class RMMU:
 		# select idler
 		self.select_idler(tool)
 
+	desc_RMMU_LOAD_FILAMENT = "Loads a filament form its parking position into the hotend."
 	def cmd_RMMU_LOAD_FILAMENT(self, param):
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
@@ -186,6 +188,7 @@ class RMMU:
 			self.on_loading_error(tool)
 			return
 	
+	desc_RMMU_UNLOAD_FILAMENT = "Unloads a filament from the hotend to its parkinbg position."
 	def cmd_RMMU_UNLOAD_FILAMENT(self, param):
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
@@ -200,6 +203,7 @@ class RMMU:
 			self.unload_filament()
 		self.select_filament(-1)
 
+	desc_RMMU_EJECT_FILAMENT = "Ejects one or all filament(s) from the RMMU device."
 	def cmd_RMMU_EJECT_FILAMENT(self, param):
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
@@ -211,13 +215,16 @@ class RMMU:
 		# eject filament
 		self.eject_filaments(tool)
 
+	desc_RMMU_HOME = "Homes the RMMU idler."
 	def cmd_RMMU_HOME(self, param):
 		self.reset()
 		self.home()
 
+	desc_RMMU_RESET = "Resets the RMMU device."
 	def cmd_RMMU_RESET(self, param):
 		self.reset()
 
+	desc_RMMU_CHANGE_FILAMENT = "Called during the print to switch to another filament. Do not call it manually!"
 	def cmd_RMMU_CHANGE_FILAMENT(self, param):
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
@@ -228,6 +235,7 @@ class RMMU:
 		if not self.change_filament(tool, x, y):
 			self.on_loading_error(tool)
 
+	desc_RMMU_END_PRINT = "Called from the END_PRINT gcode macro. Unloads the filament and resets the RMMU device."
 	def cmd_RMMU_END_PRINT(self, param):
 		# unload filament if still laoded
 		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
@@ -239,6 +247,7 @@ class RMMU:
 		# reset rmmu
 		self.reset()
 
+	desc_RMMU_START_PRINT = "Called from the START_PRINT gcode macro."
 	def cmd_RMMU_START_PRINT(self, param):
 		# parameter
 		self.travel_speed = param.get_int('TRAVEL_SPEED', None, minval=0, maxval=1000)
@@ -248,9 +257,11 @@ class RMMU:
 		self.filament_changes = 0
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
 
+	desc_RMMU_TEST_FILAMENTS = "Tests if filaments, that are needed for the print, are available or not."
 	def cmd_RMMU_TEST_FILAMENTS(self, param):
 		self.test_filaments(param)
 
+	desc_RMMU_HOME_FILAMENT = "Homes one or all filament(s) to their homing positions."
 	def cmd_RMMU_HOME_FILAMENT(self, param):
 		self.home_filaments(param)
 
