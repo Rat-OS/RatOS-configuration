@@ -326,7 +326,8 @@ class RMMU:
 						self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 						self.ratos_echo("Parking filament sensor isssue detected! Filament homing stopped!")
 						self.select_filament(i)
-						self.gcode.run_script_from_command('MOVE_FILAMENT TOOLHEAD=' + str(i) + ' MOVE=-100 SPEED=150')
+						self.rmmu_pulley.do_set_position(0.0)
+						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
 						break
 
 				# check Tx parking sensor
@@ -335,7 +336,8 @@ class RMMU:
 						self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 						self.ratos_echo("Parking filament sensor isssue detected! Filament homing stopped!")
 						self.select_filament(i)
-						self.gcode.run_script_from_command('MOVE_FILAMENT TOOLHEAD=' + str(i) + ' MOVE=-100 SPEED=150')
+						self.rmmu_pulley.do_set_position(0.0)
+						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
 						break
 
 				# check toolhead sensor
@@ -344,7 +346,8 @@ class RMMU:
 						self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 						self.ratos_echo("Toolhead filament sensor isssue detected! Filament homing stopped!")
 						self.select_filament(i)
-						self.gcode.run_script_from_command('MOVE_FILAMENT TOOLHEAD=' + str(i) + ' MOVE=-100 SPEED=150')
+						self.rmmu_pulley.do_set_position(0.0)
+						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
 						break
 
 		# release idler
@@ -924,6 +927,7 @@ class RMMU:
 
 		# unload filament and eject it if no clog has been detected
 		if clogged != "true":
+
 			# unload filament
 			if not self.unload_filament():
 				self.ratos_echo("Can not eject filament because it couldnt be unloaded!")
