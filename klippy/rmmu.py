@@ -95,14 +95,13 @@ class RMMU:
 		self.parking_endstop_pin = None
 		self.parking_t_endstop_pin = []
 		if self.config.get('parking_endstop_pin', None) is not None:
-			# ptfe adapter endstop pins
+			# ptfe adapter endstop pin
 			self.parking_endstop_pin = self.config.get('parking_endstop_pin')
-		else:
+		elif len(self.parking_t_endstop_pin) == self.tool_count:
 			# Tx endstop pins
-			if self.config.get('parking_t0_endstop_pin', None) is not None:
-				for i in range(0, self.tool_count):
-					if self.config.get('parking_t' + str(i) + '_endstop_pin', None) is not None:
-						self.parking_t_endstop_pin.append(self.config.get('parking_t' + str(i) + '_endstop_pin'))
+			for i in range(0, self.tool_count):
+				if self.config.get('parking_t' + str(i) + '_endstop_pin', None) is not None:
+					self.parking_t_endstop_pin.append(self.config.get('parking_t' + str(i) + '_endstop_pin'))
 
 		# idler config
 		self.idler_positions = [102,76,50,24]
