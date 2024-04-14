@@ -75,8 +75,10 @@ class RMMU:
 		self.toolhead_filament_sensor_t0 = self.printer.lookup_object("filament_switch_sensor toolhead_filament_sensor_t0")
 		self.feeder_filament_sensors = []
 		for i in range(0, self.tool_count):
-			if self.config.get('feeder_filament_sensor_t' + str(i), None) is not None:
-				self.feeder_filament_sensors.append(self.config.get('feeder_filament_sensor_t' + str(i)))
+			for filament_sensor in self.printer.lookup_objects('filament_switch_sensor'):
+				sensor_name = filament_sensor[1].runout_helper.name
+				if sensor_name == 'feeder_filament_sensor_t' + str(i):
+					self.feeder_filament_sensors.append(filament_sensor[1])
 
 	def _motor_off(self, print_time):
 		self.reset()
@@ -93,6 +95,9 @@ class RMMU:
 
 		# mmu config
 		self.tool_count = self.config.getint('tool_count', 4)
+		# self.reverse_bowden_length = self.get_variable(self.VARS_REVERSE_BOWDEN_LENGTH)
+		# if (self.reverse_bowden_length == 0):
+		# 	self.reverse_bowden_length = 500
 		self.reverse_bowden_length = self.config.getfloat('reverse_bowden_length', 400.0)
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
@@ -176,6 +181,8 @@ class RMMU:
 		self.gcode.register_command('RMMU_TEST_FILAMENTS', self.cmd_RMMU_TEST_FILAMENTS, desc=(self.desc_RMMU_TEST_FILAMENTS))
 		self.gcode.register_command('RMMU_FILAMENT_INSERT', self.cmd_RMMU_FILAMENT_INSERT, desc=(self.desc_RMMU_FILAMENT_INSERT))
 		self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
+		self.gcode.register_command('RMMU_CALIBRATE_REVERSE_BOWDEN', self.cmd_RMMU_CALIBRATE_REVERSE_BOWDEN, desc=(self.desc_RMMU_CALIBRATE_REVERSE_BOWDEN))
+		self.gcode.register_command('RMMU_QUERY_SENSORS', self.cmd_RMMU_QUERY_SENSORS, desc=(self.desc_RMMU_QUERY_SENSORS))
 
 	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
 	def cmd_RMMU_SELECT_FILAMENT(self, param):
@@ -287,6 +294,14 @@ class RMMU:
 	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS feeder sensor runout detection."
 	def cmd_RMMU_FILAMENT_RUNOUT(self, param):
 		self.on_filament_runout(param)
+
+	desc_RMMU_QUERY_SENSORS = "Queries all available RMMU sensors and endstops."
+	def cmd_RMMU_QUERY_SENSORS(self, param):
+		self.query_sensors()
+
+	desc_RMMU_CALIBRATE_REVERSE_BOWDEN = "Auto detection of the reverse bowden length."
+	def cmd_RMMU_CALIBRATE_REVERSE_BOWDEN(self, param):
+		self.calibrate_reverse_bowden_length()
 
 	#####
 	# Home
@@ -1063,9 +1078,103 @@ class RMMU:
 		self.rmmu_pulley.rail.endstops.append((endstop, "manual_stepper rmmu_pulley"))
 		endstop.add_stepper(self.rmmu_pulley.get_steppers()[0])
 
+	def query_sensors(self):
+		self.gcode.respond_raw("querying RMMU sensors...")
+		result = "RMMU Sensors:\n"
+		if self.toolhead_filament_sensor_t0 != None:
+			result += "Toolhead sensor triggered: " + str(self.is_sensor_triggered(self.toolhead_filament_sensor_t0)) + "\n"
+		if len(self.feeder_filament_sensors) == self.tool_count:
+			for i in range(0, self.tool_count):
+				result += "Feeder sensor T" + str(i) + " triggered: " + str(self.is_sensor_triggered(self.feeder_filament_sensors[i])) + "\n"
+		result += "\nRMMU Endstops:\n"
+		if self.toolhead_sensor_endstop != None:
+			result += "Toolhead endstop triggered: " + str(self.is_endstop_triggered(self.toolhead_sensor_endstop)) + "\n"
+		if self.parking_sensor_endstop != None:
+			result += "Parking endstop triggered: " + str(self.is_endstop_triggered(self.parking_sensor_endstop)) + "\n"
+		if len(self.parking_t_sensor_endstop) == self.tool_count:
+			for i in range(0, self.tool_count):
+				result += "Parking endstop T" + str(i) + " triggered: " + str(self.is_endstop_triggered(self.parking_t_sensor_endstop[i])) + "\n"
+		self.gcode.respond_raw(result)
+
 	#####
 	# Helper
 	#####
+	def calibrate_reverse_bowden_length(self):
+		if len(self.parking_t_sensor_endstop) != self.tool_count:
+			self.ratos_echo("No calibration possible! Parking Tx endstops not available!")
+			return
+
+		for i in range(0, self.tool_count):
+			if not self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
+				self.ratos_echo("No calibration possible! Filament T" + str(i) + " is missing.")
+				return
+
+		self.ratos_echo("calibrating, please wait...")
+
+		calibrated_reverse_bowden_length = []
+		for i in range(0, self.tool_count):
+			if self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
+				# select filament
+				self.select_filament(i)
+					
+				# enable Tx endstop
+				self.set_pulley_endstop(self.parking_t_sensor_endstop[i])
+
+				# try to home to the Tx endstop
+				step_distance = 100
+				max_step_count = 10
+				for m in range(max_step_count):
+					self.stepper_homing_move(self.rmmu_pulley, -step_distance, self.filament_homing_speed, self.filament_homing_accel, -2)
+					if not self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
+						break
+				
+				# check Tx endstop
+				if self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
+					self.ratos_echo("Can not calibrate reverse bowden length bc the filament could not be loaded into its parking sensor!")
+					self.select_filament(-1)
+					return
+					
+				# set pulley position
+				self.rmmu_pulley.do_set_position(0.0)
+
+				# enable toolhead endstop
+				self.set_pulley_endstop(self.toolhead_sensor_endstop)
+
+				# try to home to the toolhead endstop
+				step_distance = 10
+				max_step_count = 100
+				for m in range(max_step_count):
+					self.stepper_homing_move(self.rmmu_pulley, step_distance, self.filament_homing_speed, self.filament_homing_accel, 2)
+					if self.is_endstop_triggered(self.toolhead_sensor_endstop):
+						# get reverse bowden length
+						calibrated_reverse_bowden_length.append(m * step_distance)
+						self.ratos_echo("Reverse bowden length T" + str(i) + " = " + str(calibrated_reverse_bowden_length[i]) + "mm")
+						break
+
+				# check toolhead endstop
+				if not self.is_endstop_triggered(self.toolhead_sensor_endstop):
+					self.ratos_echo("Can not calibrate reverse bowden length bc the filament could not be loaded into the toolhead sensor!")
+					self.select_filament(-1)
+					return
+
+				# move filament from toolhead sensor to reverse bowden
+				if not self.unload_filament_from_toolhead_sensor_to_reverse_bowden(i):
+					self.select_filament(-1)
+					return
+
+		# release filament
+		self.select_filament(-1)
+
+		if len(calibrated_reverse_bowden_length) == self.tool_count:
+			result = 0
+			for i in range(self.tool_count):
+				result += calibrated_reverse_bowden_length[i]
+			result = result / self.tool_count
+			self.ratos_echo("Average reverse bowden length = " + str(result) + "mm")
+
+			# # save reverse bowden length
+			# self.set_variable(self.VARS_REVERSE_BOWDEN_LENGTH, result)
+
 	def ratos_echo(self, msg):
 		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='RMMU' MSG='" + str(msg) + "'")
 
