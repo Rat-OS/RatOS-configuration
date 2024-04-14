@@ -90,6 +90,7 @@ class RMMU:
 		self.reverse_bowden_length = self.config.getfloat('reverse_bowden_length', 400.0)
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
+		self.has_ptfe_adapter = True if self.config.get('has_ptfe_adapter', "false").lower() == "true" else False 
 
 		# endstop pins
 		self.parking_endstop_pin = None
@@ -166,6 +167,7 @@ class RMMU:
 		self.gcode.register_command('RMMU_START_PRINT', self.cmd_RMMU_START_PRINT, desc=(self.desc_RMMU_START_PRINT))
 		self.gcode.register_command('RMMU_HOME_FILAMENT', self.cmd_RMMU_HOME_FILAMENT, desc=(self.desc_RMMU_HOME_FILAMENT))
 		self.gcode.register_command('RMMU_TEST_FILAMENTS', self.cmd_RMMU_TEST_FILAMENTS, desc=(self.desc_RMMU_TEST_FILAMENTS))
+		self.gcode.register_command('RMMU_FILAMENT_INSERT', self.cmd_RMMU_FILAMENT_INSERT, desc=(self.desc_RMMU_FILAMENT_INSERT))
 		self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
 
 	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
@@ -271,6 +273,10 @@ class RMMU:
 	def cmd_RMMU_HOME_FILAMENT(self, param):
 		self.home_filaments(param)
 
+	desc_RMMU_FILAMENT_INSERT = "Called from the RatOS feeder sensor insert detection."
+	def cmd_RMMU_FILAMENT_INSERT(self, param):
+		self.on_filament_INSERT(param)
+
 	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS feeder sensor runout detection."
 	def cmd_RMMU_FILAMENT_RUNOUT(self, param):
 		self.on_filament_runout(param)
@@ -331,7 +337,7 @@ class RMMU:
 						break
 
 				# check Tx parking sensor
-				elif len(self.parking_t_sensor_endstop) == self.tool_count:
+				elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
 					if not self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
 						self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 						self.ratos_echo("Parking filament sensor isssue detected! Filament homing stopped!")
@@ -363,7 +369,7 @@ class RMMU:
 				return False
 			if not self.unload_filament_from_parking_sensor_to_parking_position(filament):
 				return False
-		elif len(self.parking_t_sensor_endstop) == self.tool_count:
+		elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
 			if not self.load_filament_from_parking_position_to_tx_parking_sensor(filament):
 				return False
 			if not self.unload_filament_from_tx_parking_sensor_to_parking_position(filament):
@@ -417,7 +423,7 @@ class RMMU:
 				return False
 			if not self.load_filament_from_parking_sensor_to_toolhead_sensor(tool):
 				return False
-		elif len(self.parking_t_sensor_endstop) == self.tool_count:
+		elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
 			if not self.load_filament_from_parking_sensor_to_toolhead_sensor(tool):
 				return False
 		else:
@@ -469,7 +475,7 @@ class RMMU:
 				return False
 			if not self.unload_filament_from_parking_sensor_to_parking_position(self.selected_filament):
 				return False
-		elif len(self.parking_t_sensor_endstop) == self.tool_count:
+		elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
 			if not self.unload_filament_from_reverse_bowden_to_parking_sensor(self.selected_filament):
 				return False
 			if not self.unload_filament_from_tx_parking_sensor_to_parking_position(self.selected_filament):
@@ -916,6 +922,52 @@ class RMMU:
 	def on_loading_error(self, tool):
 		self.select_idler(-1)
 		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR TOOLHEAD=" + str(tool))
+
+	def on_filament_INSERT(self, param):
+		# parameter
+		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
+
+		# check if insert actions are allowed
+		if len(self.parking_t_sensor_endstop) != self.tool_count:
+			self.ratos_echo("No automatic filament insert actions available without Tx parking sensors!")
+			return
+
+		# sanity check before insert actions
+		if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
+			self.ratos_echo("Parking sensor T" + str(tool) + " triggered! Can not perform insert actions!")
+			return
+		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+			self.ratos_echo("Toolhead Filament sensor triggered! Can not perform insert actions!")
+			return
+
+		# echo
+		self.ratos_echo("Loading filament T" + str(tool) + " into RMMU device...")
+
+		# home if needed
+		if not self.is_homed:
+			self.home()
+
+		# select filament
+		self.select_filament(tool)
+
+		# try to load filament into Tx parking sensor
+		self.stepper_homing_move(self.rmmu_pulley, 200, 20, 100, 2)
+
+		# check sensor
+		if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
+			self.ratos_echo("Could not load filament T" + str(tool) + " into RMMU device! Do it manually!")
+			self.select_filament(-1)
+			return
+
+		# move filament to its final parking position
+		if not self.unload_filament_from_tx_parking_sensor_to_parking_position(tool):
+			return False
+
+		# release idler
+		self.select_filament(-1)
+
+		# success
+		self.ratos_echo("Filament T" + str(tool) + " loaded!")
 
 	def on_filament_runout(self, param):
 		# parameter
