@@ -23,6 +23,7 @@ class RMMU:
 		self.selected_filament = -1
 		self.runout_detected = False
 		self.spool_joins = []
+		self.start_print_param = None
 
 		# load config settings
 		self.load_settings()
@@ -67,6 +68,7 @@ class RMMU:
 		self.toolhead = self.printer.lookup_object('toolhead')
 		self.extruder = self.printer.lookup_object('extruder')
 		self.pause_resume = self.printer.lookup_object('pause_resume')
+		self.v_sd = self.printer.lookup_object('virtual_sdcard', None)
 
 		# get stepper
 		self.rmmu_idler = self.printer.lookup_object("manual_stepper rmmu_idler")
@@ -159,7 +161,7 @@ class RMMU:
 		self.filament_changes = 0
 		self.selected_filament = -1
 		self.runout_detected = False
-		self.clear_spool_join()
+		self.start_print_param = None
 
 		# update frontend
 		for i in range(0, self.tool_count):
@@ -271,6 +273,10 @@ class RMMU:
 
 		# reset rmmu
 		self.reset()
+
+		# reset spool join
+		self.spool_joins = []
+		self.echo_spool_join()
 
 	desc_RMMU_START_PRINT = "Called from the START_PRINT gcode macro."
 	def cmd_RMMU_START_PRINT(self, param):
@@ -457,7 +463,7 @@ class RMMU:
 				return False
 		else:
 			if not self.load_filament_from_reverse_bowden_to_toolhead_sensor(tool):
-				self.ratos_echo("Could not load filament T" + str(tool) + "into sensor!")
+				self.ratos_echo("Could not load filament T" + str(tool) + " into sensor!")
 				return False
 
 		# extruder test
@@ -888,6 +894,9 @@ class RMMU:
 	# Filament presence check
  	#####
 	def test_filaments(self, param):
+		# cache start print parameter
+		self.start_print_param = param
+
 		# echo
 		self.ratos_echo("Testing needed filaments...")
 
@@ -909,6 +918,21 @@ class RMMU:
 
 		# echo
 		self.ratos_echo("All needed filaments available!")
+
+		# testing spool join
+		if len(self.spool_joins) > 0:
+			self.ratos_echo("Validating spool join...")
+			for spool_join in self.spool_joins:
+				counter = 0
+				for spool in spool_join:
+					for i in range(0, self.tool_count):
+						if param.get('T' + str(i), "true") == "true":
+							if spool == i:
+								counter += 1
+				if counter > 1:
+					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_SPOOL_JOIN_TEST_FAILED')
+					return
+			self.ratos_echo("Spool join validated!")
 
 	def test_filament(self, filament):
 		# echo
@@ -979,6 +1003,19 @@ class RMMU:
 							self.ratos_echo("Spool T" + str(new_spool) + " already joined with another one!")
 							self.echo_spool_join()
 							return
+
+		# check if new spools are being used in a ongoing print
+		if self.start_print_param != None:
+			counter = 0
+			for spool in new_spools:
+				for i in range(0, self.tool_count):
+					if self.start_print_param.get('T' + str(i), "true") == "true":
+						if spool == i:
+							counter += 1
+			if counter > 1:
+				self.ratos_echo("Can not join spools because selected spools are part of the ongoing print!")
+				self.echo_spool_join()
+				return
 
 		# add new spool join
 		self.spool_joins.append(new_spools)
