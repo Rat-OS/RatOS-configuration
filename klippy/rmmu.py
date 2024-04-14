@@ -911,7 +911,7 @@ class RMMU:
 		self.stepper_move(self.rmmu_pulley, -(self.reverse_bowden_length * 1.5), True, self.filament_homing_speed, self.filament_homing_accel)
 
 	#####
-	# Evens
+	# Events
 	#####
 	def on_loading_error(self, tool):
 		self.select_idler(-1)
@@ -930,11 +930,19 @@ class RMMU:
 
 			# unload filament
 			if not self.unload_filament():
+				# echo
 				self.ratos_echo("Can not eject filament because it couldnt be unloaded!")
+
+				# release idler
+				self.select_filament(-1)
+
+				# stop
 				return
 			
 			# eject filament
-			self.eject_filament(tool)
+			self.eject_filaments(tool)
+
+			# echo
 			self.ratos_echo("Load new filament T" + str(tool) + " into the hotend and resume the print!")
 
 	#####
