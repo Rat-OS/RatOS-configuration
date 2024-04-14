@@ -2,6 +2,10 @@ from math import fabs
 from re import T
 
 class RMMU:
+
+	# config file variable names
+	VARS_REVERSE_BOWDEN_LENGTH = "reverse_bowden_length"
+
 	#####
 	# Initialize
 	#####
@@ -17,6 +21,7 @@ class RMMU:
 		self.is_homed = False
 		self.filament_changes = 0
 		self.selected_filament = -1
+		self.runout_detected = False
 
 		# load config settings
 		self.load_settings()
@@ -60,6 +65,7 @@ class RMMU:
 		# get toolhead and extruder
 		self.toolhead = self.printer.lookup_object('toolhead')
 		self.extruder = self.printer.lookup_object('extruder')
+		self.pause_resume = self.printer.lookup_object('pause_resume')
 
 		# get stepper
 		self.rmmu_idler = self.printer.lookup_object("manual_stepper rmmu_idler")
@@ -146,6 +152,7 @@ class RMMU:
 		self.is_homed = False
 		self.filament_changes = 0
 		self.selected_filament = -1
+		self.runout_detected = False
 
 		# update frontend
 		for i in range(0, self.tool_count):
@@ -449,6 +456,9 @@ class RMMU:
 		if self.filament_changes > 0:
 			self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED TOOLHEAD=' + str(tool))
 
+		# reset runout detection
+		self.runout_detected = False
+
 		# echo
 		self.ratos_echo("Filament T" + str(tool) + " loaded.")
 
@@ -626,7 +636,7 @@ class RMMU:
 
 		# load filament into toolhead sensor
 		step_distance = 100
-		max_step_count = int((self.reverse_bowden_length * 1.2) / step_distance)
+		max_step_count = int((self.reverse_bowden_length * 1.5) / step_distance)
 		if not self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
 			for i in range(max_step_count):
 				self.stepper_homing_move(self.rmmu_pulley, step_distance, self.filament_homing_speed, self.filament_homing_accel, 2)
@@ -963,16 +973,36 @@ class RMMU:
 
 		# check sensor
 		if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			self.ratos_echo("Could not load filament T" + str(tool) + " into RMMU device! Do it manually!")
-			self.select_filament(-1)
+			self.ratos_echo("Could not load filament T" + str(tool) + " into the RMMU device! Please load it manually!")
+			self.select_idler(-1)
 			return
 
 		# move filament to its final parking position
 		if not self.unload_filament_from_tx_parking_sensor_to_parking_position(tool):
-			return False
+			return
+
+		# pause_resume.send_pause_command()
+		if self.pause_resume.is_paused and self.runout_detected:
+			# move filament into the toolhead sensor
+			if not self.load_filament_from_parking_sensor_to_toolhead_sensor(tool):
+				return
+
+			# retract filament from the toolhead sensor bc filament loading expects it to be at this position
+			if not self.unload_filament_from_toolhead_sensor_to_reverse_bowden(tool):
+				return
+
+			# load filament
+			if not self.load_filament(tool):
+				return
+
+			# run after filament insert macro
+			self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
+
+		# reset runout detection
+		self.runout_detected = False
 
 		# release idler
-		self.select_filament(-1)
+		self.select_idler(-1)
 
 		# success
 		self.ratos_echo("Filament T" + str(tool) + " loaded!")
@@ -981,6 +1011,9 @@ class RMMU:
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
 		clogged = param.get('CLOGGED', "true")
+
+		# set runout detection
+		self.runout_detected = True
 
 		# run before runout macro
 		self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_RUNOUT TOOLHEAD=' + str(tool) + ' CLOGGED=' + str(clogged))
@@ -1064,6 +1097,12 @@ class RMMU:
 
 	def is_sensor_triggered(self, sensor):
 		return bool(sensor.runout_helper.filament_present)     
+
+	def set_variable(self, variable, value):
+		self.gcode.run_script_from_command("SAVE_VARIABLE VARIABLE=%s VALUE=%s" % (variable, value))
+
+	def get_variable(self, variable):
+		return self.printer.lookup_object('save_variables').allVariables.get(variable, None)
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # Entry Point
