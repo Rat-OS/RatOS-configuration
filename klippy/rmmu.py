@@ -1,5 +1,5 @@
 from math import fabs
-from re import T
+import re
 
 class RMMU:
 
@@ -22,6 +22,7 @@ class RMMU:
 		self.filament_changes = 0
 		self.selected_filament = -1
 		self.runout_detected = False
+		self.spool_joins = []
 
 		# load config settings
 		self.load_settings()
@@ -158,6 +159,7 @@ class RMMU:
 		self.filament_changes = 0
 		self.selected_filament = -1
 		self.runout_detected = False
+		self.clear_spool_join()
 
 		# update frontend
 		for i in range(0, self.tool_count):
@@ -183,6 +185,7 @@ class RMMU:
 		self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
 		self.gcode.register_command('RMMU_CALIBRATE_REVERSE_BOWDEN', self.cmd_RMMU_CALIBRATE_REVERSE_BOWDEN, desc=(self.desc_RMMU_CALIBRATE_REVERSE_BOWDEN))
 		self.gcode.register_command('RMMU_QUERY_SENSORS', self.cmd_RMMU_QUERY_SENSORS, desc=(self.desc_RMMU_QUERY_SENSORS))
+		self.gcode.register_command('RMMU_JOIN_FILAMENT', self.cmd_RMMU_JOIN_FILAMENT, desc=(self.desc_RMMU_JOIN_FILAMENT))
 
 	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
 	def cmd_RMMU_SELECT_FILAMENT(self, param):
@@ -302,6 +305,10 @@ class RMMU:
 	desc_RMMU_CALIBRATE_REVERSE_BOWDEN = "Auto detection of the reverse bowden length."
 	def cmd_RMMU_CALIBRATE_REVERSE_BOWDEN(self, param):
 		self.calibrate_reverse_bowden_length()
+
+	desc_RMMU_JOIN_FILAMENT = "Configures the spool join feature."
+	def cmd_RMMU_JOIN_FILAMENT(self, param):
+		self.join_filament(param)
 
 	#####
 	# Home
@@ -940,6 +947,59 @@ class RMMU:
 		# eject filament
 		self.rmmu_pulley.do_set_position(0.0)
 		self.stepper_move(self.rmmu_pulley, -(self.reverse_bowden_length * 1.5), True, self.filament_homing_speed, self.filament_homing_accel)
+
+	#####
+	# Join filament 
+	#####
+	def join_filament(self, param):
+		spools_parameter = param.get('SPOOLS', "").strip().replace(" ", "")
+
+		if spools_parameter == "":
+			self.spool_joins = []
+			self.echo_spool_join()
+			return
+			
+		if "," not in spools_parameter:
+			self.ratos_echo("Wrong spool parameter!")
+			return
+
+		new_spools = [int(item) for item in spools_parameter.split(',')]
+
+		# check for correct spool parameter
+		if len(new_spools) < 2 or len(new_spools) > self.tool_count:
+			self.ratos_echo("Wrong spool count!")
+			return
+
+		# check if new spools are already part of another spool join config
+		if len(self.spool_joins) > 0:
+			for spool_join in self.spool_joins:
+				for joined_spool in spool_join:
+					for new_spool in new_spools:
+						if joined_spool == new_spool:
+							self.ratos_echo("Spool T" + str(new_spool) + " already joined with another one!")
+							self.echo_spool_join()
+							return
+
+		# add new spool join
+		self.spool_joins.append(new_spools)
+		self.echo_spool_join()
+
+	def echo_spool_join(self):
+		if len(self.spool_joins) > 0:
+			result = "Joining filament:\n" 
+			for spool_join in self.spool_joins:
+				result += "Spools: " + ",".join(str(i) for i in spool_join) + "\n"
+			self.gcode.respond_raw(result)
+			return
+		result = "Joining deactivated!\n\n"
+		result += "Deactivate joining with:\n"
+		result += "JOIN_FILAMENT SPOOLS=\n\n"
+		result += "Join spool 1, 2 and 3 with:\n"
+		result += "JOIN_FILAMENT SPOOLS=1,2,3\n\n"
+		result += "Join spool 1 and 2 and then 0 and 3 with:\n"
+		result += "JOIN_FILAMENT SPOOLS=1,2\n"
+		result += "JOIN_FILAMENT SPOOLS=0,3\n"
+		self.gcode.respond_raw(result)
 
 	#####
 	# Events
