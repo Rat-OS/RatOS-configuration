@@ -284,6 +284,7 @@ class RMMU:
 		self.travel_speed = param.get_int('TRAVEL_SPEED', None, minval=0, maxval=1000)
 		self.travel_accel = param.get_int('TRAVEL_ACCEL', None, minval=0, maxval=100000)
 		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
+		self.start_print_param = param
 
 		self.filament_changes = 0
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
@@ -894,9 +895,6 @@ class RMMU:
 	# Filament presence check
  	#####
 	def test_filaments(self, param):
-		# cache start print parameter
-		self.start_print_param = param
-
 		# echo
 		self.ratos_echo("Testing needed filaments...")
 
@@ -1014,7 +1012,6 @@ class RMMU:
 							counter += 1
 			if counter > 1:
 				self.ratos_echo("Can not join spools because selected spools are part of the ongoing print!")
-				self.echo_spool_join()
 				return
 
 		# add new spool join
