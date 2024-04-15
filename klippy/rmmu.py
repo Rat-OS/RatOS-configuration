@@ -432,6 +432,15 @@ class RMMU:
 	# Change Filament
 	#####
 	def change_filament(self, tool, x, y):
+		# handle toolhead mapping
+		if len(self.toolhead_mapping) > 0:
+			for toolhead_map in self.toolhead_mapping:
+				if tool in toolhead_map:
+					for t in toolhead_map:
+						if tool != t:
+							tool = toolhead_map[t]
+							break
+
 		# handle spool mapping
 		if len(self.spool_mapping) > 0:
 			for spool_map in self.spool_mapping:
