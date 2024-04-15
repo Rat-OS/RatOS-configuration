@@ -1048,7 +1048,14 @@ class RMMU:
 			if spool != tool:
 				if self.test_filament(spool):
 					if self.load_filament(spool):
-						self.spool_mapping.append({tool: spool})
+						spool_map_exists = False
+						if len(self.spool_mapping) > 0:
+							for spool_map in self.spool_mapping:
+								if tool in spool_map:
+									spool_map[tool] = spool
+									spool_map_exists = True
+						if not spool_map_exists:
+							self.spool_mapping.append({tool: spool})
 						return True
 					else:
 						self.ratos_echo("Can not join spool " + str(spool) + "!")
