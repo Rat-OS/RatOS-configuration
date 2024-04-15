@@ -25,6 +25,7 @@ class RMMU:
 		self.spool_joins = []
 		self.spool_mapping = []
 		self.start_print_param = None
+		self.toolhead_mapping = []
 
 		# load config settings
 		self.load_settings()
@@ -189,6 +190,7 @@ class RMMU:
 		self.gcode.register_command('RMMU_CALIBRATE_REVERSE_BOWDEN', self.cmd_RMMU_CALIBRATE_REVERSE_BOWDEN, desc=(self.desc_RMMU_CALIBRATE_REVERSE_BOWDEN))
 		self.gcode.register_command('RMMU_QUERY_SENSORS', self.cmd_RMMU_QUERY_SENSORS, desc=(self.desc_RMMU_QUERY_SENSORS))
 		self.gcode.register_command('RMMU_JOIN_FILAMENT', self.cmd_RMMU_JOIN_FILAMENT, desc=(self.desc_RMMU_JOIN_FILAMENT))
+		self.gcode.register_command('RMMU_REMAP_TOOLHEADS', self.cmd_RMMU_REMAP_TOOLHEADS, desc=(self.desc_RMMU_REMAP_TOOLHEADS))
 
 	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
 	def cmd_RMMU_SELECT_FILAMENT(self, param):
@@ -278,6 +280,7 @@ class RMMU:
 		# reset spool join
 		self.spool_joins = []
 		self.spool_mapping = []
+		self.toolhead_mapping = []
 		self.echo_spool_join()
 
 	desc_RMMU_START_PRINT = "Called from the START_PRINT gcode macro."
@@ -318,6 +321,10 @@ class RMMU:
 	desc_RMMU_JOIN_FILAMENT = "Configures the spool join feature."
 	def cmd_RMMU_JOIN_FILAMENT(self, param):
 		self.join_filament(param)
+
+	desc_RMMU_REMAP_TOOLHEADS = "Configures the toolhead mapping feature."
+	def cmd_RMMU_REMAP_TOOLHEADS(self, param):
+		self.remap_toolhead(param)
 
 	#####
 	# Home
@@ -425,7 +432,7 @@ class RMMU:
 	# Change Filament
 	#####
 	def change_filament(self, tool, x, y):
-		# handle tool mapping
+		# handle spool mapping
 		if len(self.spool_mapping) > 0:
 			for spool_map in self.spool_mapping:
 				if tool in spool_map:
@@ -1019,20 +1026,24 @@ class RMMU:
 	# Join filament 
 	#####
 	def join_filament(self, param):
-		spools_parameter = param.get('SPOOLS', "").strip().replace(" ", "")
+		# parameter
+		parameter = param.get('SPOOLS', "").strip().replace(" ", "")
 
-		if spools_parameter == "":
+		# reset spool join
+		if parameter == "":
 			self.spool_joins = []
 			self.echo_spool_join()
 			return
 			
-		if "," not in spools_parameter:
-			self.ratos_echo("Wrong spool parameter!")
+		# check parameter format
+		if "," not in parameter:
+			self.ratos_echo("Wrong parameter!")
 			return
 
-		new_spools = [int(item) for item in spools_parameter.split(',')]
+		# get new spool join
+		new_spools = [int(item) for item in parameter.split(',')]
 
-		# check for correct spool parameter
+		# check parameter
 		if len(new_spools) < 2 or len(new_spools) > self.tool_count:
 			self.ratos_echo("Wrong spool count!")
 			return
@@ -1105,6 +1116,68 @@ class RMMU:
 				else:
 					self.ratos_echo("Spool " + str(spool) + " not available!")
 		return False
+
+	#####
+	# Toolhead mapping 
+	#####
+	def remap_toolhead(self, param):
+		# parameter
+		parameter = param.get('TOOLHEADS', "").strip().replace(" ", "")
+
+		# check for ongoing print
+		if self.start_print_param != None:
+			self.ratos_echo("Toolhead remapping is not supported during a print!")
+			return
+
+		# reset mapping
+		if parameter == "":
+			self.toolhead_mapping = []
+			self.echo_toolhead_mapping()
+			return
+
+		# check parameter format
+		if "," not in parameter:
+			self.ratos_echo("Wrong parameter!")
+			return
+
+		# get new mapping
+		new_toolhead_map = [int(item) for item in parameter.split(',')]
+
+		# check parameter count
+		if len(new_toolhead_map) != 2:
+			self.ratos_echo("Wrong toolhead count!")
+			return
+
+		# check new mapping
+		if len(self.toolhead_mapping) > 0:
+			for toolhead_map in self.toolhead_mapping:
+				for toolhead in toolhead_map:
+					for new_toolhead in new_toolhead_map:
+						if toolhead == new_toolhead:
+							self.ratos_echo("Cant remap toolhead T" + str(new_toolhead) + "! Toolhead is already mapped.")
+							self.echo_toolhead_mapping()
+							return
+
+		# add new toolhead mapping
+		self.toolhead_mapping.append(new_toolhead_map)
+		self.echo_toolhead_mapping()
+
+	def echo_toolhead_mapping(self):
+		if len(self.toolhead_mapping) > 0:
+			result = "Remap toolheads:\n" 
+			for toolhead_map in self.toolhead_mapping:
+				result += "Toolhead: " + ",".join(str(i) for i in toolhead_map) + "\n"
+			self.gcode.respond_raw(result)
+			return
+		result = "Toolhead remapping deactivated!\n\n"
+		result += "Deactivate remapping with:\n"
+		result += "REMAP_TOOLHEADS TOOLHEADS=\n\n"
+		result += "Remap toolhead 1 -> 2 with:\n"
+		result += "REMAP_TOOLHEADS TOOLHEADS=1,2\n\n"
+		result += "Remap toolhead 0 -> 1 and 2 -> 3 with:\n"
+		result += "REMAP_TOOLHEADS TOOLHEADS=0,1\n"
+		result += "REMAP_TOOLHEADS TOOLHEADS=2,3\n"
+		self.gcode.respond_raw(result)
 
 	#####
 	# Events
