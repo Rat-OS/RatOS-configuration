@@ -446,6 +446,7 @@ class RMMU:
 			for spool_map in self.spool_mapping:
 				if tool in spool_map:
 					tool = spool_map[tool]
+					break
 
 		# we ignore the first filament change since we have already loaded the first filament during the start print macro
 		if self.filament_changes > 0:
