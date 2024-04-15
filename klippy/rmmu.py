@@ -433,20 +433,10 @@ class RMMU:
 	#####
 	def change_filament(self, tool, x, y):
 		# handle toolhead mapping
-		if len(self.toolhead_mapping) > 0:
-			for toolhead_map in self.toolhead_mapping:
-				if tool in toolhead_map:
-					for t in toolhead_map:
-						if tool != t:
-							tool = toolhead_map[t]
-							break
+		tool = self.get_remapped_toolhead(tool)
 
 		# handle spool mapping
-		if len(self.spool_mapping) > 0:
-			for spool_map in self.spool_mapping:
-				if tool in spool_map:
-					tool = spool_map[tool]
-					break
+		tool = self.get_remapped_spool(tool)
 
 		# we ignore the first filament change since we have already loaded the first filament during the start print macro
 		if self.filament_changes > 0:
@@ -934,9 +924,10 @@ class RMMU:
 		for i in range(0, self.tool_count):
 			toolhead_used = param.get('T' + str(i), "true") 
 			if toolhead_used == "true":
-				if not self.test_filament(i):
+				toolhead = self.get_remapped_toolhead(i)
+				if not self.test_filament(toolhead):
 					self.select_filament(-1)
-					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_FILAMENT_TEST_FAILED TOOLHEAD=' + str(i))
+					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_FILAMENT_TEST_FAILED TOOLHEAD=' + str(toolhead))
 					return
 
 		# release idler
@@ -1084,23 +1075,6 @@ class RMMU:
 		self.spool_joins.append(new_spools)
 		self.echo_spool_join()
 
-	def echo_spool_join(self):
-		if len(self.spool_joins) > 0:
-			result = "Joining filament:\n" 
-			for spool_join in self.spool_joins:
-				result += "Spools: " + ",".join(str(i) for i in spool_join) + "\n"
-			self.gcode.respond_raw(result)
-			return
-		result = "Joining deactivated!\n\n"
-		result += "Deactivate joining with:\n"
-		result += "JOIN_FILAMENT SPOOLS=\n\n"
-		result += "Join spool 1, 2 and 3 with:\n"
-		result += "JOIN_FILAMENT SPOOLS=1,2,3\n\n"
-		result += "Join spool 1 and 2 and then 0 and 3 with:\n"
-		result += "JOIN_FILAMENT SPOOLS=1,2\n"
-		result += "JOIN_FILAMENT SPOOLS=0,3\n"
-		self.gcode.respond_raw(result)
-
 	def join_spool(self, spool_join, tool):
 		for spool in spool_join:
 			if spool != tool:
@@ -1126,6 +1100,31 @@ class RMMU:
 				else:
 					self.ratos_echo("Spool " + str(spool) + " not available!")
 		return False
+
+	def get_remapped_spool(self, tool):
+		if len(self.spool_mapping) > 0:
+			for spool_map in self.spool_mapping:
+				if tool in spool_map:
+					tool = spool_map[tool]
+					break
+		return tool
+
+	def echo_spool_join(self):
+		if len(self.spool_joins) > 0:
+			result = "Joining filament:\n" 
+			for spool_join in self.spool_joins:
+				result += "Spools: " + ",".join(str(i) for i in spool_join) + "\n"
+			self.gcode.respond_raw(result)
+			return
+		result = "Joining deactivated!\n\n"
+		result += "Deactivate joining with:\n"
+		result += "JOIN_FILAMENT SPOOLS=\n\n"
+		result += "Join spool 1, 2 and 3 with:\n"
+		result += "JOIN_FILAMENT SPOOLS=1,2,3\n\n"
+		result += "Join spool 1 and 2 and then 0 and 3 with:\n"
+		result += "JOIN_FILAMENT SPOOLS=1,2\n"
+		result += "JOIN_FILAMENT SPOOLS=0,3\n"
+		self.gcode.respond_raw(result)
 
 	#####
 	# Toolhead mapping 
@@ -1171,6 +1170,16 @@ class RMMU:
 		# add new toolhead mapping
 		self.toolhead_mapping.append(new_toolhead_map)
 		self.echo_toolhead_mapping()
+
+	def get_remapped_toolhead(self, tool):
+		if len(self.toolhead_mapping) > 0:
+			for toolhead_map in self.toolhead_mapping:
+				if tool in toolhead_map:
+					for t in toolhead_map:
+						if tool != t:
+							tool = t
+							break
+		return tool
 
 	def echo_toolhead_mapping(self):
 		if len(self.toolhead_mapping) > 0:
