@@ -977,6 +977,40 @@ class RMMU:
 		# select filament
 		self.select_filament(tool)
 
+		if len(self.feeder_filament_sensors) == self.tool_count:
+			# check filament runout sensor
+			if not self.is_sensor_triggered(self.feeder_filament_sensors[tool]):
+				self.ratos_echo("Filament T" + str(tool) + " already ejected!")
+				return
+
+		if len(self.parking_t_sensor_endstop) == self.tool_count:
+			# check if filament is loaded
+			if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
+				self.ratos_echo("Filament T" + str(tool) + " already ejected!")
+				return
+
+			# enable parking sensor endstop
+			self.set_pulley_endstop(self.parking_t_sensor_endstop[tool])
+
+			# homing moves
+			if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
+				step_distance = 100
+				max_step_count = int((self.reverse_bowden_length * 1.5) / step_distance)
+				for i in range(max_step_count):
+					self.stepper_homing_move(self.rmmu_pulley, -step_distance, self.filament_homing_speed, self.filament_homing_accel, -2)
+					if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
+						break
+
+			# check sensor
+			if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
+				self.ratos_echo("Could not eject filament T" + str(tool) + "! Parking sensor still triggered!")
+				return
+
+			# eject filament from device
+			self.rmmu_pulley.do_set_position(0.0)
+			self.stepper_move(self.rmmu_pulley, -250, True, self.filament_homing_speed, self.filament_homing_accel)
+			return
+
 		# eject filament
 		self.rmmu_pulley.do_set_position(0.0)
 		self.stepper_move(self.rmmu_pulley, -(self.reverse_bowden_length * 1.5), True, self.filament_homing_speed, self.filament_homing_accel)
