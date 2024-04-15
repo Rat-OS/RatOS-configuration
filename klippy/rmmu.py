@@ -671,6 +671,9 @@ class RMMU:
 		# echo
 		self.ratos_echo("Loading filament T" + str(tool) + " from reverse bowden into toolhead sensor...")
 
+		# enable toolhead sensor endstop
+		self.set_pulley_endstop(self.toolhead_sensor_endstop)
+
 		# load filament into toolhead sensor
 		step_distance = 100
 		max_step_count = int((self.reverse_bowden_length * 1.5) / step_distance)
