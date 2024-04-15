@@ -23,6 +23,7 @@ class RMMU:
 		self.selected_filament = -1
 		self.runout_detected = False
 		self.spool_joins = []
+		self.spool_mapping = []
 		self.start_print_param = None
 
 		# load config settings
@@ -276,6 +277,7 @@ class RMMU:
 
 		# reset spool join
 		self.spool_joins = []
+		self.spool_mapping = []
 		self.echo_spool_join()
 
 	desc_RMMU_START_PRINT = "Called from the START_PRINT gcode macro."
@@ -423,6 +425,12 @@ class RMMU:
 	# Change Filament
 	#####
 	def change_filament(self, tool, x, y):
+		# handle tool mapping
+		if len(self.spool_mapping) > 0:
+			for spool_map in self.spool_mapping:
+				if tool in spool_map:
+					tool = spool_map[tool]
+
 		# we ignore the first filament change since we have already loaded the first filament during the start print macro
 		if self.filament_changes > 0:
 			self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(tool) + ' X=' + str(x) + ' Y=' + str(y) + ' TRAVEL_SPEED=' + str(self.travel_speed) + ' TRAVEL_ACCEL=' + str(self.travel_accel) + ' WIPE_ACCEL=' + str(self.wipe_accel))
@@ -1035,6 +1043,25 @@ class RMMU:
 		result += "JOIN_FILAMENT SPOOLS=0,3\n"
 		self.gcode.respond_raw(result)
 
+	def join_spool(self, spool_join, tool):
+		for spool in spool_join:
+			if spool != tool:
+				if self.test_filament(spool):
+					if self.load_filament(spool):
+						self.spool_mapping.append({tool: spool})
+						return True
+					else:
+						self.ratos_echo("Can not join spool " + str(spool) + "!")
+						self.select_idler(tool)
+						self.stepper_synced_move(-100, 50, 200)
+						self.select_idler(-1)
+						if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+							self.ratos_echo("Can not join spools! Toolhead sensor is still triggered after a unsuccessful filament loading.")
+							return False
+				else:
+					self.ratos_echo("Spool " + str(spool) + " not available!")
+		return False
+
 	#####
 	# Events
 	#####
@@ -1143,6 +1170,16 @@ class RMMU:
 			
 			# eject filament
 			self.eject_filaments(tool)
+
+			# check spool joining
+			if len(self.spool_joins) > 0:
+				for spool_join in self.spool_joins:
+					for joined_spool in spool_join:
+						if joined_spool == tool:
+							if self.join_spool(spool_join, tool):
+								self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
+								return
+
 
 			# echo
 			self.ratos_echo("Load new filament T" + str(tool) + " into the hotend and resume the print!")
