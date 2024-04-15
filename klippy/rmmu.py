@@ -216,7 +216,7 @@ class RMMU:
 			self.on_loading_error(tool)
 			return
 	
-	desc_RMMU_UNLOAD_FILAMENT = "Unloads a filament from the hotend to its parkinbg position."
+	desc_RMMU_UNLOAD_FILAMENT = "Unloads a filament from the hotend to its parking position."
 	def cmd_RMMU_UNLOAD_FILAMENT(self, param):
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
