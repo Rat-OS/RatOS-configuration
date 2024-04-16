@@ -83,11 +83,12 @@ class RMMU:
 		if self.rmmu_pulley == None:
 			raise self.config.error("RMMU Pulley stepper not found!")
 
-		# get filament sensors
+		# get toolhead filament sensor
 		self.toolhead_filament_sensor_t0 = self.printer.lookup_object("filament_switch_sensor toolhead_filament_sensor_t0", None)
 		if self.toolhead_filament_sensor_t0 == None:
 			raise self.config.error("Toolhead filament sensor not found! Please configure the RatOS toolhead_filament_sensor_t0 filament sensor.")
 
+		# get feeder filament sensors
 		self.feeder_filament_sensors = []
 		for i in range(0, self.tool_count):
 			for filament_sensor in self.printer.lookup_objects('filament_switch_sensor'):
@@ -185,9 +186,8 @@ class RMMU:
 	#####
 	def register_commands(self):
 		self.gcode.register_command('RMMU_HOME', self.cmd_RMMU_HOME, desc=(self.desc_RMMU_HOME))
-		self.gcode.register_command('RMMU_RESET', self.cmd_RMMU_RESET, desc=(self.desc_RMMU_RESET))
 		self.gcode.register_command('RMMU_LOAD_FILAMENT', self.cmd_RMMU_LOAD_FILAMENT, desc=(self.desc_RMMU_LOAD_FILAMENT))
-		self.gcode.register_command('RMMU_SELECT_FILAMENT', self.cmd_RMMU_SELECT_FILAMENT, desc=(self.desc_RMMU_SELECT_FILAMENT))
+		self.gcode.register_command('RMMU_MOVE_FILAMENT', self.cmd_RMMU_MOVE_FILAMENT, desc=(self.desc_RMMU_MOVE_FILAMENT))
 		self.gcode.register_command('RMMU_UNLOAD_FILAMENT', self.cmd_RMMU_UNLOAD_FILAMENT, desc=(self.desc_RMMU_UNLOAD_FILAMENT))
 		self.gcode.register_command('RMMU_EJECT_FILAMENT', self.cmd_RMMU_EJECT_FILAMENT, desc=(self.desc_RMMU_EJECT_FILAMENT))
 		self.gcode.register_command('RMMU_CHANGE_FILAMENT', self.cmd_RMMU_CHANGE_FILAMENT, desc=(self.desc_RMMU_CHANGE_FILAMENT))
@@ -202,17 +202,9 @@ class RMMU:
 		self.gcode.register_command('RMMU_JOIN_SPOOLS', self.cmd_RMMU_JOIN_SPOOLS, desc=(self.desc_RMMU_JOIN_SPOOLS))
 		self.gcode.register_command('RMMU_REMAP_TOOLHEADS', self.cmd_RMMU_REMAP_TOOLHEADS, desc=(self.desc_RMMU_REMAP_TOOLHEADS))
 
-	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
-	def cmd_RMMU_SELECT_FILAMENT(self, param):
-		# parameter
-		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
-
-		# home if needed
-		if not self.is_homed:
-			self.home()
-
-		# select idler
-		self.select_idler(tool)
+	desc_RMMU_MOVE_FILAMENT = "Moves a filament with or without extruder sync."
+	def cmd_RMMU_MOVE_FILAMENT(self, param):
+		self.move_filament(param)
 
 	desc_RMMU_LOAD_FILAMENT = "Loads a filament form its parking position into the hotend."
 	def cmd_RMMU_LOAD_FILAMENT(self, param):
@@ -241,18 +233,13 @@ class RMMU:
 		self.selected_filament = tool
 		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
 			self.unload_filament()
+
+		# release idler
 		self.select_filament(-1)
 
 	desc_RMMU_EJECT_FILAMENT = "Ejects one or all filament(s) from the RMMU device."
 	def cmd_RMMU_EJECT_FILAMENT(self, param):
-		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
-
-		# home if needed
-		if not self.is_homed:
-			self.home()
-
-		# eject filament
 		self.eject_filaments(tool)
 
 	desc_RMMU_HOME = "Homes the RMMU idler."
@@ -260,54 +247,17 @@ class RMMU:
 		self.reset()
 		self.home()
 
-	desc_RMMU_RESET = "Resets the RMMU device."
-	def cmd_RMMU_RESET(self, param):
-		self.reset()
-
 	desc_RMMU_CHANGE_FILAMENT = "Called during the print to switch to another filament. Do not call it manually!"
 	def cmd_RMMU_CHANGE_FILAMENT(self, param):
-		# parameter
-		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
-		x = param.get_float('X', None, minval=-1, maxval=999)
-		y = param.get_float('Y', None, minval=-1, maxval=999)
-
-		# change filament
-		if not self.change_filament(tool, x, y):
-			self.on_loading_error(tool)
+		self.change_filament(param)
 
 	desc_RMMU_END_PRINT = "Called from the END_PRINT gcode macro. Unloads the filament and resets the RMMU device."
 	def cmd_RMMU_END_PRINT(self, param):
-		# unload filament if still laoded
-		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
-			self.unload_filament()
+		self.end_print()
 
-		# release idler
-		self.select_filament(-1)
-
-		# reset rmmu
-		self.reset()
-
-		# reset spool join
-		self.spool_joins = []
-		self.spool_mapping = []
-		self.toolhead_mapping = []
-		self.echo_spool_join()
-
-	desc_RMMU_START_PRINT = "Called from the START_PRINT gcode macro."
+	desc_RMMU_START_PRINT = "RMMU_START_PRINT gcode macro. Calls the RatOS START_PRINT macro if there are no errors."
 	def cmd_RMMU_START_PRINT(self, param):
-		# parameter
-		self.travel_speed = param.get_int('TRAVEL_SPEED', None, minval=0, maxval=1000)
-		self.travel_accel = param.get_int('TRAVEL_ACCEL', None, minval=0, maxval=100000)
-		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
-		self.start_print_param = param
-
-		self.filament_changes = 0
-		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
-			raise self.printer.command_error("Filament detected in toolhead! Please unload the filament and restart the print.")
-
-		self.test_filaments(param)
-		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
-		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
+		self.start_print(param)
 
 	desc_RMMU_TEST_FILAMENTS = "Tests if filaments, that are needed for the print, are available or not."
 	def cmd_RMMU_TEST_FILAMENTS(self, param):
@@ -340,6 +290,46 @@ class RMMU:
 	desc_RMMU_REMAP_TOOLHEADS = "Configures the toolhead mapping feature."
 	def cmd_RMMU_REMAP_TOOLHEADS(self, param):
 		self.remap_toolhead(param)
+
+	#####
+	# Start / End Print
+	#####
+	def start_print(self, param):
+		# parameter
+		self.travel_speed = param.get_int('TRAVEL_SPEED', None, minval=0, maxval=1000)
+		self.travel_accel = param.get_int('TRAVEL_ACCEL', None, minval=0, maxval=100000)
+		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
+		self.start_print_param = param
+
+		# check for filament in hotend
+		self.filament_changes = 0
+		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+			raise self.printer.command_error("Filament detected in toolhead! Please unload the filament and restart the print.")
+
+		# test if all demanded filaments are available and raises an error if not
+		self.test_filaments(param)
+
+		# disable toolhead filament sensor
+		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
+
+		# call RatOS start print gcode macro
+		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
+
+	def end_print(self):
+		# unload filament if still laoded
+		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+			self.unload_filament()
+
+		# release idler
+		self.select_filament(-1)
+
+		# reset rmmu
+		self.reset()
+
+		# reset spool join and toolhead mapping
+		self.spool_joins = []
+		self.spool_mapping = []
+		self.toolhead_mapping = []
 
 	#####
 	# Home
@@ -446,7 +436,12 @@ class RMMU:
 	#####
 	# Change Filament
 	#####
-	def change_filament(self, tool, x, y):
+	def change_filament(self, param):
+		# parameter
+		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
+		x = param.get_float('X', None, minval=-1, maxval=999)
+		y = param.get_float('Y', None, minval=-1, maxval=999)
+
 		# handle toolhead mapping
 		tool = self.get_remapped_toolhead(tool)
 
@@ -457,12 +452,9 @@ class RMMU:
 		if self.filament_changes > 0:
 			self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(tool) + ' X=' + str(x) + ' Y=' + str(y) + ' TRAVEL_SPEED=' + str(self.travel_speed) + ' TRAVEL_ACCEL=' + str(self.travel_accel) + ' WIPE_ACCEL=' + str(self.wipe_accel))
 			if not self.load_filament(tool, "change_filament"):
-				return False
+				self.on_loading_error(tool)
 			self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
 		self.filament_changes = self.filament_changes + 1
-
-		# success
-		return True
 
 	def load_filament(self, tool, origin = ""):
 		# home if not homed yet
@@ -570,6 +562,11 @@ class RMMU:
 		self.selected_filament = tool
 
 	def select_idler(self, tool):
+		# home if needed
+		if not self.is_homed:
+			self.home()
+
+		# select idler
 		if tool >= 0:
 			self.stepper_move(self.rmmu_idler, self.idler_positions[tool], True, self.idler_speed, self.idler_accel)
 		else:
@@ -986,6 +983,10 @@ class RMMU:
 	# Eject Filament
 	#####
 	def eject_filaments(self, tool):
+		# home if needed
+		if not self.is_homed:
+			self.home()
+
 		# eject filaments
 		for i in range(0, self.tool_count):
 			if tool == -1 or tool == i:
@@ -1103,7 +1104,7 @@ class RMMU:
 							self.spool_mapping.append({tool: spool})
 						return True
 					else:
-						self.ratos_echo("Can not join spool " + str(spool) + "!")
+						self.ratos_echo("Can not join spool T" + str(spool) + "!")
 						self.select_idler(tool)
 						self.stepper_synced_move(-100, 50, 200)
 						self.select_idler(-1)
@@ -1379,6 +1380,30 @@ class RMMU:
 	#####
 	# Helper
 	#####
+	def move_filament(self, param):
+		# parameter
+		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
+		move = param.get_int('MOVE', 50)
+		speed = param.get_int('SPEED', 10)
+		sync = param.get_int('SYNC_EXTRUDER', None, minval=0, maxval=1)
+
+		# home if needed
+		if not self.is_homed:
+			self.home()
+
+		# select idler
+		self.select_idler(tool)
+
+		# move 
+		self.rmmu_pulley.do_set_position(0.0)
+		if sync == 1:
+			self.stepper_synced_move(move, speed, self.cooling_zone_loading_accel)
+		else:
+			self.stepper_move(self.rmmu_pulley, move, True, speed, self.idler_homing_accel)
+
+		# release idler
+		self.select_idler(-1)
+
 	def calibrate_reverse_bowden_length(self):
 		if len(self.parking_t_sensor_endstop) != self.tool_count:
 			self.ratos_echo("No calibration possible! Parking Tx endstops not available!")
@@ -1493,8 +1518,8 @@ class RMMU:
 	def get_variable(self, variable):
 		return self.printer.lookup_object('save_variables').allVariables.get(variable, None)
 
-# -----------------------------------------------------------------------------------------------------------------------------
+#####
 # Entry Point
-# -----------------------------------------------------------------------------------------------------------------------------
+#####
 def load_config(config):
 	return RMMU(config)
