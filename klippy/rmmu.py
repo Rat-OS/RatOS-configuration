@@ -1397,9 +1397,9 @@ class RMMU:
 		# move 
 		self.rmmu_pulley.do_set_position(0.0)
 		if sync == 1:
-			self.stepper_synced_move(move, speed, self.cooling_zone_loading_accel)
+			self.stepper_synced_move(move, speed, 250)
 		else:
-			self.stepper_move(self.rmmu_pulley, move, True, speed, self.idler_homing_accel)
+			self.stepper_move(self.rmmu_pulley, move, True, speed, 250)
 
 		# release idler
 		self.select_idler(-1)
