@@ -31,11 +31,14 @@ class RMMU:
 		self.load_settings()
 
 		# get manual_stepper rmmu_pulley endstop
+		self.toolhead_sensor_endstop = None
 		query_endstops = self.printer.load_object(self.config, 'query_endstops')
 		for i in range(0, len(query_endstops.endstops)):
 			if query_endstops.endstops[i][1] == "manual_stepper rmmu_pulley":
 				self.toolhead_sensor_endstop = query_endstops.endstops[i][0]
 				break
+		if self.toolhead_sensor_endstop == None:
+			raise self.config.error("RMMU Pulley endstop not configured! Please configure the toolhead filament sensor endstop.")
 
 		# get additional endstops
 		self.parking_sensor_endstop = None
@@ -73,11 +76,18 @@ class RMMU:
 		self.v_sd = self.printer.lookup_object('virtual_sdcard', None)
 
 		# get stepper
-		self.rmmu_idler = self.printer.lookup_object("manual_stepper rmmu_idler")
-		self.rmmu_pulley = self.printer.lookup_object("manual_stepper rmmu_pulley")
+		self.rmmu_idler = self.printer.lookup_object("manual_stepper rmmu_idler", None)
+		if self.rmmu_idler == None:
+			raise self.config.error("RMMU Idler stepper not found!")
+		self.rmmu_pulley = self.printer.lookup_object("manual_stepper rmmu_pulley", None)
+		if self.rmmu_pulley == None:
+			raise self.config.error("RMMU Pulley stepper not found!")
 
 		# get filament sensors
-		self.toolhead_filament_sensor_t0 = self.printer.lookup_object("filament_switch_sensor toolhead_filament_sensor_t0")
+		self.toolhead_filament_sensor_t0 = self.printer.lookup_object("filament_switch_sensor toolhead_filament_sensor_t0", None)
+		if self.toolhead_filament_sensor_t0 == None:
+			raise self.config.error("Toolhead filament sensor not found! Please configure the RatOS toolhead_filament_sensor_t0 filament sensor.")
+
 		self.feeder_filament_sensors = []
 		for i in range(0, self.tool_count):
 			for filament_sensor in self.printer.lookup_objects('filament_switch_sensor'):
