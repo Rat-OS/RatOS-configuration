@@ -292,7 +292,12 @@ class RMMU:
 		self.start_print_param = param
 
 		self.filament_changes = 0
+		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+			raise self.printer.command_error("Filament detected in toolhead! Please unload the filament and restart the print.")
+
+		self.test_filaments(param)
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = False
+		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
 
 	desc_RMMU_TEST_FILAMENTS = "Tests if filaments, that are needed for the print, are available or not."
 	def cmd_RMMU_TEST_FILAMENTS(self, param):
@@ -927,8 +932,7 @@ class RMMU:
 				toolhead = self.get_remapped_toolhead(i)
 				if not self.test_filament(toolhead):
 					self.select_filament(-1)
-					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_FILAMENT_TEST_FAILED TOOLHEAD=' + str(toolhead))
-					return
+					raise self.printer.command_error("Can not start print because Filament T" + str(toolhead) + " is not available!")
 
 		# release idler
 		self.select_filament(-1)
@@ -947,8 +951,7 @@ class RMMU:
 							if spool == i:
 								counter += 1
 				if counter > 1:
-					self.gcode.run_script_from_command('_RMMU_ON_START_PRINT_SPOOL_JOIN_TEST_FAILED')
-					return
+					raise self.printer.command_error("Can not start print because joined spools are part of the print!")
 			self.ratos_echo("Spool join validated!")
 
 	def test_filament(self, filament):

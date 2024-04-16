@@ -74,7 +74,7 @@ def process_file(args, sourcefile):
 
 			# get the start_print line number and fix color variable format
 			if start_print_line == 0:
-				if lines[line].rstrip().startswith("START_PRINT"):
+				if lines[line].rstrip().startswith("START_PRINT") or lines[line].rstrip().startswith("RMMU_START_PRINT"):
 					start_print_line = line
 					# fix color variable format
 					if "#" in lines[start_print_line].rstrip():
