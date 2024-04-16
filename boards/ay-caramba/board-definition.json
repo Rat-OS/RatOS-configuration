@@ -39,8 +39,8 @@
 		"cs_pin": "PA4",
 		"software": {
 			"sclk": "PA5",
-			"mosi": "PA6",
-			"miso": "PA7"
+			"mosi": "PA7",
+			"miso": "PA6"
 		}
 	}
 }
