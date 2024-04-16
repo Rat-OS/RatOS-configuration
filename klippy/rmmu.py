@@ -189,7 +189,7 @@ class RMMU:
 		self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
 		self.gcode.register_command('RMMU_CALIBRATE_REVERSE_BOWDEN', self.cmd_RMMU_CALIBRATE_REVERSE_BOWDEN, desc=(self.desc_RMMU_CALIBRATE_REVERSE_BOWDEN))
 		self.gcode.register_command('RMMU_QUERY_SENSORS', self.cmd_RMMU_QUERY_SENSORS, desc=(self.desc_RMMU_QUERY_SENSORS))
-		self.gcode.register_command('RMMU_JOIN_FILAMENT', self.cmd_RMMU_JOIN_FILAMENT, desc=(self.desc_RMMU_JOIN_FILAMENT))
+		self.gcode.register_command('RMMU_JOIN_SPOOLS', self.cmd_RMMU_JOIN_SPOOLS, desc=(self.desc_RMMU_JOIN_SPOOLS))
 		self.gcode.register_command('RMMU_REMAP_TOOLHEADS', self.cmd_RMMU_REMAP_TOOLHEADS, desc=(self.desc_RMMU_REMAP_TOOLHEADS))
 
 	desc_RMMU_SELECT_FILAMENT = "Selects a filament by moving the idler to the correct position."
@@ -318,9 +318,9 @@ class RMMU:
 	def cmd_RMMU_CALIBRATE_REVERSE_BOWDEN(self, param):
 		self.calibrate_reverse_bowden_length()
 
-	desc_RMMU_JOIN_FILAMENT = "Configures the spool join feature."
-	def cmd_RMMU_JOIN_FILAMENT(self, param):
-		self.join_filament(param)
+	desc_RMMU_JOIN_SPOOLS = "Configures the spool join feature."
+	def cmd_RMMU_JOIN_SPOOLS(self, param):
+		self.join_spools(param)
 
 	desc_RMMU_REMAP_TOOLHEADS = "Configures the toolhead mapping feature."
 	def cmd_RMMU_REMAP_TOOLHEADS(self, param):
@@ -1026,7 +1026,7 @@ class RMMU:
 	#####
 	# Join filament 
 	#####
-	def join_filament(self, param):
+	def join_spools(self, param):
 		# parameter
 		parameter = param.get('SPOOLS', "").strip().replace(" ", "")
 
@@ -1116,14 +1116,14 @@ class RMMU:
 				result += "Spools: " + ",".join(str(i) for i in spool_join) + "\n"
 			self.gcode.respond_raw(result)
 			return
-		result = "Joining deactivated!\n\n"
+		result = "Spool joining deactivated!\n\n"
 		result += "Deactivate joining with:\n"
-		result += "JOIN_FILAMENT SPOOLS=\n\n"
+		result += "JOIN_SPOOLS SPOOLS=\n\n"
 		result += "Join spool 1, 2 and 3 with:\n"
-		result += "JOIN_FILAMENT SPOOLS=1,2,3\n\n"
+		result += "JOIN_SPOOLS SPOOLS=1,2,3\n\n"
 		result += "Join spool 1 and 2 and then 0 and 3 with:\n"
-		result += "JOIN_FILAMENT SPOOLS=1,2\n"
-		result += "JOIN_FILAMENT SPOOLS=0,3\n"
+		result += "JOIN_SPOOLS SPOOLS=1,2\n"
+		result += "JOIN_SPOOLS SPOOLS=0,3\n"
 		self.gcode.respond_raw(result)
 
 	#####
