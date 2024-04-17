@@ -12,7 +12,7 @@
 	"driverVoltages": [24, 36, 48, 56],
 	"fourPinFanConnectorCount": 2,
 	"dfu": {
-		"flashDevice": "0483:df11", // must check
+		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.drawio.png",
 		"instructions": [
 			"Connect the board via USB to the Raspberry Pi",
