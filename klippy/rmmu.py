@@ -230,7 +230,7 @@ class RMMU:
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
 		self.has_ptfe_adapter = True if self.config.get('has_ptfe_adapter', "false").lower() == "true" else False 
-		self.make_extruder_test = True if self.config.get('make_extruder_test', "false").lower() == "true" else False 
+		self.make_extruder_test = True if self.config.get('make_extruder_test', "true").lower() == "true" else False 
 
 		# endstop pins
 		self.parking_endstop_pin = None
@@ -562,6 +562,8 @@ class RMMU:
 		else:
 			# move filament into cooling zone
 			self.stepper_synced_move(self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+			# release idler
+			self.select_idler(-1)
 
 		# load filament into hotend cooling zone
 		self.gcode.run_script_from_command('_LOAD_FILAMENT_FROM_COOLING_ZONE_TO_NOZZLE TOOLHEAD=0 PURGE=False')
