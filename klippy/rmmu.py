@@ -420,6 +420,10 @@ class RMMU:
 		# parameter
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
 
+		# check for filament in hotend
+		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+			raise self.printer.command_error("Can not home filaments! Filament in hotend detected.")
+
 		# update frontend
 		for i in range(0, self.tool_count):
 			if tool == -1 or tool == i:
