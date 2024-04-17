@@ -230,6 +230,7 @@ class RMMU:
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
 		self.has_ptfe_adapter = True if self.config.get('has_ptfe_adapter', "false").lower() == "true" else False 
+		self.make_extruder_test = True if self.config.get('make_extruder_test', "false").lower() == "true" else False 
 
 		# endstop pins
 		self.parking_endstop_pin = None
@@ -285,6 +286,7 @@ class RMMU:
 		  'is_homed': self.is_homed,
 		  'filament_changes': self.filament_changes,
 		  'selected_filament': self.selected_filament,
+		  'loaded_filament': self.get_setting(self.VARS_LOADED_FILAMENT),
 		  'initial_tool_loaded': self.initial_tool_loaded}
 
 	def reset(self):
@@ -296,8 +298,12 @@ class RMMU:
 		self.start_print_param = None
 
 		# update frontend
+		loaded_filament = self.get_setting(self.VARS_LOADED_FILAMENT)
 		for i in range(0, self.tool_count):
-			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
+			if i == loaded_filament:
+				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
+			else:
+				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
 			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
 
 	#####
@@ -550,8 +556,12 @@ class RMMU:
 				return False
 
 		# extruder test
-		if not self.extruder_test(tool):
-			return False
+		if self.make_extruder_test:
+			if not self.extruder_test(tool):
+				return False
+		else:
+			# move filament into cooling zone
+			self.stepper_synced_move(self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
 		# load filament into hotend cooling zone
 		self.gcode.run_script_from_command('_LOAD_FILAMENT_FROM_COOLING_ZONE_TO_NOZZLE TOOLHEAD=0 PURGE=False')
@@ -1469,8 +1479,12 @@ class RMMU:
 		self.select_idler(-1)
 
 	def calibrate_reverse_bowden_length(self):
+		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+			self.ratos_echo("No calibration possible! Filament in hotend detected.")
+			return
+
 		if len(self.parking_t_sensor_endstop) != self.tool_count:
-			self.ratos_echo("No calibration possible! Parking Tx endstops not available!")
+			self.ratos_echo("No calibration possible! Parking Tx endstops not available.")
 			return
 
 		for i in range(0, self.tool_count):
@@ -1479,6 +1493,10 @@ class RMMU:
 				return
 
 		self.ratos_echo("calibrating, please wait...")
+
+		# home if needed
+		if not self.is_homed:
+			self.home()
 
 		calibrated_reverse_bowden_length = []
 		for i in range(0, self.tool_count):
@@ -1543,6 +1561,7 @@ class RMMU:
 
 			# save reverse bowden length
 			self.set_setting(self.VARS_REVERSE_BOWDEN_LENGTH, result)
+			self.ratos_echo("Setting has been saved and is now in use!")
 
 	def ratos_echo(self, msg):
 		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='RMMU' MSG='" + str(msg) + "'")
