@@ -4,7 +4,9 @@ import re
 class RMMU:
 
 	# config file variable names
-	VARS_REVERSE_BOWDEN_LENGTH = "reverse_bowden_length"
+	VARS_LOADED_FILAMENT = "rmmu_loaded_filament"
+	VARS_LOADED_FILAMENT_TEMP = "rmmu_loaded_filament_temp"
+	VARS_REVERSE_BOWDEN_LENGTH = "rmmu_reverse_bowden_length"
 
 	#####
 	# Initialize
@@ -22,6 +24,7 @@ class RMMU:
 		self.filament_changes = 0
 		self.selected_filament = -1
 		self.runout_detected = False
+		self.needs_initial_purge = False
 		self.spool_joins = []
 		self.spool_mapping = []
 		self.start_print_param = None
@@ -74,6 +77,8 @@ class RMMU:
 		self.extruder = self.printer.lookup_object('extruder')
 		self.pause_resume = self.printer.lookup_object('pause_resume')
 		self.v_sd = self.printer.lookup_object('virtual_sdcard', None)
+		self.pheaters = self.printer.lookup_object('heaters')
+		self.heater = self.extruder.get_heater()
 
 		# get stepper
 		self.rmmu_idler = self.printer.lookup_object("manual_stepper rmmu_idler", None)
@@ -111,10 +116,9 @@ class RMMU:
 
 		# mmu config
 		self.tool_count = self.config.getint('tool_count', 4)
-		# self.reverse_bowden_length = self.get_variable(self.VARS_REVERSE_BOWDEN_LENGTH)
-		# if (self.reverse_bowden_length == 0):
-		# 	self.reverse_bowden_length = 500
-		self.reverse_bowden_length = self.config.getfloat('reverse_bowden_length', 400.0)
+		self.reverse_bowden_length = self.get_variable(self.VARS_REVERSE_BOWDEN_LENGTH)
+		if (self.reverse_bowden_length == 0):
+			self.reverse_bowden_length = 500
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
 		self.has_ptfe_adapter = True if self.config.get('has_ptfe_adapter', "false").lower() == "true" else False 
@@ -166,7 +170,8 @@ class RMMU:
 		  'tool_count': self.tool_count,
 		  'is_homed': self.is_homed,
 		  'filament_changes': self.filament_changes,
-		  'selected_filament': self.selected_filament}
+		  'selected_filament': self.selected_filament,
+		  'needs_initial_purge': self.needs_initial_purge}
 
 	def reset(self):
 		# default values
@@ -296,15 +301,34 @@ class RMMU:
 	#####
 	def start_print(self, param):
 		# parameter
+		self.initial_tool = param.get_int('INITIAL_TOOL', None, minval=0, maxval=self.tool_count)
 		self.travel_speed = param.get_int('TRAVEL_SPEED', None, minval=0, maxval=1000)
 		self.travel_accel = param.get_int('TRAVEL_ACCEL', None, minval=0, maxval=100000)
 		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
 		self.start_print_param = param
+		self.needs_initial_purge = False
 
 		# check for filament in hotend
 		self.filament_changes = 0
 		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
-			raise self.printer.command_error("Filament detected in toolhead! Please unload the filament and restart the print.")
+			loaded_filament = self.get_variable(self.VARS_LOADED_FILAMENT)
+			loaded_filament_temp = self.get_variable(self.VARS_LOADED_FILAMENT_TEMP)
+			if loaded_filament >=0 and loaded_filament <= self.tool_count:
+				if loaded_filament != self.initial_tool:
+					self.needs_initial_purge = True
+					if loaded_filament_temp > self.heater.min_extrude_temp and loaded_filament_temp < self.heater.max_extrude_temp:
+						self.ratos_echo("Wrong filament detected in hotend!")
+						self.ratos_echo("Unloading filament T" + str(loaded_filament) + ". Please wait...")
+						self.ratos_echo("Heating up extruder to " + str(loaded_filament_temp) + "°C ! Please wait...")
+						self.extruder_set_temperature(loaded_filament_temp, True)					
+						if not self.unload_filament():
+							self.extruder_set_temperature(0, False)					
+							raise self.printer.command_error("Could not unload filament! Please unload the filament and restart the print.")
+						self.extruder_set_temperature(0, False)					
+					else:
+						raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
+			else:
+				raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 
 		# test if all demanded filaments are available and raises an error if not
 		self.test_filaments(param)
@@ -316,13 +340,6 @@ class RMMU:
 		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
 
 	def end_print(self):
-		# unload filament if still laoded
-		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
-			self.unload_filament()
-
-		# release idler
-		self.select_filament(-1)
-
 		# reset rmmu
 		self.reset()
 
@@ -461,10 +478,14 @@ class RMMU:
 		if not self.is_homed:
 			self.home()
 
+		# reset loaded filament
+		self.set_variable(self.VARS_LOADED_FILAMENT, -1)
+		self.set_variable(self.VARS_LOADED_FILAMENT_TEMP, -1)
+
 		# toolhead filament sensor check
 		self.toolhead_filament_sensor_t0.runout_helper.sensor_enabled = True
 		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
-			if not self.unload_filament(tool):
+			if not self.unload_filament():
 				self.select_idler(-1)
 				self.ratos_echo("Could not unload filament!")
 				return False
@@ -474,8 +495,10 @@ class RMMU:
 				self.ratos_echo("Filament sensor should be triggered but it isnt!")
 				return False
 
-		# load filament to toolhead sensor
+		# select filament
 		self.select_filament(tool)
+
+		# load filament to toolhead sensor
 		if self.parking_sensor_endstop != None:
 			if not self.load_filament_from_parking_position_to_parking_sensor(tool):
 				return False
@@ -510,13 +533,17 @@ class RMMU:
 		# reset runout detection
 		self.runout_detected = False
 
+		# set loaded filament
+		self.set_variable(self.VARS_LOADED_FILAMENT, tool)
+		self.set_variable(self.VARS_LOADED_FILAMENT_TEMP, self.extruder_get_target_temperature())
+
 		# echo
 		self.ratos_echo("Filament T" + str(tool) + " loaded.")
 
 		# success 
 		return True
 
-	def unload_filament(self, next_tool=-1):
+	def unload_filament(self):
 		# echo
 		self.ratos_echo("Unloading filament T" + str(self.selected_filament) + "...")
 
@@ -526,7 +553,7 @@ class RMMU:
 		# select filament 
 		self.select_filament(self.selected_filament)
 
-		# check sensor 
+		# unload filament from cooling zone to reverse bowden 
 		if not self.unload_filament_from_cooling_zone_to_reverse_bowden(self.selected_filament):
 			return False
 
@@ -542,11 +569,12 @@ class RMMU:
 			if not self.unload_filament_from_tx_parking_sensor_to_parking_position(self.selected_filament):
 				return False
 
-		# release idler 
-		self.select_idler(next_tool)
-
 		# update frontend 
 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(self.selected_filament) + " VARIABLE=active VALUE=False")
+
+		# reset loaded filament
+		self.set_variable(self.VARS_LOADED_FILAMENT, -1)
+		self.set_variable(self.VARS_LOADED_FILAMENT_TEMP, -1)
 
 		# echo
 		self.ratos_echo("Filament T" + str(self.selected_filament) + " unloaded!")
@@ -1330,7 +1358,6 @@ class RMMU:
 								self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
 								return
 
-
 			# echo
 			self.ratos_echo("Load new filament T" + str(tool) + " into the hotend and resume the print!")
 
@@ -1477,8 +1504,8 @@ class RMMU:
 			result = result / self.tool_count
 			self.ratos_echo("Average reverse bowden length = " + str(result) + "mm")
 
-			# # save reverse bowden length
-			# self.set_variable(self.VARS_REVERSE_BOWDEN_LENGTH, result)
+			# save reverse bowden length
+			self.set_variable(self.VARS_REVERSE_BOWDEN_LENGTH, result)
 
 	def ratos_echo(self, msg):
 		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='RMMU' MSG='" + str(msg) + "'")
@@ -1518,6 +1545,20 @@ class RMMU:
 	def get_variable(self, variable):
 		return self.printer.lookup_object('save_variables').allVariables.get(variable, None)
 
+	def extruder_get_temperature(self):
+		return self.heater.get_status(self.toolhead.get_last_move_time())['temperature']
+
+	def extruder_get_target_temperature(self):
+		return self.heater.get_status(self.toolhead.get_last_move_time())['target']
+
+	def extruder_set_temperature(self, temperature, wait):
+		self.pheaters.set_temperature(self.heater, temperature, wait)
+
+	def extruder_can_extrude(self):
+		status = self.extruder.get_status(self.toolhead.get_last_move_time())
+		result = status['can_extrude'] 
+		return result
+	
 #####
 # Entry Point
 #####
