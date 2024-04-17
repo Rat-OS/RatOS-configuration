@@ -105,6 +105,7 @@ class RMMU:
 	#####
 	def register_commands(self):
 		self.gcode.register_command('RMMU_HOME', self.cmd_RMMU_HOME, desc=(self.desc_RMMU_HOME))
+		self.gcode.register_command('RMMU_RESET', self.cmd_RMMU_RESET, desc=(self.desc_RMMU_RESET))
 		self.gcode.register_command('RMMU_LOAD_FILAMENT', self.cmd_RMMU_LOAD_FILAMENT, desc=(self.desc_RMMU_LOAD_FILAMENT))
 		self.gcode.register_command('RMMU_MOVE_FILAMENT', self.cmd_RMMU_MOVE_FILAMENT, desc=(self.desc_RMMU_MOVE_FILAMENT))
 		self.gcode.register_command('RMMU_UNLOAD_FILAMENT', self.cmd_RMMU_UNLOAD_FILAMENT, desc=(self.desc_RMMU_UNLOAD_FILAMENT))
@@ -160,6 +161,10 @@ class RMMU:
 	def cmd_RMMU_EJECT_FILAMENT(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.tool_count)
 		self.eject_filaments(tool)
+
+	desc_RMMU_RESET = "Resets the RMMU device."
+	def cmd_RMMU_RESET(self, param):
+		self.reset()
 
 	desc_RMMU_HOME = "Homes the RMMU idler."
 	def cmd_RMMU_HOME(self, param):
@@ -302,9 +307,10 @@ class RMMU:
 		for i in range(0, self.tool_count):
 			if i == loaded_filament:
 				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
+				self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "00FF00" + "\"\'")
 			else:
 				self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
-			self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
+				self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
 
 	#####
 	# Start / End Print
