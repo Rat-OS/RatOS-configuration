@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 cp -f /home/pi/printer_data/config/RatOS/boards/btt-skr-14/firmware.config /home/pi/klipper/.config
-pushd /home/pi/klipper || exit
+pushd /home/pi/klipper
 make olddefconfig
 make clean
 make
