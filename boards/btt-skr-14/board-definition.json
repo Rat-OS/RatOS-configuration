@@ -7,7 +7,7 @@
 	"driverCount": 5,
 	"driverVoltages": [24],
 	"compileScript": "compile.sh",
-	"documentationLink": "https://os.ratrig.com/docs/boards/btt/btt-skr-14-turbo",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/btt-skr-14",
 	"stepperSPI": {
 		"software": {
 			"sclk": "P0.4",
