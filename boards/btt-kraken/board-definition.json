@@ -25,7 +25,7 @@
 	},
 	"ADXL345SPI": {
 		"cs_pin": "PE10",
-		"spi_bus": "spi4"
+		"spi_bus": "spi4",
 		"software": {
 			"sclk": "PE12",
 			"mosi": "PE14",
