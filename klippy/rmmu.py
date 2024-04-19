@@ -330,6 +330,9 @@ class RMMU:
 		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
 		self.start_print_param = param
 
+		# handle toolhead mapping
+		self.initial_tool = self.get_remapped_toolhead(self.initial_tool)
+
 		# home if needed
 		if not self.is_homed:
 			self.home()
