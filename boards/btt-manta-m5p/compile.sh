@@ -14,6 +14,6 @@ then
     mkdir /home/pi/printer_data/config/firmware_binaries
     chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-manta-m4p.bin
-chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-manta-m4p.bin
+cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-manta-m5p.bin
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-manta-m5p.bin
 popd || exit
