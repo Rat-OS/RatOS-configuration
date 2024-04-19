@@ -17,6 +17,7 @@ class RMMU:
 		# rmmu default status
 		self.is_homed = False
 		self.filament_changes = 0
+		self.initial_tool = -1
 		self.runout_detected = False
 		self.spool_joins = []
 		self.spool_mapping = []
@@ -299,6 +300,7 @@ class RMMU:
 		  'tool_count': self.tool_count,
 		  'is_homed': self.is_homed,
 		  'filament_changes': self.filament_changes,
+		  'initial_tool': self.initial_tool,
 		  'loaded_filament': self.get_setting(self.VARS_LOADED_FILAMENT),
 		  'loaded_filament_temp': self.get_setting(self.VARS_LOADED_FILAMENT_TEMP)}
 
