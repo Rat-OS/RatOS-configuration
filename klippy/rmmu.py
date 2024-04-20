@@ -1498,6 +1498,7 @@ class RMMU:
 		tool = param.get_int('TOOLHEAD', None, minval=0, maxval=self.tool_count)
 		move = param.get_int('MOVE', 50)
 		speed = param.get_int('SPEED', 10)
+		accel = param.get_int('ACCEL', 100)
 		sync = param.get_int('SYNC_EXTRUDER', None, minval=0, maxval=1)
 
 		# home if needed
@@ -1510,9 +1511,9 @@ class RMMU:
 		# move 
 		self.rmmu_pulley.do_set_position(0.0)
 		if sync == 1:
-			self.stepper_synced_move(move, speed, 250)
+			self.stepper_synced_move(move, speed, accel)
 		else:
-			self.stepper_move(self.rmmu_pulley, move, True, speed, 250)
+			self.stepper_move(self.rmmu_pulley, move, True, speed, accel)
 
 		# release idler
 		self.select_filament(-1)
