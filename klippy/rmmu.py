@@ -441,7 +441,6 @@ class RMMU:
 
 				# home filament
 				if self.home_filament(i):
-					self.ratos_echo("Filament T" + str(i) + " homed!")
 					self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "00FF00" + "\"\'")
 				else:
 					self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
