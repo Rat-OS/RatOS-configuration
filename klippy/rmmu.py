@@ -1345,7 +1345,7 @@ class RMMU:
 		if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
 			self.ratos_echo("Parking sensor T" + str(tool) + " triggered! Can not perform insert action.")
 			return
-		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
+		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0) and self.start_print_param != None:
 			self.ratos_echo("Toolhead Filament sensor triggered! Can not perform insert action.")
 			return
 
@@ -1380,22 +1380,23 @@ class RMMU:
 		if not self.unload_filament_from_tx_parking_sensor_to_parking_position(tool):
 			return
 
-		# pause_resume.send_pause_command()
-		if self.pause_resume.is_paused and self.runout_detected:
-			# move filament into the toolhead sensor
-			if not self.load_filament_from_parking_sensor_to_toolhead_sensor(tool):
-				return
+		# auto load filament into toolhead in case of a ongoing print
+		if self.start_print_param != None:
+			if self.pause_resume.is_paused and self.runout_detected:
+				# move filament into the toolhead sensor
+				if not self.load_filament_from_parking_sensor_to_toolhead_sensor(tool):
+					return
 
-			# retract filament from the toolhead sensor bc filament loading expects it to be at this position
-			if not self.unload_filament_from_toolhead_sensor_to_reverse_bowden(tool):
-				return
+				# retract filament from the toolhead sensor bc filament loading expects it to be at this position
+				if not self.unload_filament_from_toolhead_sensor_to_reverse_bowden(tool):
+					return
 
-			# load filament
-			if not self.load_filament(tool):
-				return
+				# load filament
+				if not self.load_filament(tool):
+					return
 
-			# run after filament insert macro
-			self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
+				# run after filament insert macro
+				self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
 
 		# reset runout detection
 		self.runout_detected = False
