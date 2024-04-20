@@ -19,6 +19,7 @@ class RMMU:
 		self.filament_changes = 0
 		self.initial_tool = -1
 		self.runout_detected = False
+		self.needs_initial_purging = False
 		self.spool_joins = []
 		self.spool_mapping = []
 		self.start_print_param = None
@@ -301,6 +302,7 @@ class RMMU:
 		  'is_homed': self.is_homed,
 		  'filament_changes': self.filament_changes,
 		  'initial_tool': self.initial_tool,
+		  'needs_initial_purging': self.needs_initial_purging,
 		  'loaded_filament': self.get_setting(self.VARS_LOADED_FILAMENT),
 		  'loaded_filament_temp': self.get_setting(self.VARS_LOADED_FILAMENT_TEMP)}
 
@@ -310,6 +312,7 @@ class RMMU:
 		self.filament_changes = 0
 		self.runout_detected = False
 		self.start_print_param = None
+		self.needs_initial_purging = False
 
 		# update frontend
 		loaded_filament = self.get_setting(self.VARS_LOADED_FILAMENT)
@@ -341,6 +344,7 @@ class RMMU:
 
 		# check for filament in hotend
 		self.filament_changes = 0
+		self.needs_initial_purging = True
 		if self.is_sensor_triggered(self.toolhead_filament_sensor_t0):
 			loaded_filament = self.get_setting(self.VARS_LOADED_FILAMENT)
 			loaded_filament_temp = self.get_setting(self.VARS_LOADED_FILAMENT_TEMP)
@@ -372,6 +376,9 @@ class RMMU:
 						self.extruder_set_temperature(0, False)					
 					else:
 						raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
+				else:
+					# tell RatOS that initial purging is not needed
+					self.needs_initial_purging = False
 			else:
 				raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 
