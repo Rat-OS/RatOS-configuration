@@ -17,7 +17,8 @@
 			"Press and hold the BOOT 0 button on the board.",
 			"Press and release the RESET button on the board.",
 			"Release the BOOT  button."
-		]
+		],
+		"hasBoot0Jumper": false
 	},
 	"motorSlots": {
 		"HV-STEPPER-0": {
