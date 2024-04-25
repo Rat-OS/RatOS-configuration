@@ -31,4 +31,5 @@ set -xe
 
 verify_ready
 disable_modem_manager
+patch_klipperscreen_service_restarts
 symlink_extensions
