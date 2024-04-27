@@ -60,7 +60,7 @@ def process_file(args, sourcefile):
 		start_print_line = 0
 		file_has_changed = False
 		wipe_accel = 0
-		tools_usage = []
+		used_tools = []
 		for line in range(len(lines)):
 
 			# get slicer profile settings
@@ -85,14 +85,14 @@ def process_file(args, sourcefile):
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 					# add initial tool to the list if not already added
-					if len(tools_usage) == 0:
+					if len(used_tools) == 0:
 						index = lines[start_print_line].rstrip().find("INITIAL_TOOL=")
 						if index != -1:
-							tools_usage.append(lines[start_print_line].rstrip()[index + len("INITIAL_TOOL="):].split()[0])
+							used_tools.append(lines[start_print_line].rstrip()[index + len("INITIAL_TOOL="):].split()[0])
 					# add Tx to the list if not already added
 					t = lines[line].rstrip()[1:]
-					if t not in tools_usage:
-						tools_usage.append(t)
+					if t not in used_tools:
+						used_tools.append(t)
 
 			# get first XY coordinates
 			if start_print_line > 0 and first_x < 0 and first_y < 0:
@@ -248,9 +248,9 @@ def process_file(args, sourcefile):
 			if min_x < 1000:
 				file_has_changed = True
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' MIN_X=' + str(min_x) + ' MAX_X=' + str(max_x) + '\n'
-			if len(tools_usage) > 0:
+			if len(used_tools) > 0:
 				file_has_changed = True
-				lines[start_print_line] = lines[start_print_line].rstrip() + ' TOOLS_USAGE=' + ','.join(tools_usage) + '\n'
+				lines[start_print_line] = lines[start_print_line].rstrip() + ' USED_TOOLS=' + ','.join(used_tools) + '\n'
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' WIPE_ACCEL=' + str(wipe_accel) + '\n'
 
 		# save file if it has changed 

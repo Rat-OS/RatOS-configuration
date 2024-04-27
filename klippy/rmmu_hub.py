@@ -23,7 +23,6 @@ class RMMU_Hub:
 		self.mapping = {}
 		self.mode = "multi"
 		self.total_tool_count = 0
-		self.initial_filament = 0
 
 		self.register_commands()
 		self.register_handler()
@@ -165,7 +164,6 @@ class RMMU_Hub:
 	def get_status(self, eventtime):
 		return {'name': self.name,
 		  'mode': self.mode,
-		  'initial_filament': self.initial_filament,
 		  'total_tool_count': self.total_tool_count,
 		  'mapping': self.mapping}
 
@@ -174,82 +172,129 @@ class RMMU_Hub:
 	#####
 	def start_print(self, param):
 		# parameter
-		self.initial_filament = param.get_int('INITIAL_TOOL', None, minval=0, maxval=self.total_tool_count)
-		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
 		self.start_print_param = param
+		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
+		used_tools = []
+		try:
+			used_tools = [int(v.strip()) for v in str(param.get('USED_TOOLS', None)).split(',')]
+		except:
+			raise self.printer.command_error("Unable to parse START_PRINT parameter USED_TOOLS.")
+		if len(used_tools) == 0:
+			raise self.printer.command_error("Unable to parse START_PRINT parameter USED_TOOLS.")
 
-		# handle toolhead mapping
-		# self.initial_filament = self.get_remapped_toolhead(self.initial_filament)
+		# home needed RMMUs
+		for t in used_tools:
+			physical_toolhead = int(self.mapping[str(t)]["TOOLHEAD"])
+			if not self.rmmu[physical_toolhead].is_homed:
+				self.rmmu[physical_toolhead].home()
 
-		# home RMMUs
-		for rmmu in self.rmmu:
-			rmmu.home()
-
-		# # get used physical toolheads
-		# used_toolheads = []
-		# for t in range(0, self.total_tool_count):
-		# 	if param.get('T' + str(t), "true") == "true":
-		# 		if not t in used_toolheads:
-		# 			used_toolheads.append(t)
-		# self.ratos_echo("used_toolheads: " + str(used_toolheads))
-
-		# get initial RMMU and tool
-		rmmu = self.rmmu[0]
-		rmmu_tool = self.initial_filament
-		if rmmu_tool >= self.rmmu[0].tool_count:
-			rmmu = self.rmmu[1]
-			rmmu_tool = rmmu_tool - self.rmmu[0].tool_count
+		# get used physical toolheads
+		used_toolheads = []
+		for t in used_tools:
+			physical_toolhead = int(self.mapping[str(t)]["TOOLHEAD"])
+			if physical_toolhead not in used_toolheads:
+				used_toolheads.append(physical_toolhead)
 
 		# check for filament in hotend
-		rmmu.needs_initial_purging = True
-		if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
-			loaded_filament = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament']
-			loaded_filament_temp = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament_temp']
-			if loaded_filament >=0 and loaded_filament <= self.total_tool_count:
-				if loaded_filament != rmmu_tool:
-					if loaded_filament_temp > rmmu.heater.min_extrude_temp and loaded_filament_temp < rmmu.heater.max_temp:
-						# unloaded the filament that is already loaded
-						self.ratos_echo("Wrong filament detected in hotend!")
-						self.ratos_echo("Unloading filament T" + str(loaded_filament) + "! Please wait...")
+		for physical_toolhead in used_toolheads:
+			initial_tool = -1
+			for t in used_tools:
+				if physical_toolhead == int(self.mapping[str(t)]["TOOLHEAD"]):
+					initial_tool = int(self.mapping[str(t)]["FILAMENT"])
+					break
+			# handle toolhead mapping
+			# self.initial_filament = self.get_remapped_toolhead(self.initial_filament)
+			rmmu = self.rmmu[physical_toolhead]
+			rmmu.initial_filament = initial_tool
+			rmmu.needs_initial_purging = True
+			if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
+				loaded_filament = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament']
+				loaded_filament_temp = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament_temp']
+				if loaded_filament >=0 and loaded_filament <= self.total_tool_count:
+					if loaded_filament != rmmu.initial_filament:
+						if loaded_filament_temp > rmmu.heater.min_extrude_temp and loaded_filament_temp < rmmu.heater.max_temp:
+							# unloaded the filament that is already loaded
+							self.ratos_echo("Wrong filament detected in hotend!")
+							self.ratos_echo("Unloading filament T" + str(loaded_filament) + "! Please wait...")
 
-						# start heating up extruder but dont wait for it so we can save some time
-						self.ratos_echo("Preheating extruder to " + str(loaded_filament_temp) + "°C.")
-						rmmu.extruder_set_temperature(loaded_filament_temp, False)
+							# start heating up extruder but dont wait for it so we can save some time
+							self.ratos_echo("Preheating extruder to " + str(loaded_filament_temp) + "°C.")
+							rmmu.extruder_set_temperature(loaded_filament_temp, False)
 
-						# home printer if needed and move toolhead to its parking position
-						self.gcode.run_script_from_command('MAYBE_HOME')
-						if rmmu_tool >= self.rmmu[0].tool_count:
-							self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=1')
-						else:
-							self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=0')
+							# home printer if needed and move toolhead to its parking position
+							self.gcode.run_script_from_command('MAYBE_HOME')
+							if rmmu.initial_filament >= self.rmmu[0].tool_count:
+								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=1')
+							else:
+								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=0')
 
-						# wait for the extruder to heat up
-						self.ratos_echo("Heating up extruder to " + str(loaded_filament_temp) + "°C! Please wait...")
-						rmmu.extruder_set_temperature(loaded_filament_temp, True)					
+							# wait for the extruder to heat up
+							self.ratos_echo("Heating up extruder to " + str(loaded_filament_temp) + "°C! Please wait...")
+							rmmu.extruder_set_temperature(loaded_filament_temp, True)					
 
-						# unload filament
-						if not rmmu.unload_filament(loaded_filament):
+							# unload filament
+							if not rmmu.unload_filament(loaded_filament):
+								rmmu.extruder_set_temperature(0, False)					
+								raise self.printer.command_error("Could not unload filament! Please unload the filament and restart the print.")
+
+							# cool down extruder, dont wait for it
 							rmmu.extruder_set_temperature(0, False)					
-							raise self.printer.command_error("Could not unload filament! Please unload the filament and restart the print.")
-
-						# cool down extruder, dont wait for it
-						rmmu.extruder_set_temperature(0, False)					
+						else:
+							raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 					else:
-						raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
+						# tell RatOS that initial purging is not needed
+						rmmu.needs_initial_purging = False
 				else:
-					# tell RatOS that initial purging is not needed
-					rmmu.needs_initial_purging = False
-			else:
-				raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
+					raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 
-		# # test if all demanded filaments are available and raises an error if not
-		# rmmu.test_filaments(param)
+			# disable toolhead filament sensor
+			rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
 
-		# disable toolhead filament sensor
-		rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
+		# test if all demanded filaments are available and raises an error if not
+		self.test_filaments(used_tools)
 
 		# call RatOS start print gcode macro
 		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
+
+	#####
+	# Filament presence check
+ 	#####
+	def test_filaments(self, used_tools):
+		# echo
+		self.ratos_echo("Testing needed filaments...")
+
+		# test filaments
+		for filament in used_tools:
+			rmmu_filament = int(self.mapping[str(filament)]["FILAMENT"])
+			# filament = self.get_remapped_toolhead(filament)
+			physical_toolhead = int(self.mapping[str(filament)]["TOOLHEAD"])
+			rmmu = self.rmmu[physical_toolhead]
+			self.ratos_echo("Testing filament T" + str(filament) + "...")
+			if not rmmu.test_filament(rmmu_filament):
+				self.ratos_echo("Filament T" + str(filament) + " not found!")
+				rmmu.select_filament(-1)
+				raise self.printer.command_error("Can not start print because Filament T" + str(filament) + " is not available!")
+
+		# release idler
+		if len(rmmu.parking_t_sensor_endstop) != rmmu.tool_count:
+			rmmu.select_filament(-1)
+
+		# echo
+		self.ratos_echo("All needed filaments available!")
+
+		# # testing spool join
+		# if len(self.spool_joins) > 0:
+		# 	self.ratos_echo("Validating spool join...")
+		# 	for spool_join in self.spool_joins:
+		# 		counter = 0
+		# 		for spool in spool_join:
+		# 			for i in range(0, self.tool_count):
+		# 				if param.get('T' + str(i), "true") == "true":
+		# 					if spool == i:
+		# 						counter += 1
+		# 		if counter > 1:
+		# 			raise self.printer.command_error("Can not start print because joined spools are part of the print!")
+		# 	self.ratos_echo("Spool join validated!")
 
 	#####
 	# Change Filament

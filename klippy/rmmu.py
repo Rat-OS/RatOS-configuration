@@ -66,6 +66,7 @@ class RMMU:
 		# rmmu default status
 		self.is_homed = False
 		self.runout_detected = False
+		self.initial_filament = -1
 		self.needs_initial_purging = False
 		self.spool_joins = []
 		self.spool_mapping = []
@@ -212,6 +213,7 @@ class RMMU:
 		return {'name': self.name,
 		  'tool_count': self.tool_count,
 		  'is_homed': self.is_homed,
+		  'initial_filament': self.initial_filament,
 		  'needs_initial_purging': self.needs_initial_purging,
 		  'loaded_filament': self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT),
 		  'loaded_filament_temp': self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP)}
@@ -221,6 +223,7 @@ class RMMU:
 		self.is_homed = False
 		self.runout_detected = False
 		self.start_print_param = None
+		self.initial_filament = -1
 		self.needs_initial_purging = False
 
 		# # update frontend
@@ -832,57 +835,13 @@ class RMMU:
 	#####
 	# Filament presence check
  	#####
-	def test_filaments(self, param):
-		# echo
-		self.ratos_echo("Testing needed filaments...")
-
-		# home if needed
-		if not self.is_homed and len(self.parking_t_sensor_endstop) != self.tool_count:
-			self.home()
-
-		# test filaments
-		for i in range(0, self.tool_count):
-			toolhead_used = param.get('T' + str(i), "true") 
-			if toolhead_used == "true":
-				toolhead = self.get_remapped_toolhead(i)
-				if not self.test_filament(toolhead):
-					self.select_filament(-1)
-					raise self.printer.command_error("Can not start print because Filament T" + str(toolhead) + " is not available!")
-
-		# release idler
-		if len(self.parking_t_sensor_endstop) != self.tool_count:
-			self.select_filament(-1)
-
-		# echo
-		self.ratos_echo("All needed filaments available!")
-
-		# testing spool join
-		if len(self.spool_joins) > 0:
-			self.ratos_echo("Validating spool join...")
-			for spool_join in self.spool_joins:
-				counter = 0
-				for spool in spool_join:
-					for i in range(0, self.tool_count):
-						if param.get('T' + str(i), "true") == "true":
-							if spool == i:
-								counter += 1
-				if counter > 1:
-					raise self.printer.command_error("Can not start print because joined spools are part of the print!")
-			self.ratos_echo("Spool join validated!")
-
 	def test_filament(self, filament):
-		# echo
-		self.ratos_echo("Testing filament T" + str(filament) + "...")
-
-		# test filament
 		if len(self.parking_t_sensor_endstop) == self.tool_count or len(self.feeder_filament_sensors) == self.tool_count:
 			if len(self.parking_t_sensor_endstop) == self.tool_count:
 				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[filament]):
-					self.ratos_echo("Filament T" + str(filament) + " not detected!")
 					return False
 			if len(self.feeder_filament_sensors) == self.tool_count:
 				if not self.is_sensor_triggered(self.feeder_filament_sensors[filament]):
-					self.ratos_echo("Filament T" + str(filament) + " runout detected!")
 					return False
 			return True
 		else:
