@@ -65,10 +65,6 @@ def process_file(args, sourcefile):
 			if start_print_line == 0:
 				if lines[line].rstrip().startswith("START_PRINT"):
 					start_print_line = line
-					# fix color variable format
-					if "#" in lines[start_print_line].rstrip():
-						file_has_changed = True
-						lines[start_print_line] = lines[start_print_line].rstrip().replace("#", "") + '\n'
 
 			# count toolshifts
 			if start_print_line > 0:
