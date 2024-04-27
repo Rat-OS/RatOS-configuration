@@ -197,58 +197,55 @@ class RMMU_Hub:
 
 		# check for filament in hotend
 		for physical_toolhead in used_toolheads:
-			initial_tool = -1
 			for t in used_tools:
 				if physical_toolhead == int(self.mapping[str(t)]["TOOLHEAD"]):
-					initial_tool = int(self.mapping[str(t)]["FILAMENT"])
+					self.rmmu[physical_toolhead].initial_filament = t
 					break
 			# handle toolhead mapping
 			# self.initial_filament = self.get_remapped_toolhead(self.initial_filament)
-			rmmu = self.rmmu[physical_toolhead]
-			rmmu.initial_filament = initial_tool
-			rmmu.needs_initial_purging = True
-			if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
-				loaded_filament = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament']
-				loaded_filament_temp = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament_temp']
+			self.rmmu[physical_toolhead].needs_initial_purging = True
+			if self.rmmu[physical_toolhead].is_sensor_triggered(self.rmmu[physical_toolhead].toolhead_filament_sensor):
+				loaded_filament = self.rmmu[physical_toolhead].get_status(self.toolhead.get_last_move_time())['loaded_filament']
+				loaded_filament_temp = self.rmmu[physical_toolhead].get_status(self.toolhead.get_last_move_time())['loaded_filament_temp']
 				if loaded_filament >=0 and loaded_filament <= self.total_tool_count:
-					if loaded_filament != rmmu.initial_filament:
-						if loaded_filament_temp > rmmu.heater.min_extrude_temp and loaded_filament_temp < rmmu.heater.max_temp:
+					if loaded_filament != self.rmmu[physical_toolhead].initial_filament:
+						if loaded_filament_temp > self.rmmu[physical_toolhead].heater.min_extrude_temp and loaded_filament_temp < self.rmmu[physical_toolhead].heater.max_temp:
 							# unloaded the filament that is already loaded
 							self.ratos_echo("Wrong filament detected in hotend!")
 							self.ratos_echo("Unloading filament T" + str(loaded_filament) + "! Please wait...")
 
 							# start heating up extruder but dont wait for it so we can save some time
 							self.ratos_echo("Preheating extruder to " + str(loaded_filament_temp) + "°C.")
-							rmmu.extruder_set_temperature(loaded_filament_temp, False)
+							self.rmmu[physical_toolhead].extruder_set_temperature(loaded_filament_temp, False)
 
 							# home printer if needed and move toolhead to its parking position
 							self.gcode.run_script_from_command('MAYBE_HOME')
-							if rmmu.initial_filament >= self.rmmu[0].tool_count:
+							if self.rmmu[physical_toolhead].initial_filament >= self.rmmu[0].tool_count:
 								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=1')
 							else:
 								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=0')
 
 							# wait for the extruder to heat up
 							self.ratos_echo("Heating up extruder to " + str(loaded_filament_temp) + "°C! Please wait...")
-							rmmu.extruder_set_temperature(loaded_filament_temp, True)					
+							self.rmmu[physical_toolhead].extruder_set_temperature(loaded_filament_temp, True)					
 
 							# unload filament
-							if not rmmu.unload_filament(loaded_filament):
-								rmmu.extruder_set_temperature(0, False)					
+							if not self.rmmu[physical_toolhead].unload_filament(loaded_filament):
+								self.rmmu[physical_toolhead].extruder_set_temperature(0, False)					
 								raise self.printer.command_error("Could not unload filament! Please unload the filament and restart the print.")
 
 							# cool down extruder, dont wait for it
-							rmmu.extruder_set_temperature(0, False)					
+							self.rmmu[physical_toolhead].extruder_set_temperature(0, False)					
 						else:
 							raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 					else:
 						# tell RatOS that initial purging is not needed
-						rmmu.needs_initial_purging = False
+						self.rmmu[physical_toolhead].rmmu[physical_toolhead].needs_initial_purging = False
 				else:
 					raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 
 			# disable toolhead filament sensor
-			rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
+			self.rmmu[physical_toolhead].toolhead_filament_sensor.runout_helper.sensor_enabled = False
 
 		# test if all demanded filaments are available and raises an error if not
 		self.test_filaments(used_tools)

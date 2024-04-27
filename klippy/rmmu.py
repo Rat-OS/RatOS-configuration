@@ -520,7 +520,7 @@ class RMMU:
 
 	def load_filament_from_parking_sensor_to_toolhead_sensor(self, tool):
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + " from parking sensor to parking position...")
+		self.ratos_echo("Loading filament T" + str(tool) + " from parking sensor to toolhead sensor...")
 
 		# enable toolhead sensor endstop
 		self.set_pulley_endstop(self.toolhead_sensor_endstop)
@@ -546,7 +546,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded to parking position!")
+		self.ratos_echo("Filament T" + str(tool) + " loaded to toolhead sensor!")
 
 		# success
 		return True
