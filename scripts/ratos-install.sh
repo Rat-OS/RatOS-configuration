@@ -50,4 +50,5 @@ register_gcode_shell_command
 register_ratos_homing
 register_z_offset_probe
 register_rmmu
+register_rmmu_hub
 register_resonance_generator

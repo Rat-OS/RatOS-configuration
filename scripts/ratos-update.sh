@@ -58,6 +58,7 @@ install_hooks
 ensure_node_18
 register_z_offset_probe
 register_rmmu
+register_rmmu_hub
 register_resonance_generator
 symlink_extensions
 restart_configurator

@@ -59,21 +59,40 @@ def process_file(args, sourcefile):
 		tower_line = -1
 		start_print_line = 0
 		file_has_changed = False
+		wipe_accel = 0
+		tools_usage = []
 		for line in range(len(lines)):
 
-			# get the start_print line number and fix color variable format
-			if start_print_line == 0:
-				if lines[line].rstrip().startswith("START_PRINT"):
-					start_print_line = line
-					# fix color variable format
-					if "#" in lines[start_print_line].rstrip():
-						file_has_changed = True
-						lines[start_print_line] = lines[start_print_line].rstrip().replace("#", "") + '\n'
+			# get slicer profile settings
+			if wipe_accel == 0:
+				if lines[line].rstrip().startswith("; wipe_tower_acceleration = "):
+					wipe_accel = int(lines[line].rstrip().replace("; wipe_tower_acceleration = ", ""))
 
-			# count toolshifts
+			# get the start_print line number
+			if start_print_line == 0:
+				if lines[line].rstrip().startswith("START_PRINT") or lines[line].rstrip().startswith("RMMU_START_PRINT"):
+					start_print_line = line
+
+			# count IDEX toolshifts
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T0") or lines[line].rstrip().startswith("T1"):
+					if toolshift_count == 0:
+						# remove first toolchange
+						lines[line] = ''
 					toolshift_count += 1
+
+			# get first tools usage in order
+			if start_print_line > 0:
+				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
+					# add initial tool to the list if not already added
+					if len(tools_usage) == 0:
+						index = lines[start_print_line].rstrip().find("INITIAL_TOOL=")
+						if index != -1:
+							tools_usage.append(lines[start_print_line].rstrip()[index + len("INITIAL_TOOL="):].split()[0])
+					# add Tx to the list if not already added
+					t = lines[line].rstrip()[1:]
+					if t not in tools_usage:
+						tools_usage.append(t)
 
 			# get first XY coordinates
 			if start_print_line > 0 and first_x < 0 and first_y < 0:
@@ -118,7 +137,7 @@ def process_file(args, sourcefile):
 
 			# toolshift processing
 			if start_print_line > 0:
-				if lines[line].rstrip().startswith("T0") or lines[line].rstrip().startswith("T1"):
+				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 
 					# purge tower
 					if tower_line == -1:
@@ -144,7 +163,7 @@ def process_file(args, sourcefile):
 					# toolchange line
 					toolchange_line = 0
 					for i2 in range(20):
-						if lines[line + i2].rstrip().startswith("T0") or lines[line + i2].rstrip().startswith("T1"):
+						if lines[line + i2].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 							toolchange_line = line + i2
 							break
 
@@ -204,7 +223,7 @@ def process_file(args, sourcefile):
 							print("Z-Drop removed           " + lines[zdrop_line].rstrip())
 							lines[zdrop_line] = '; Z-Drop removed by RatOS IDEX Postprocessor: ' + lines[zdrop_line].rstrip() + '\n'
 
-						new_toolchange_gcode = (lines[toolchange_line].rstrip() + ' ' + move_x + ' ' + move_y + ' ' + move_z).rstrip()
+						new_toolchange_gcode = ('TOOL T=' + lines[toolchange_line].rstrip().replace("T", "") + ' ' + move_x.replace("X", "X=") + ' ' + move_y.replace("Y", "Y=") + ' ' + move_z.replace("Z", "Z=")).rstrip()
 						print('parameter added          ' + new_toolchange_gcode)
 						lines[toolchange_line] = new_toolchange_gcode + '\n'
 						print('Horizontal move removed  ' + lines[move_line].rstrip().replace("  ", " "))
@@ -229,6 +248,10 @@ def process_file(args, sourcefile):
 			if min_x < 1000:
 				file_has_changed = True
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' MIN_X=' + str(min_x) + ' MAX_X=' + str(max_x) + '\n'
+			if len(tools_usage) > 0:
+				file_has_changed = True
+				lines[start_print_line] = lines[start_print_line].rstrip() + ' TOOLS_USAGE=' + ','.join(tools_usage) + '\n'
+				lines[start_print_line] = lines[start_print_line].rstrip() + ' WIPE_ACCEL=' + str(wipe_accel) + '\n'
 
 		# save file if it has changed 
 		if file_has_changed:
