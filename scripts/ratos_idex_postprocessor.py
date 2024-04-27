@@ -73,9 +73,9 @@ def process_file(args, sourcefile):
 				if lines[line].rstrip().startswith("START_PRINT") or lines[line].rstrip().startswith("RMMU_START_PRINT"):
 					start_print_line = line
 
-			# count IDEX toolshifts
+			# count toolshifts
 			if start_print_line > 0:
-				if lines[line].rstrip().startswith("T0") or lines[line].rstrip().startswith("T1"):
+				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 					if toolshift_count == 0:
 						# remove first toolchange
 						lines[line] = ''
@@ -212,7 +212,7 @@ def process_file(args, sourcefile):
 								break
 
 					# make toolshift changes
-					if toolshift_count > 1 and toolchange_line > 0 and move_line > 0:
+					if toolshift_count > 0 and toolchange_line > 0 and move_line > 0:
 						file_has_changed = True
 
 						if zhop_line > 0:

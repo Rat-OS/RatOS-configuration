@@ -199,6 +199,7 @@ class RMMU_Hub:
 		for physical_toolhead in used_toolheads:
 			for t in used_tools:
 				if physical_toolhead == int(self.mapping[str(t)]["TOOLHEAD"]):
+					self.rmmu[physical_toolhead].in_use = True
 					self.rmmu[physical_toolhead].initial_filament = t
 					break
 			# handle toolhead mapping
@@ -207,8 +208,9 @@ class RMMU_Hub:
 			if self.rmmu[physical_toolhead].is_sensor_triggered(self.rmmu[physical_toolhead].toolhead_filament_sensor):
 				loaded_filament = self.rmmu[physical_toolhead].get_status(self.toolhead.get_last_move_time())['loaded_filament']
 				loaded_filament_temp = self.rmmu[physical_toolhead].get_status(self.toolhead.get_last_move_time())['loaded_filament_temp']
+				initial_filament = int(self.mapping[str(self.rmmu[physical_toolhead].initial_filament)]["FILAMENT"])
 				if loaded_filament >=0 and loaded_filament <= self.total_tool_count:
-					if loaded_filament != self.rmmu[physical_toolhead].initial_filament:
+					if loaded_filament != initial_filament:
 						if loaded_filament_temp > self.rmmu[physical_toolhead].heater.min_extrude_temp and loaded_filament_temp < self.rmmu[physical_toolhead].heater.max_temp:
 							# unloaded the filament that is already loaded
 							self.ratos_echo("Wrong filament detected in hotend!")
@@ -220,7 +222,7 @@ class RMMU_Hub:
 
 							# home printer if needed and move toolhead to its parking position
 							self.gcode.run_script_from_command('MAYBE_HOME')
-							if self.rmmu[physical_toolhead].initial_filament >= self.rmmu[0].tool_count:
+							if initial_filament >= self.rmmu[0].tool_count:
 								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=1')
 							else:
 								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=0')
@@ -240,7 +242,7 @@ class RMMU_Hub:
 							raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 					else:
 						# tell RatOS that initial purging is not needed
-						self.rmmu[physical_toolhead].rmmu[physical_toolhead].needs_initial_purging = False
+						self.rmmu[physical_toolhead].needs_initial_purging = False
 				else:
 					raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 

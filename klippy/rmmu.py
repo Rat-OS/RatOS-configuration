@@ -64,6 +64,7 @@ class RMMU:
 		self.name = config.get_name().split()[-1]
 
 		# rmmu default status
+		self.in_use = False
 		self.is_homed = False
 		self.runout_detected = False
 		self.initial_filament = -1
@@ -213,13 +214,15 @@ class RMMU:
 		return {'name': self.name,
 		  'tool_count': self.tool_count,
 		  'is_homed': self.is_homed,
+		  'in_use': self.in_use,
 		  'initial_filament': self.initial_filament,
 		  'needs_initial_purging': self.needs_initial_purging,
-		  'loaded_filament': self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT),
+		  'loaded_filament': self.get_loaded_filament(),
 		  'loaded_filament_temp': self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP)}
 
 	def reset(self):
 		# default values
+		self.in_use = False
 		self.is_homed = False
 		self.runout_detected = False
 		self.start_print_param = None
@@ -227,7 +230,7 @@ class RMMU:
 		self.needs_initial_purging = False
 
 		# # update frontend
-		# loaded_filament = self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT)
+		# loaded_filament = self.get_loaded_filament()
 		# for i in range(0, self.tool_count):
 		# 	if i == loaded_filament:
 		# 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
@@ -1176,7 +1179,7 @@ class RMMU:
 		if clogged != "true":
 
 			# unload filament
-			loaded_filament = self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT)
+			loaded_filament = self.get_loaded_filament()
 			if not self.unload_filament(loaded_filament):
 				# echo
 				self.ratos_echo("Can not eject filament because it couldnt be unloaded!")
@@ -1248,6 +1251,11 @@ class RMMU:
 	#####
 	# Helper
 	#####
+	def get_loaded_filament(self):
+		if self.is_sensor_triggered(self.toolhead_filament_sensor):
+			return self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT)
+		return -1
+
 	def move_filament(self, tool, move, speed, accel, sync):
 		# home if needed
 		if not self.is_homed:
