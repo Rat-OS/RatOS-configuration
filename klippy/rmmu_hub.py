@@ -35,6 +35,7 @@ class RMMU_Hub:
 
 	def _connect(self):
 		self.toolhead = self.printer.lookup_object('toolhead')
+		self.dual_carriage = self.printer.lookup_object("dual_carriage", None)
 		self.rmmu = []
 		self.mapping = {}
 		start_tool_count = 0
@@ -174,83 +175,166 @@ class RMMU_Hub:
 		# parameter
 		self.start_print_param = param
 		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
-		used_tools = []
-		try:
-			used_tools = [int(v.strip()) for v in str(param.get('USED_TOOLS', None)).split(',')]
-		except:
-			raise self.printer.command_error("Unable to parse START_PRINT parameter USED_TOOLS.")
-		if len(used_tools) == 0:
-			raise self.printer.command_error("Unable to parse START_PRINT parameter USED_TOOLS.")
+		self.extruder_temp = [param.get_int('EXTRUDER_TEMP', None), param.get_int('EXTRUDER_TEMP_1', None)]
+		logical_tools = []
+		if param.get('USED_TOOLS', None) != None:
+			try:
+				logical_tools = [int(v.strip()) for v in str(param.get('USED_TOOLS', None)).split(',')]
+			except:
+				raise self.printer.command_error("Unable to parse START_PRINT parameter USED_TOOLS.")
 
-		# home needed RMMUs
-		for t in used_tools:
-			physical_toolhead = int(self.mapping[str(t)]["TOOLHEAD"])
-			if not self.rmmu[physical_toolhead].is_homed:
-				self.rmmu[physical_toolhead].home()
+		if len(logical_tools) == 0:
+			# home all RMMUs to make sure the idler is released
+			for rmmu in self.rmmu:
+				if not rmmu.is_homed:
+					rmmu.home()
 
-		# get used physical toolheads
-		used_toolheads = []
-		for t in used_tools:
-			physical_toolhead = int(self.mapping[str(t)]["TOOLHEAD"])
-			if physical_toolhead not in used_toolheads:
-				used_toolheads.append(physical_toolhead)
+		if len(logical_tools) > 0:
 
-		# check for filament in hotend
-		for physical_toolhead in used_toolheads:
-			for t in used_tools:
-				if physical_toolhead == int(self.mapping[str(t)]["TOOLHEAD"]):
-					self.rmmu[physical_toolhead].in_use = True
-					self.rmmu[physical_toolhead].initial_filament = t
-					break
-			# handle toolhead mapping
-			# self.initial_filament = self.get_remapped_toolhead(self.initial_filament)
-			self.rmmu[physical_toolhead].needs_initial_purging = True
-			if self.rmmu[physical_toolhead].is_sensor_triggered(self.rmmu[physical_toolhead].toolhead_filament_sensor):
-				loaded_filament = self.rmmu[physical_toolhead].get_status(self.toolhead.get_last_move_time())['loaded_filament']
-				loaded_filament_temp = self.rmmu[physical_toolhead].get_status(self.toolhead.get_last_move_time())['loaded_filament_temp']
-				initial_filament = int(self.mapping[str(self.rmmu[physical_toolhead].initial_filament)]["FILAMENT"])
-				if loaded_filament >=0 and loaded_filament <= self.total_tool_count:
+			# get used physical toolheads
+			physical_toolheads = []
+			for t in logical_tools:
+				physical_toolhead = int(self.mapping[str(t)]["TOOLHEAD"])
+				if physical_toolhead not in physical_toolheads:
+					physical_toolheads.append(physical_toolhead)
+
+			# home needed RMMUs
+			for physical_toolhead in physical_toolheads:
+				if not self.rmmu[physical_toolhead].is_homed:
+					self.rmmu[physical_toolhead].home()
+
+			# idex mode
+			idex_mode = ""
+			act_idex_toolhead = -1
+			if self.dual_carriage != None:
+				idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
+				act_idex_toolhead = 1 if idex_mode == "primary" else 0
+			if idex_mode == "copy" or idex_mode == "mirror":
+				default_toolhead = self.get_macro_variable("RatOS", "default_toolhead")
+				parking_position = self.get_macro_variable("T" + str(default_toolhead), "parking_position")
+				self.gcode.run_script_from_command('_IDEX_SINGLE X=' + str(parking_position))
+
+			# load initial filament
+			for physical_toolhead in physical_toolheads:
+				for t in logical_tools:
+					if physical_toolhead == int(self.mapping[str(t)]["TOOLHEAD"]):
+						self.rmmu[physical_toolhead].in_use = True
+						self.rmmu[physical_toolhead].initial_filament = t
+						break
+				rmmu = self.rmmu[physical_toolhead]
+
+				# handle toolhead mapping
+				# initial_filament = self.get_remapped_toolhead(initial_filament)
+
+				loaded_filament = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament']
+				loaded_filament_temp = rmmu.get_status(self.toolhead.get_last_move_time())['loaded_filament_temp']
+				initial_filament = int(self.mapping[str(rmmu.initial_filament)]["FILAMENT"])
+
+				# unload wrong filament if needed 
+				if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
 					if loaded_filament != initial_filament:
-						if loaded_filament_temp > self.rmmu[physical_toolhead].heater.min_extrude_temp and loaded_filament_temp < self.rmmu[physical_toolhead].heater.max_temp:
+						if loaded_filament_temp > rmmu.heater.min_extrude_temp and loaded_filament_temp < rmmu.heater.max_temp:
+
 							# unloaded the filament that is already loaded
-							self.ratos_echo("Wrong filament detected in hotend!")
-							self.ratos_echo("Unloading filament T" + str(loaded_filament) + "! Please wait...")
+							self.ratos_echo("Wrong filament detected in toolhead T" + str(physical_toolhead) + ".")
+							self.ratos_echo("Unloading filament T" + str(loaded_filament) + "...")
 
 							# start heating up extruder but dont wait for it so we can save some time
 							self.ratos_echo("Preheating extruder to " + str(loaded_filament_temp) + "°C.")
-							self.rmmu[physical_toolhead].extruder_set_temperature(loaded_filament_temp, False)
+							rmmu.extruder_set_temperature(loaded_filament_temp, False)
 
-							# home printer if needed and move toolhead to its parking position
+							# home printer if needed
 							self.gcode.run_script_from_command('MAYBE_HOME')
-							if initial_filament >= self.rmmu[0].tool_count:
-								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=1')
-							else:
-								self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=0')
+
+							# park toolhead
+							if idex_mode != "":
+								self.gcode.run_script_from_command('PARK_TOOLHEAD')
+
+							# handle dual carriage if needed
+							if idex_mode != "":
+								if act_idex_toolhead != physical_toolhead:
+									self.gcode.run_script_from_command('SET_DUAL_CARRIAGE CARRIAGE=' + str(physical_toolhead) + ' MODE=PRIMARY')
+									self.gcode.run_script_from_command('ACTIVATE_EXTRUDER EXTRUDER=extruder' + ('' if physical_toolhead == 0 else '1'))
+
+							# move toolhead to its loading position
+							self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=' + str(physical_toolhead))
 
 							# wait for the extruder to heat up
 							self.ratos_echo("Heating up extruder to " + str(loaded_filament_temp) + "°C! Please wait...")
-							self.rmmu[physical_toolhead].extruder_set_temperature(loaded_filament_temp, True)					
+							rmmu.extruder_set_temperature(loaded_filament_temp, True)					
 
-							# unload filament
-							if not self.rmmu[physical_toolhead].unload_filament(loaded_filament):
-								self.rmmu[physical_toolhead].extruder_set_temperature(0, False)					
+							# unload wrong filament
+							if not rmmu.unload_filament(loaded_filament):
+								rmmu.extruder_set_temperature(0, False)					
 								raise self.printer.command_error("Could not unload filament! Please unload the filament and restart the print.")
 
-							# cool down extruder, dont wait for it
-							self.rmmu[physical_toolhead].extruder_set_temperature(0, False)					
+							# handle dual carriage if needed
+							if idex_mode != "":
+								if act_idex_toolhead != physical_toolhead:
+									self.gcode.run_script_from_command('SET_DUAL_CARRIAGE CARRIAGE=' + str(act_idex_toolhead) + ' MODE=PRIMARY')
+									self.gcode.run_script_from_command('ACTIVATE_EXTRUDER EXTRUDER=extruder' + ('' if act_idex_toolhead == 0 else '1'))
 						else:
 							raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
-					else:
-						# tell RatOS that initial purging is not needed
-						self.rmmu[physical_toolhead].needs_initial_purging = False
-				else:
-					raise self.printer.command_error("Unknown filament detected in toolhead! Please unload the filament and restart the print.")
 
-			# disable toolhead filament sensor
-			self.rmmu[physical_toolhead].toolhead_filament_sensor.runout_helper.sensor_enabled = False
+				# load initial filament if needed
+				if loaded_filament != initial_filament:
 
-		# test if all demanded filaments are available and raises an error if not
-		self.test_filaments(used_tools)
+					# start heating up extruder but dont wait for it so we can save some time
+					self.ratos_echo("Preheating extruder to " + str(self.extruder_temp[physical_toolhead]) + "°C")
+					rmmu.extruder_set_temperature(self.extruder_temp[physical_toolhead], False)
+
+					# home printer if needed
+					self.gcode.run_script_from_command('MAYBE_HOME')
+
+					# handle dual carriage if needed
+					if idex_mode != "":
+						if act_idex_toolhead != physical_toolhead:
+							self.gcode.run_script_from_command('SET_DUAL_CARRIAGE CARRIAGE=' + str(physical_toolhead) + ' MODE=PRIMARY')
+							self.gcode.run_script_from_command('ACTIVATE_EXTRUDER EXTRUDER=extruder' + ('' if physical_toolhead == 0 else '1'))
+
+					# move toolhead to its loading position
+					self.gcode.run_script_from_command('_MOVE_TO_LOADING_POSITION TOOLHEAD=' + str(physical_toolhead))
+
+					# wait for the extruder to heat up
+					self.ratos_echo("Heating up extruder to " + str(self.extruder_temp[physical_toolhead]) + "°C...")
+					rmmu.extruder_set_temperature(self.extruder_temp[physical_toolhead], True)					
+
+					# load initial filament
+					if not rmmu.load_filament(initial_filament):
+						rmmu.extruder_set_temperature(0, False)					
+						raise self.printer.command_error("Could not load filament! Please load filament T" + str(rmmu.initial_filament) + " and restart the print.")
+
+					# purge filament
+					toolchange_first_purge = self.get_macro_variable("RatOS", "toolchange_first_purge")
+					if toolchange_first_purge != None and toolchange_first_purge > 0:
+						toolchange_first_purge_feedrate = self.get_macro_variable("RatOS", "toolchange_first_purge_feedrate")
+						loading_position = self.get_macro_variable("T" + str(physical_toolhead), "loading_position")
+						if loading_position != None and loading_position > 0:
+							self.ratos_echo("Initial puring...")
+							self.gcode.run_script_from_command('_PURGE_FILAMENT	TOOLHEAD=' + str(physical_toolhead) + ' E=' + str(toolchange_first_purge) + ' F=' + str(toolchange_first_purge_feedrate))
+							self.gcode.run_script_from_command('_CLEANING_MOVE TOOLHEAD=' + str(physical_toolhead))
+
+					# handle dual carriage if needed
+					if idex_mode != "":
+						if act_idex_toolhead != physical_toolhead:
+							self.gcode.run_script_from_command('SET_DUAL_CARRIAGE CARRIAGE=' + str(act_idex_toolhead) + ' MODE=PRIMARY')
+							self.gcode.run_script_from_command('ACTIVATE_EXTRUDER EXTRUDER=extruder' + ('' if act_idex_toolhead == 0 else '1'))
+
+					# cool down extruder, dont wait for it
+					rmmu.extruder_set_temperature(0, False)					
+
+				# disable toolhead filament sensor
+				rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
+
+			# test if all demanded filaments are available and raises an error if not
+			self.test_filaments(logical_tools)
+
+			# # restore idex mode
+			# act_idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
+			# if idex_mode == "copy" and idex_mode != act_idex_mode:
+			# 	self.gcode.run_script_from_command('_IDEX_COPY DANCE=0')
+			# elif idex_mode == "mirror" and idex_mode != act_idex_mode:
+			# 	self.gcode.run_script_from_command('_IDEX_MIRROR DANCE=0')
 
 		# call RatOS start print gcode macro
 		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
@@ -258,21 +342,21 @@ class RMMU_Hub:
 	#####
 	# Filament presence check
  	#####
-	def test_filaments(self, used_tools):
+	def test_filaments(self, logical_tools):
 		# echo
 		self.ratos_echo("Testing needed filaments...")
 
 		# test filaments
-		for filament in used_tools:
-			rmmu_filament = int(self.mapping[str(filament)]["FILAMENT"])
+		for logical_tool in logical_tools:
+			rmmu_filament = int(self.mapping[str(logical_tool)]["FILAMENT"])
 			# filament = self.get_remapped_toolhead(filament)
-			physical_toolhead = int(self.mapping[str(filament)]["TOOLHEAD"])
+			physical_toolhead = int(self.mapping[str(logical_tool)]["TOOLHEAD"])
 			rmmu = self.rmmu[physical_toolhead]
-			self.ratos_echo("Testing filament T" + str(filament) + "...")
+			self.ratos_echo("Testing filament T" + str(logical_tool) + "...")
 			if not rmmu.test_filament(rmmu_filament):
-				self.ratos_echo("Filament T" + str(filament) + " not found!")
+				self.ratos_echo("Filament T" + str(logical_tool) + " not found!")
 				rmmu.select_filament(-1)
-				raise self.printer.command_error("Can not start print because Filament T" + str(filament) + " is not available!")
+				raise self.printer.command_error("Can not start print because Filament T" + str(logical_tool) + " is not available!")
 
 		# release idler
 		if len(rmmu.parking_t_sensor_endstop) != rmmu.tool_count:
@@ -401,10 +485,18 @@ class RMMU_Hub:
 	# Helper
 	#####
 	def ratos_echo(self, msg):
-		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='" + str(self.name) + "' MSG='" + str(msg) + "'")
+		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='RMMU' MSG='" + str(msg) + "'")
 
 	def ratos_debug_echo(self, msg):
-		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX='" + str(self.name) + "' MSG='" + str(msg) + "'")
+		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX='RMMU' MSG='" + str(msg) + "'")
+
+	def get_macro_variable(self, macro, variable):
+		self.gcode_macro = self.printer.lookup_object("gcode_macro " + macro, None)
+		if self.gcode_macro != None:
+			variables = self.gcode_macro.get_status(self.toolhead.get_last_move_time())
+			if variable in variables:
+				return variables[variable]
+		return None
 
 #####
 # Loader
