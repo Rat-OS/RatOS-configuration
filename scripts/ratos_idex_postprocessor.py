@@ -83,12 +83,11 @@ def process_file(args, sourcefile):
 
 			# get first tools usage in order
 			if start_print_line > 0:
+				if len(used_tools) == 0:
+					index = lines[start_print_line].rstrip().find("INITIAL_TOOL=")
+					if index != -1:
+						used_tools.append(lines[start_print_line].rstrip()[index + len("INITIAL_TOOL="):].split()[0])
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
-					# add initial tool to the list if not already added
-					if len(used_tools) == 0:
-						index = lines[start_print_line].rstrip().find("INITIAL_TOOL=")
-						if index != -1:
-							used_tools.append(lines[start_print_line].rstrip()[index + len("INITIAL_TOOL="):].split()[0])
 					# add Tx to the list if not already added
 					t = lines[line].rstrip()[1:]
 					if t not in used_tools:
@@ -239,7 +238,7 @@ def process_file(args, sourcefile):
 
 		# add START_PRINT parameters 
 		if start_print_line > 0:
-			if toolshift_count > 0 :
+			if toolshift_count > 0:
 				file_has_changed = True
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' TOTAL_TOOLSHIFTS=' + str(toolshift_count - 1) + '\n'
 			if first_x >= 0 and first_y >= 0:

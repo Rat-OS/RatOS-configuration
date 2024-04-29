@@ -378,7 +378,7 @@ class RMMU:
 	#####
 	# Load Filament
 	#####
-	def load_filament(self, tool):
+	def load_filament(self, tool, copy_mirror="false"):
 		# echo
 		self.ratos_echo("Loading filament T" + str(tool) + "...")
 
@@ -420,15 +420,8 @@ class RMMU:
 		# load filament into hotend cooling zone
 		self.gcode.run_script_from_command('_LOAD_FILAMENT_FROM_COOLING_ZONE_TO_NOZZLE TOOLHEAD=' + str(self.physical_toolhead) + ' PURGE=False')
 
-		# # update frontend
-		# for i in range(0, self.tool_count):
-		# 	if tool == i:
-		# 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
-		# 	else:
-		# 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
-
 		# send notification
-		self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED TOOLHEAD=' + str(self.physical_toolhead))
+		self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED TOOLHEAD=' + str(self.physical_toolhead) + ' COPY_MIRROR=' + str(copy_mirror))
 
 		# reset runout detection
 		self.runout_detected = False
@@ -642,18 +635,19 @@ class RMMU:
 	#####
 	# Unload Filament
 	#####
-	def unload_filament(self, tool, origin = ""):
+	def unload_filament(self, tool, is_gcode_toolchange, is_copy_mirror = False):
 		# echo
 		self.ratos_echo("Unloading filament T" + str(tool) + "...")
 
 		# unload filament 
-		if origin == "change_filament":
+		if is_gcode_toolchange:
 			self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.physical_toolhead) + ' PAUSE=' + str(self.cooling_zone_unloading_pause))
 		else:
 			self.gcode.run_script_from_command('_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.physical_toolhead))
 
 		# select filament 
-		self.select_filament(tool)
+		if not is_copy_mirror:
+			self.select_filament(tool)
 
 		# unload filament from cooling zone to reverse bowden 
 		if not self.unload_filament_from_cooling_zone_to_reverse_bowden(tool):
@@ -1180,7 +1174,7 @@ class RMMU:
 
 			# unload filament
 			loaded_filament = self.get_loaded_filament()
-			if not self.unload_filament(loaded_filament):
+			if not self.unload_filament(loaded_filament, False):
 				# echo
 				self.ratos_echo("Can not eject filament because it couldnt be unloaded!")
 

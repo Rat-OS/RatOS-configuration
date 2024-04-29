@@ -183,13 +183,30 @@ class RMMU_Hub:
 			except:
 				raise self.printer.command_error("Unable to parse START_PRINT parameter USED_TOOLS.")
 
-		if len(logical_tools) == 0:
-			# home all RMMUs to make sure the idler is released
+		# idex mode
+		idex_mode = ""
+		act_idex_toolhead = -1
+		if self.dual_carriage != None:
+			idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
+			act_idex_toolhead = 1 if idex_mode == "primary" else 0
+
+		# copy and mirror mmu mode
+		if (idex_mode == "copy" or idex_mode == "mirror") and len(logical_tools) > 1:
+			for logical_tool in logical_tools:
+				if logical_tool > self.rmmu[0].tool_count:
+					raise self.printer.command_error("Wrong slicer tool selection for copy and mirror mmu mode.")
+			logical_tools_t1 = []
+			for logical_tool in logical_tools:
+				logical_tools_t1.append(logical_tool + self.rmmu[0].tool_count)
+			logical_tools.extend(logical_tools_t1)
+
+		# make sure the idlers are released when in non mmu copy and mirror mode
+		if (idex_mode == "copy" or idex_mode == "mirror") and len(logical_tools) == 1:
 			for rmmu in self.rmmu:
 				if not rmmu.is_homed:
 					rmmu.home()
 
-		if len(logical_tools) > 0:
+		if not ((idex_mode == "copy" or idex_mode == "mirror") and len(logical_tools) == 1):
 
 			# get used physical toolheads
 			physical_toolheads = []
@@ -204,17 +221,12 @@ class RMMU_Hub:
 					self.rmmu[physical_toolhead].home()
 
 			# idex mode
-			idex_mode = ""
-			act_idex_toolhead = -1
-			if self.dual_carriage != None:
-				idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
-				act_idex_toolhead = 1 if idex_mode == "primary" else 0
 			if idex_mode == "copy" or idex_mode == "mirror":
 				default_toolhead = self.get_macro_variable("RatOS", "default_toolhead")
 				parking_position = self.get_macro_variable("T" + str(default_toolhead), "parking_position")
 				self.gcode.run_script_from_command('_IDEX_SINGLE X=' + str(parking_position))
 
-			# load initial filament
+			# unload / load filaments
 			for physical_toolhead in physical_toolheads:
 				for t in logical_tools:
 					if physical_toolhead == int(self.mapping[str(t)]["TOOLHEAD"]):
@@ -306,10 +318,14 @@ class RMMU_Hub:
 
 					# purge filament
 					toolchange_first_purge = self.get_macro_variable("RatOS", "toolchange_first_purge")
+					self.ratos_echo("toolchange_first_purge: " + str(toolchange_first_purge))
 					if toolchange_first_purge != None and toolchange_first_purge > 0:
 						toolchange_first_purge_feedrate = self.get_macro_variable("RatOS", "toolchange_first_purge_feedrate")
 						loading_position = self.get_macro_variable("T" + str(physical_toolhead), "loading_position")
-						if loading_position != None and loading_position > 0:
+						self.ratos_echo("physical_toolhead: " + str(physical_toolhead))
+						self.ratos_echo("toolchange_first_purge_feedrate: " + str(toolchange_first_purge_feedrate))
+						self.ratos_echo("loading_position: " + str(loading_position))
+						if loading_position != None:
 							self.ratos_echo("Initial puring...")
 							self.gcode.run_script_from_command('_PURGE_FILAMENT	TOOLHEAD=' + str(physical_toolhead) + ' E=' + str(toolchange_first_purge) + ' F=' + str(toolchange_first_purge_feedrate))
 							self.gcode.run_script_from_command('_CLEANING_MOVE TOOLHEAD=' + str(physical_toolhead))
@@ -329,12 +345,12 @@ class RMMU_Hub:
 			# test if all demanded filaments are available and raises an error if not
 			self.test_filaments(logical_tools)
 
-			# # restore idex mode
-			# act_idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
-			# if idex_mode == "copy" and idex_mode != act_idex_mode:
-			# 	self.gcode.run_script_from_command('_IDEX_COPY DANCE=0')
-			# elif idex_mode == "mirror" and idex_mode != act_idex_mode:
-			# 	self.gcode.run_script_from_command('_IDEX_MIRROR DANCE=0')
+			# restore idex mode
+			act_idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
+			if idex_mode == "copy" and idex_mode != act_idex_mode:
+				self.gcode.run_script_from_command('_IDEX_COPY DANCE=0')
+			elif idex_mode == "mirror" and idex_mode != act_idex_mode:
+				self.gcode.run_script_from_command('_IDEX_MIRROR DANCE=0')
 
 		# call RatOS start print gcode macro
 		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
@@ -385,6 +401,7 @@ class RMMU_Hub:
 	def change_filament(self, param):
 		# parameter
 		filament = param.get_int('FILAMENT', None, minval=0, maxval=self.total_tool_count)
+		copy_mirror = True if param.get('COPY_MIRROR', 'False').lower() == "true" else False
 		x = param.get_float('X', None, minval=-1, maxval=999)
 		y = param.get_float('Y', None, minval=-1, maxval=999)
 
@@ -400,7 +417,7 @@ class RMMU_Hub:
 		# rmmu_filament = self.get_remapped_spool(rmmu_filament)
 
 		# run before filament change gcode macro
-		self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(physical_toolhead) + ' X=' + str(x) + ' Y=' + str(y) + ' WIPE_ACCEL=' + str(self.wipe_accel))
+		self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(physical_toolhead) + ' X=' + str(x) + ' Y=' + str(y) + ' WIPE_ACCEL=' + str(self.wipe_accel) + ' COPY_MIRROR=' + str(copy_mirror))
 
 		# enable toolhead filament sensor
 		rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = True
@@ -419,7 +436,7 @@ class RMMU_Hub:
 			return
 
 		# load filament
-		if not rmmu.load_filament(rmmu_filament):
+		if not rmmu.load_filament(rmmu_filament, copy_mirror):
 			rmmu.on_loading_error(rmmu_filament)
 
 		# disable toolhead filament sensor
