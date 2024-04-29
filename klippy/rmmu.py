@@ -378,7 +378,7 @@ class RMMU:
 	#####
 	# Load Filament
 	#####
-	def load_filament(self, tool, copy_mirror="false"):
+	def load_filament(self, tool, is_copy_mirror="false"):
 		# echo
 		self.ratos_echo("Loading filament T" + str(tool) + "...")
 
@@ -421,7 +421,7 @@ class RMMU:
 		self.gcode.run_script_from_command('_LOAD_FILAMENT_FROM_COOLING_ZONE_TO_NOZZLE TOOLHEAD=' + str(self.physical_toolhead) + ' PURGE=False')
 
 		# send notification
-		self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED TOOLHEAD=' + str(self.physical_toolhead) + ' COPY_MIRROR=' + str(copy_mirror))
+		self.gcode.run_script_from_command('_RMMU_ON_FILAMENT_HAS_CHANGED TOOLHEAD=' + str(self.physical_toolhead) + ' COPY_MIRROR=' + str(is_copy_mirror))
 
 		# reset runout detection
 		self.runout_detected = False
@@ -641,7 +641,7 @@ class RMMU:
 
 		# unload filament 
 		if is_gcode_toolchange:
-			self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.physical_toolhead) + ' PAUSE=' + str(self.cooling_zone_unloading_pause))
+			self.gcode.run_script_from_command('_RMMU_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.physical_toolhead) + ' PAUSE=' + str(self.cooling_zone_unloading_pause) + ' COPY_MIRROR=' + str(is_copy_mirror))
 		else:
 			self.gcode.run_script_from_command('_UNLOAD_FILAMENT_FROM_NOZZLE_TO_COOLING_ZONE TOOLHEAD=' + str(self.physical_toolhead))
 
