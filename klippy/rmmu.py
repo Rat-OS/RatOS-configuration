@@ -665,9 +665,6 @@ class RMMU:
 			if not self.unload_filament_from_tx_parking_sensor_to_parking_position(tool):
 				return False
 
-		# # update frontend 
-		# self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(tool) + " VARIABLE=active VALUE=False")
-
 		# reset loaded filament
 		self.set_setting(self.name.lower() + self.VARS_LOADED_FILAMENT, -1)
 		self.set_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP, -1)

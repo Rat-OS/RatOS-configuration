@@ -276,7 +276,7 @@ class RMMU_Hub:
 							rmmu.extruder_set_temperature(loaded_filament_temp, True)					
 
 							# unload wrong filament
-							if not rmmu.unload_filament(loaded_filament):
+							if not rmmu.unload_filament(loaded_filament, False):
 								rmmu.extruder_set_temperature(0, False)					
 								raise self.printer.command_error("Could not unload filament! Please unload the filament and restart the print.")
 
@@ -426,7 +426,7 @@ class RMMU_Hub:
 		if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
 			# unload filament
 			loaded_filament = rmmu.get_setting(rmmu.name.lower() + rmmu.VARS_LOADED_FILAMENT)
-			if not rmmu.unload_filament(loaded_filament, "change_filament"):
+			if not rmmu.unload_filament(loaded_filament, True):
 				rmmu.select_filament(-1)
 				self.ratos_echo("Could not unload filament T" + str(loaded_filament) + "!")
 				return
@@ -491,7 +491,7 @@ class RMMU_Hub:
 		loaded_filament = rmmu.get_setting(rmmu.name.lower() + rmmu.VARS_LOADED_FILAMENT)
 		rmmu_filament = rmmu_filament if rmmu_filament > -1 else loaded_filament
 		if rmmu_filament > -1 and rmmu_filament < rmmu.tool_count:
-			rmmu.unload_filament(rmmu_filament)
+			rmmu.unload_filament(rmmu_filament, False)
 		else:
 			raise self.printer.command_error("Can not unload unknown filament!")
 
