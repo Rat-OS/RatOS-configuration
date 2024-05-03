@@ -57,6 +57,7 @@ install_beacon
 install_hooks
 ensure_node_18
 register_z_offset_probe
+register_ratos_post_processor
 register_rmmu
 register_rmmu_hub
 register_resonance_generator
