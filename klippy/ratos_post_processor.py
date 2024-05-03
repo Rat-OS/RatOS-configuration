@@ -9,7 +9,7 @@ from os import path, remove, getenv
 import os, logging, io
 
 #####
-# RMMU Hub
+# RatOS Gcode Post Processor
 #####
 class RatOS_Post_Processor:
 
