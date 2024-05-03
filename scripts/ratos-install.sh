@@ -49,4 +49,5 @@ ensure_sudo_command_whitelisting sudo
 register_gcode_shell_command
 register_ratos_homing
 register_z_offset_probe
+register_ratos_post_processor
 register_resonance_generator
