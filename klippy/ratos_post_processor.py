@@ -243,18 +243,18 @@ class RatOS_Post_Processor:
 					if toolshift_count > 0 and toolchange_line > 0 and move_line > 0:
 						file_has_changed = True
 						if zhop_line > 0:
-							lines[zhop_line] = '; Z-Hop removed by RatOS IDEX Postprocessor: ' + lines[zhop_line].rstrip() + '\n'
+							lines[zhop_line] = '; Removed by RatOS Postprocessor: ' + lines[zhop_line].rstrip() + '\n'
 						if zdrop_line > 0:
-							lines[zdrop_line] = '; Z-Drop removed by RatOS IDEX Postprocessor: ' + lines[zdrop_line].rstrip() + '\n'
+							lines[zdrop_line] = '; Removed by RatOS Postprocessor: ' + lines[zdrop_line].rstrip() + '\n'
 						if self.rmmu_hub == None:
 							new_toolchange_gcode = (lines[toolchange_line].rstrip() + ' ' + move_x + ' ' + move_y + ' ' + move_z).rstrip()
 						else:
 							new_toolchange_gcode = ('TOOL T=' + lines[toolchange_line].rstrip().replace("T", "") + ' ' + move_x.replace("X", "X=") + ' ' + move_y.replace("Y", "Y=") + ' ' + move_z.replace("Z", "Z=")).rstrip()
 						lines[toolchange_line] = new_toolchange_gcode + '\n'
-						lines[move_line] = '; Horizontal move removed by RatOS IDEX Postprocessor: ' + lines[move_line].rstrip().replace("  ", " ") + '\n'
+						lines[move_line] = '; Removed by RatOS Postprocessor: ' + lines[move_line].rstrip().replace("  ", " ") + '\n'
 						if retraction_line > 0 and extrusion_line > 0:
-							lines[retraction_line] = '; Retraction removed by RatOS IDEX Postprocessor: ' + lines[retraction_line].rstrip() + '\n'
-							lines[extrusion_line] = '; Deretraction removed by RatOS IDEX Postprocessor: ' + lines[extrusion_line].rstrip() + '\n'
+							lines[retraction_line] = '; Removed by RatOS Postprocessor: ' + lines[retraction_line].rstrip() + '\n'
+							lines[extrusion_line] = '; Removed by RatOS Postprocessor: ' + lines[extrusion_line].rstrip() + '\n'
 
 		# add START_PRINT parameters 
 		if start_print_line > 0:
