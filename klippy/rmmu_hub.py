@@ -374,9 +374,18 @@ class RMMU_Hub:
 				rmmu.select_filament(-1)
 				raise self.printer.command_error("Can not start print because Filament T" + str(logical_tool) + " is not available!")
 
+		# get used physical toolheads
+		physical_toolheads = []
+		for t in logical_tools:
+			physical_toolhead = int(self.mapping[str(t)]["TOOLHEAD"])
+			if physical_toolhead not in physical_toolheads:
+				physical_toolheads.append(physical_toolhead)
+
 		# release idler
-		if len(rmmu.parking_t_sensor_endstop) != rmmu.tool_count:
-			rmmu.select_filament(-1)
+		for physical_toolhead in physical_toolheads:
+			physical_toolhead = int(self.mapping[str(logical_tool)]["TOOLHEAD"])
+			if len(self.rmmu[physical_toolhead].parking_t_sensor_endstop) != self.rmmu[physical_toolhead].tool_count:
+				self.rmmu[physical_toolhead].select_filament(-1)
 
 		# echo
 		self.ratos_echo("All needed filaments available!")
