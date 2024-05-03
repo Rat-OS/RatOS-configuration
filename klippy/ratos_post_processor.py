@@ -7,6 +7,7 @@ from math import fabs
 from shutil import ReadError, copy2
 from os import path, remove, getenv
 import os, logging, io
+import re
 
 #####
 # RatOS Gcode Post Processor
@@ -87,6 +88,7 @@ class RatOS_Post_Processor:
 		wipe_accel = 0
 		used_tools = []
 		pause_counter = 0
+		other_layer_temp_bug_fixed = slicer["Name"] == "PrusaSlicer" 
 		for line in range(len(lines)):
 			# give the cpu some time
 			pause_counter += 1
@@ -105,6 +107,20 @@ class RatOS_Post_Processor:
 				if lines[line].rstrip().startswith("START_PRINT") or lines[line].rstrip().startswith("RMMU_START_PRINT"):
 					lines[line] = lines[line].replace("#", "") # fix color variable format
 					start_print_line = line
+
+			# fix superslicer other layer temperature bug
+			if start_print_line > 0:
+				if not other_layer_temp_bug_fixed:
+					if lines[line].rstrip().startswith(";LAYER_CHANGE"):
+						layer_number += 1
+						if layer_number == 2:
+							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=(\d+) EXTRUDER_OTHER_LAYER_TEMP_1=(\d+)"
+							matches = re.search(pattern, lines[start_print_line].rstrip())
+							if matches:
+								extruder_temp = int(matches.group(1))
+								extruder_temp_1 = int(matches.group(2))
+								lines[line] = lines[line] + "M104 S" + str(extruder_temp) + " T0\nM104 S" + str(extruder_temp_1) + " T1\n"
+							other_layer_temp_bug_fixed = True
 
 			# count toolshifts
 			if start_print_line > 0:
