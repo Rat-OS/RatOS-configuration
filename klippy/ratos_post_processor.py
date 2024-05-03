@@ -247,7 +247,7 @@ class RatOS_Post_Processor:
 						if zdrop_line > 0:
 							lines[zdrop_line] = '; Z-Drop removed by RatOS IDEX Postprocessor: ' + lines[zdrop_line].rstrip() + '\n'
 						if self.rmmu_hub == None:
-							new_toolchange_gcode = (lines[toolchange_line] + ' ' + move_x + ' ' + move_y + ' ' + move_z).rstrip()
+							new_toolchange_gcode = (lines[toolchange_line].rstrip() + ' ' + move_x + ' ' + move_y + ' ' + move_z).rstrip()
 						else:
 							new_toolchange_gcode = ('TOOL T=' + lines[toolchange_line].rstrip().replace("T", "") + ' ' + move_x.replace("X", "X=") + ' ' + move_y.replace("Y", "Y=") + ' ' + move_z.replace("Z", "Z=")).rstrip()
 						lines[toolchange_line] = new_toolchange_gcode + '\n'
