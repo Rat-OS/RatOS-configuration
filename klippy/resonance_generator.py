@@ -23,7 +23,7 @@ class VibrationGenerator:
         if self.freq is None:
             raise gcmd.error("FREQ parameter is required")
 
-        self.time = gcmd.get_float("TIME", 1, minval=1., maxval=60.)
+        self.time = gcmd.get_float("TIME", 1, minval=0.1, maxval=60.)
 
     def run_test(self, axis, gcmd):
         toolhead = self.printer.lookup_object('toolhead')
@@ -102,8 +102,6 @@ class ResonanceGenerator:
         gcmd.respond_info(
                 "Generating oscillations at (%.3f, %.3f, %.3f)" % tuple(toolhead.get_position()[:3]))
         for axis in axes:
-            toolhead.wait_moves()
-            toolhead.dwell(0.500)
             if len(axes) > 1:
                 gcmd.respond_info("Testing axis %s" % axis.get_name())
 

@@ -1,0 +1,127 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "LDO leviathan v1.20",
+	"manufacturer": "LDO",
+	"id": "ldo-leviathan-12",
+	"firmwareBinaryName": "firmware-ldo-leviathan-12.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"driverCount": 7,
+	"driverVoltages": [24, 36, 48, 56],
+	"documentationLink": "https://os.ratrig.com/docs/boards/ldo/ldo-leviathan-12",
+	"dfu": {
+		"flashDevice": "0483:df11",
+		"dfuBootImage": "dfubooting.png",
+		"instructions": [
+			"Make sure the board is powered on",
+			"Press and hold the BOOT 0 button on the board.",
+			"Press and release the RESET button on the board.",
+			"Release the BOOT  button."
+		],
+		"hasBoot0Jumper": false
+	},
+	"motorSlots": {
+		"HV-STEPPER-0": {
+			"title": "MOTOR X",
+			"enable_pin": "PG0",
+			"step_pin": "PB10",
+			"dir_pin": "PB11",
+			"uart_pin": "PE15",
+			"cs_pin": "PE15",
+			"diag_pin": "PG1",
+			"endstop_pin": "PC1",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"HV-STEPPER-1": {
+			"title": "MOTOR Y",
+			"enable_pin": "PE9",
+			"step_pin": "PF15",
+			"dir_pin": "PF14",
+			"uart_pin": "PE11",
+			"cs_pin": "PE11",
+			"diag_pin": "PE10",
+			"endstop_pin": "PC2",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"STEPPER-0": {
+			"title": "MOTOR Z",
+			"enable_pin": "PD7",
+			"step_pin": "PD4",
+			"dir_pin": "PD3",
+			"uart_pin": "PD5",
+			"cs_pin": "null",
+			"diag_pin": "PD6",
+			"endstop_pin": "PC3",
+			"spi_software_mosi_pin": "null",
+			"spi_software_miso_pin": "null",
+			"spi_software_sclk_pin": "null"
+		},
+		"STEPPER-1": {
+			"title": "MOTOR Z 1",
+			"enable_pin": "PD2",
+			"step_pin": "PC12",
+			"dir_pin": "PC11",
+			"uart_pin": "PD0",
+			"cs_pin": "null",
+			"diag_pin": "PD1",
+			"spi_software_mosi_pin": "null",
+			"spi_software_miso_pin": "null",
+			"spi_software_sclk_pin": "null"
+		},
+		"STEPPER-2": {
+			"title": "MOTOR Z 2",
+			"enable_pin": "PC10",
+			"step_pin": "PC9",
+			"dir_pin": "PC8",
+			"uart_pin": "PA8",
+			"cs_pin": "null",
+			"diag_pin": "PA15",
+			"spi_software_mosi_pin": "null",
+			"spi_software_miso_pin": "null",
+			"spi_software_sclk_pin": "null"
+		},
+		"STEPPER-3": {
+			"title": "MOTOR Z 3",
+			"enable_pin": "PC7",
+			"step_pin": "PG7",
+			"dir_pin": "PG6",
+			"uart_pin": "PG8",
+			"cs_pin": "null",
+			"diag_pin": "PC6",
+			"spi_software_mosi_pin": "null",
+			"spi_software_miso_pin": "null",
+			"spi_software_sclk_pin": "null"
+		},
+		"STEPPER-4": {
+			"title": "MOTOR EXTRUDER",
+			"enable_pin": "PD13",
+			"step_pin": "PD10",
+			"dir_pin": "PD9",
+			"uart_pin": "PD11",
+			"cs_pin": "null",
+			"endstop_pin": "PC0",
+			"spi_software_mosi_pin": "null",
+			"spi_software_miso_pin": "null",
+			"spi_software_sclk_pin": "null"
+		}
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PB12",
+		"software": {
+			"sclk": "PB13",
+			"mosi": "PB15",
+			"miso": "PB14"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PE12",
+			"mosi": "PE14",
+			"miso": "PE13"
+		}
+	}
+}
