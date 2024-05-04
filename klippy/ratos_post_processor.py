@@ -89,6 +89,7 @@ class RatOS_Post_Processor:
 		used_tools = []
 		pause_counter = 0
 		other_layer_temp_bug_fixed = slicer["Name"] == "PrusaSlicer" 
+		layer_number = 0
 		for line in range(len(lines)):
 			# give the cpu some time
 			pause_counter += 1
@@ -114,12 +115,11 @@ class RatOS_Post_Processor:
 					if lines[line].rstrip().startswith(";LAYER_CHANGE"):
 						layer_number += 1
 						if layer_number == 2:
-							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=(\d+) EXTRUDER_OTHER_LAYER_TEMP_1=(\d+)"
+							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
 							matches = re.search(pattern, lines[start_print_line].rstrip())
 							if matches:
-								extruder_temp = int(matches.group(1))
-								extruder_temp_1 = int(matches.group(2))
-								lines[line] = lines[line] + "M104 S" + str(extruder_temp) + " T0\nM104 S" + str(extruder_temp_1) + " T1\n"
+								extruder_temp = matches.group(1).split(",")
+								lines[line] = lines[line] + "M104 S" + str(extruder_temp[0]) + " T0\nM104 S" + str(extruder_temp[1]) + " T1\n"
 							other_layer_temp_bug_fixed = True
 
 			# count toolshifts
