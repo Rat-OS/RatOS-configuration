@@ -88,8 +88,10 @@ class RatOS_Post_Processor:
 		wipe_accel = 0
 		used_tools = []
 		pause_counter = 0
-		other_layer_temp_bug_fixed = slicer["Name"] == "PrusaSlicer" 
 		layer_number = 0
+		layer_number = 0
+		extruder_temps = []
+		extruder_temps_line = 0
 		for line in range(len(lines)):
 			# give the cpu some time
 			pause_counter += 1
@@ -110,17 +112,16 @@ class RatOS_Post_Processor:
 					start_print_line = line
 
 			# fix superslicer other layer temperature bug
-			if start_print_line > 0:
-				if not other_layer_temp_bug_fixed:
+			if start_print_line > 0 and slicer["Name"] == "SuperSlicer":
+				if extruder_temps_line == 0:
 					if lines[line].rstrip().startswith(";LAYER_CHANGE"):
 						layer_number += 1
 						if layer_number == 2:
+							extruder_temps_line = line
 							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
 							matches = re.search(pattern, lines[start_print_line].rstrip())
 							if matches:
-								extruder_temp = matches.group(1).split(",")
-								lines[line] = lines[line] + "M104 S" + str(extruder_temp[0]) + " T0\nM104 S" + str(extruder_temp[1]) + " T1\n"
-							other_layer_temp_bug_fixed = True
+								extruder_temps = matches.group(1).split(",")
 
 			# count toolshifts
 			if start_print_line > 0:
@@ -259,18 +260,18 @@ class RatOS_Post_Processor:
 					if toolshift_count > 0 and toolchange_line > 0 and move_line > 0:
 						file_has_changed = True
 						if zhop_line > 0:
-							lines[zhop_line] = '; Removed by RatOS Postprocessor: ' + lines[zhop_line].rstrip() + '\n'
+							lines[zhop_line] = '; Removed by RatOS IDEX Postprocessor: ' + lines[zhop_line].rstrip() + '\n'
 						if zdrop_line > 0:
-							lines[zdrop_line] = '; Removed by RatOS Postprocessor: ' + lines[zdrop_line].rstrip() + '\n'
+							lines[zdrop_line] = '; Removed by RatOS IDEX Postprocessor: ' + lines[zdrop_line].rstrip() + '\n'
 						if self.rmmu_hub == None:
 							new_toolchange_gcode = (lines[toolchange_line].rstrip() + ' ' + move_x + ' ' + move_y + ' ' + move_z).rstrip()
 						else:
 							new_toolchange_gcode = ('TOOL T=' + lines[toolchange_line].rstrip().replace("T", "") + ' ' + move_x.replace("X", "X=") + ' ' + move_y.replace("Y", "Y=") + ' ' + move_z.replace("Z", "Z=")).rstrip()
 						lines[toolchange_line] = new_toolchange_gcode + '\n'
-						lines[move_line] = '; Removed by RatOS Postprocessor: ' + lines[move_line].rstrip().replace("  ", " ") + '\n'
+						lines[move_line] = '; Removed by RatOS IDEX Postprocessor: ' + lines[move_line].rstrip().replace("  ", " ") + '\n'
 						if retraction_line > 0 and extrusion_line > 0:
-							lines[retraction_line] = '; Removed by RatOS Postprocessor: ' + lines[retraction_line].rstrip() + '\n'
-							lines[extrusion_line] = '; Removed by RatOS Postprocessor: ' + lines[extrusion_line].rstrip() + '\n'
+							lines[retraction_line] = '; Removed by RatOS IDEX Postprocessor: ' + lines[retraction_line].rstrip() + '\n'
+							lines[extrusion_line] = '; Removed by RatOS IDEX Postprocessor: ' + lines[extrusion_line].rstrip() + '\n'
 
 		# add START_PRINT parameters 
 		if start_print_line > 0:
@@ -287,6 +288,10 @@ class RatOS_Post_Processor:
 				file_has_changed = True
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' USED_TOOLS=' + ','.join(used_tools) + '\n'
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' WIPE_ACCEL=' + str(wipe_accel) + '\n'
+				if len(extruder_temps) > 0:
+					self.ratos_echo("1")
+					for tool in used_tools:
+						lines[extruder_temps_line] = lines[extruder_temps_line] + "M104 S" + str(extruder_temps[int(tool)]) + " T" + str(tool) + "\n"
 
 			# console output 
 			self.ratos_echo("USED TOOLS: " + ','.join(used_tools))
