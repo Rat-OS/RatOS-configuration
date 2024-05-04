@@ -175,7 +175,8 @@ class RMMU_Hub:
 		# parameter
 		self.start_print_param = param
 		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
-		self.extruder_temp = [param.get_int('EXTRUDER_TEMP', None), param.get_int('EXTRUDER_TEMP_1', None)]
+		self.extruder_temp = param.get('EXTRUDER_TEMP').lower().split(",")
+		self.ratos_echo("self.extruder_temp: " + str(self.extruder_temp))
 		logical_tools = []
 		if param.get('USED_TOOLS', None) != None:
 			try:
