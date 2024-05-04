@@ -89,8 +89,9 @@ class RatOS_Post_Processor:
 		used_tools = []
 		pause_counter = 0
 		layer_number = 0
-		other_layer_temp_bug_fixed = slicer["Name"] == "PrusaSlicer"
 		layer_number = 0
+		extruder_temps = []
+		extruder_temps_line = 0
 		for line in range(len(lines)):
 			# give the cpu some time
 			pause_counter += 1
@@ -111,17 +112,16 @@ class RatOS_Post_Processor:
 					start_print_line = line
 
 			# fix superslicer other layer temperature bug
-			if start_print_line > 0:
-				if not other_layer_temp_bug_fixed:
+			if start_print_line > 0 and slicer["Name"] == "SuperSlicer":
+				if extruder_temps_line == 0:
 					if lines[line].rstrip().startswith(";LAYER_CHANGE"):
 						layer_number += 1
 						if layer_number == 2:
+							extruder_temps_line = line
 							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
 							matches = re.search(pattern, lines[start_print_line].rstrip())
 							if matches:
-								extruder_temp = matches.group(1).split(",")
-								lines[line] = lines[line] + "M104 S" + str(extruder_temp[0]) + " T0\nM104 S" + str(extruder_temp[1]) + " T1\n"
-							other_layer_temp_bug_fixed = True
+								extruder_temps = matches.group(1).split(",")
 
 			# count toolshifts
 			if start_print_line > 0:
@@ -288,6 +288,10 @@ class RatOS_Post_Processor:
 				file_has_changed = True
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' USED_TOOLS=' + ','.join(used_tools) + '\n'
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' WIPE_ACCEL=' + str(wipe_accel) + '\n'
+				if len(extruder_temps) > 0:
+					self.ratos_echo("1")
+					for tool in used_tools:
+						lines[extruder_temps_line] = lines[extruder_temps_line] + "M104 S" + str(extruder_temps[int(tool)]) + " T" + str(tool) + "\n"
 
 			# console output 
 			self.ratos_echo("USED TOOLS: " + ','.join(used_tools))
