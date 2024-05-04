@@ -1,0 +1,93 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"name": "Manta M4P",
+	"manufacturer": "BIGTREETECH",
+	"id": "btt-manta-m5p",
+	"firmwareBinaryName": "firmware-btt-manta-m5p.bin",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"flashInstructions": "Flashing only works if the SD card slot on the Manta is empty.",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/manta-m5p",
+	"driverCount": 5,
+	"driverVoltages": [24, 36, 48, 56],
+	"motorSlots": {
+		"Motor1": {
+			"title": "Motor 1",
+			"enable_pin": "PA15",
+			"step_pin": "PC8",
+			"dir_pin": "PC9",
+			"uart_pin": "PD9",
+			"cs_pin": "PD9",
+			"diag_pin": "PD3",
+			"endstop_pin": "PD3",
+			"spi_software_mosi_pin": "PB15",
+			"spi_software_miso_pin": "PB14",
+			"spi_software_sclk_pin": "PB13"
+		},
+		"Motor2": {
+			"title": "Motor 2",
+			"enable_pin": "PA13",
+			"step_pin": "PA10",
+			"dir_pin": "PA14",
+			"uart_pin": "PD8",
+			"cs_pin": "PD8",
+			"diag_pin": "PD2",
+			"endstop_pin": "PD2",
+			"spi_software_mosi_pin": "PB15",
+			"spi_software_miso_pin": "PB14",
+			"spi_software_sclk_pin": "PB13"
+		},
+		"Motor3": {
+			"title": "Motor 3",
+			"enable_pin": "PA9",
+			"step_pin": "PC6",
+			"dir_pin": "PC7",
+			"uart_pin": "PB10",
+			"cs_pin": "PB10",
+			"diag_pin": "PC3",
+			"endstop_pin": "PC3",
+			"spi_software_mosi_pin": "PB15",
+			"spi_software_miso_pin": "PB14",
+			"spi_software_sclk_pin": "PB13"
+		},
+		"Motor4": {
+			"title": "Motor 4",
+			"enable_pin": "PA8",
+			"step_pin": "PB12",
+			"dir_pin": "PB11",
+			"uart_pin": "PB2",
+			"cs_pin": "PB2",
+			"diag_pin": "PC2",
+			"endstop_pin": "PC2",
+			"spi_software_mosi_pin": "PB15",
+			"spi_software_miso_pin": "PB14",
+			"spi_software_sclk_pin": "PB13"
+		},
+		"Motor5": {
+			"title": "Motor 5",
+			"enable_pin": "PC4",
+			"step_pin": "PB0",
+			"dir_pin": "PB1",
+			"uart_pin": "PA6",
+			"cs_pin": "PA6",
+			"spi_software_mosi_pin": "PB15",
+			"spi_software_miso_pin": "PB14",
+			"spi_software_sclk_pin": "PB13"
+		}
+	},
+	"ADXL345SPI": {
+		"cs_pin": "PC0",
+		"software": {
+			"sclk": "PB13",
+			"mosi": "PB15",
+			"miso": "PB14"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PB13",
+			"mosi": "PB15",
+			"miso": "PB14"
+		}
+	}
+}
