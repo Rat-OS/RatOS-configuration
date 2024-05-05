@@ -6,6 +6,8 @@ import argparse
 from shutil import ReadError, copy2
 from os import path, remove, getenv
 
+POST_PROCESSOR_VERSION=1
+
 def argumentparser():
 	parser = argparse.ArgumentParser(
 		prog=path.basename(__file__),
@@ -258,6 +260,7 @@ def process_file(args, sourcefile, rmmu):
 
 		# add START_PRINT parameters 
 		if start_print_line > 0:
+			lines[start_print_line] = lines[start_print_line].rstrip() + ' POST_PROCESSOR_VERSION=' + str(POST_PROCESSOR_VERSION) + '\n'
 			if toolshift_count > 0 :
 				file_has_changed = True
 				lines[start_print_line] = lines[start_print_line].rstrip() + ' TOTAL_TOOLSHIFTS=' + str(toolshift_count - 1) + '\n'
@@ -280,6 +283,7 @@ def process_file(args, sourcefile, rmmu):
 		if file_has_changed:
 			writefile = None
 			try:
+				lines.append("; processed by RatOS\n")
 				with open(sourcefile, "w", newline='\n', encoding='UTF-8') as writefile:
 					for i, strline in enumerate(lines):
 						writefile.write(strline)
