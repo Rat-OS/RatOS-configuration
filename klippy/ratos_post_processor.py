@@ -299,7 +299,7 @@ class RatOS_Post_Processor:
 
 			# save file if it has changed 
 			if file_has_changed:
-				lines[1] = lines[1].rstrip()+ "; processed by RatOS\n"
+				lines.append("; processed by RatOS\n")
 				self.save_file(path, lines)
 
 		self.ratos_echo("Done!")
@@ -308,12 +308,10 @@ class RatOS_Post_Processor:
 	def already_processed(self, path):
 		readfile = None
 		try:
-			i = 0
-			with open(path, 'r', encoding='utf-8') as readfile:
+			with open(path, "r") as readfile:
 				for line in readfile:
-					i += 1
-					if i == 2:
-						return line.rstrip().lower().startswith("; processed by ratos")
+					pass
+				return line.rstrip().lower().startswith("; processed by ratos")
 		except:
 			raise self.printer.command_error("Can not get processed state")
 		finally:
