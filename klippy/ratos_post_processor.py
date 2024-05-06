@@ -20,8 +20,11 @@ class RatOS_Post_Processor:
 	def __init__(self, config):
 		self.printer = config.get_printer()
 		self.name = config.get_name()
+		self.config = config
 		self.gcode = self.printer.lookup_object('gcode')
 		self.reactor = self.printer.get_reactor()
+
+		self.enabled = True if self.config.get('enable', "true").lower() == "true" else False 
 
 		self.register_commands()
 		self.register_handler()
@@ -49,7 +52,7 @@ class RatOS_Post_Processor:
 
 	desc_RATOS_POST_PROCESSOR = ""
 	def cmd_RATOS_POST_PROCESSOR(self, gcmd):
-		if self.dual_carriage == None and self.rmmu_hub == None:
+		if self.dual_carriage == None and self.rmmu_hub == None or not self.enabled:
 			self.v_sd.cmd_SDCARD_PRINT_FILE(gcmd)
 		else:
 			filename = gcmd.get('FILENAME', "")
