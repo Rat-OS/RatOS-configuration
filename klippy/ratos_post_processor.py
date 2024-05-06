@@ -89,7 +89,6 @@ class RatOS_Post_Processor:
 		wipe_accel = 0
 		used_tools = []
 		pause_counter = 0
-		layer_number = 0
 		extruder_temps = []
 		extruder_temps_line = 0
 		for line in range(len(lines)):
@@ -111,23 +110,30 @@ class RatOS_Post_Processor:
 					lines[line] = lines[line].replace("#", "") # fix color variable format
 					start_print_line = line
 
-			# fix superslicer other layer temperature bug
-			if start_print_line > 0 and slicer["Name"] == "SuperSlicer":
-				if extruder_temps_line == 0:
-					if lines[line].rstrip().startswith(";LAYER_CHANGE"):
-						layer_number += 1
-						if layer_number == 2:
-							extruder_temps_line = line
-							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
-							matches = re.search(pattern, lines[start_print_line].rstrip())
-							if matches:
-								extruder_temps = matches.group(1).split(",")
+			# fix superslicer and orcaslicer other layer temperature bug
+			if start_print_line > 0 and extruder_temps_line == 0:
+				if slicer["Name"] == "SuperSlicer" or slicer["Name"] == "OrcaSlicer":
+					if lines[line].rstrip().startswith("_ON_LAYER_CHANGE LAYER=2"):
+						extruder_temps_line = line
+						pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
+						matches = re.search(pattern, lines[start_print_line].rstrip())
+						if matches:
+							extruder_temps = matches.group(1).split(",")
+
+			# fix orcaslicer set acceleration gcode command
+			if start_print_line > 0 and slicer["Name"] == "OrcaSlicer":
+				if lines[line].rstrip().startswith("SET_VELOCITY_LIMIT"):
+					pattern = r"ACCEL=(\d+)"
+					matches = re.search(pattern, lines[line].rstrip())
+					if matches:
+						accel = matches.group(1)
+						lines[line] = 'M204 S' + str(accel) + ' ; Changed by RatOS post processor: ' + lines[line].rstrip() + '\n'
 
 			# count toolshifts
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 					if toolshift_count == 0:
-						lines[line] = '' # remove first toolchange
+						lines[line] = '; Removed by RatOS post processor: ' + lines[line].rstrip() + '\n' # remove first toolchange
 					toolshift_count += 1
 
 			# get first tools usage in order
@@ -197,13 +203,23 @@ class RatOS_Post_Processor:
 					zhop_line = 0
 					if tower_line == 0:
 						for i2 in range(20):
-							if lines[line-i2].rstrip().startswith("; custom gcode: end_filament_gcode"):
-								if lines[line-i2-1].rstrip().startswith("G1 Z"):
-									split = lines[line-i2-1].rstrip().split(" ")
+							if slicer["Name"] == "PrusaSlicer" or slicer["Name"] == "SuperSlicer":
+								if lines[line-i2].rstrip().startswith("; custom gcode: end_filament_gcode"):
+									if lines[line-i2-1].rstrip().startswith("G1 Z"):
+										split = lines[line-i2-1].rstrip().split(" ")
+										if split[1].startswith("Z"):
+											zhop = float(split[1].replace("Z", ""))
+											if zhop > 0.0:
+												zhop_line = line-i2-1
+												break
+							elif slicer["Name"] == "OrcaSlicer":
+								if lines[line+i2].rstrip().startswith("G1 Z"):
+									split = lines[line+i2].rstrip().split(" ")
 									if split[1].startswith("Z"):
 										zhop = float(split[1].replace("Z", ""))
 										if zhop > 0.0:
-											zhop_line = line-i2-1
+											zhop_line = line+i2
+											break
 
 					# toolchange line
 					toolchange_line = 0
@@ -212,13 +228,18 @@ class RatOS_Post_Processor:
 							toolchange_line = line + i2
 							break
 
-					# retraction after toolchange
+					# toolchange retraction
 					retraction_line = 0
 					if tower_line == 0 and toolchange_line > 0:
 						for i2 in range(20):
-							if lines[toolchange_line + i2].rstrip().startswith("G1 E-"):
-								retraction_line = toolchange_line + i2
-								break
+							if slicer["Name"] == "PrusaSlicer" or slicer["Name"] == "SuperSlicer":
+								if lines[toolchange_line + i2].rstrip().startswith("G1 E-"):
+									retraction_line = toolchange_line + i2
+									break
+							elif slicer["Name"] == "OrcaSlicer":
+								if lines[toolchange_line - i2].rstrip().startswith("G1 E-"):
+									retraction_line = toolchange_line - i2
+									break
 
 					# move after toolchange
 					move_x = ''
@@ -239,14 +260,25 @@ class RatOS_Post_Processor:
 					move_z = ''
 					zdrop_line = 0
 					if tower_line == 0:
-						if lines[move_line + 1].rstrip().startswith("G1 Z"):
-							zdrop_line = move_line + 1
-						elif lines[move_line + 2].rstrip().startswith("G1 Z"):
-							zdrop_line = move_line + 2
-						if zdrop_line > 0:
-							split = lines[zdrop_line].rstrip().split(" ")
-							if split[1].startswith("Z"):
-								move_z = split[1].rstrip()
+						if slicer["Name"] == "PrusaSlicer" or slicer["Name"] == "SuperSlicer":
+							if lines[move_line + 1].rstrip().startswith("G1 Z"):
+								zdrop_line = move_line + 1
+							elif lines[move_line + 2].rstrip().startswith("G1 Z"):
+								zdrop_line = move_line + 2
+							if zdrop_line > 0:
+								split = lines[zdrop_line].rstrip().split(" ")
+								if split[1].startswith("Z"):
+									move_z = split[1].rstrip()
+						elif slicer["Name"] == "OrcaSlicer":
+							if zhop_line > 0:
+								for i in range(5):
+									if lines[zhop_line+i].rstrip().startswith("G1 Z"):
+										for i2 in range(5):
+											if lines[zhop_line+i+i2].rstrip().startswith("G1 Z"):
+												zdrop_line = zhop_line+i+i2
+												split = lines[zdrop_line].rstrip().split(" ")
+												if split[1].startswith("Z"):
+													move_z = split[1].rstrip()
 
 					# extrusion after move
 					extrusion_line = 0
@@ -261,6 +293,11 @@ class RatOS_Post_Processor:
 						file_has_changed = True
 						if zhop_line > 0:
 							lines[zhop_line] = '; Removed by RatOS post processor: ' + lines[zhop_line].rstrip() + '\n'
+							if slicer["Name"] == "OrcaSlicer":
+								for i in range(5):
+									if lines[zhop_line+i].rstrip().startswith("G1 Z"):
+										lines[zhop_line+i] = '; Removed by RatOS post processor: ' + lines[zhop_line+i].rstrip() + '\n'
+										break
 						if zdrop_line > 0:
 							lines[zdrop_line] = '; Removed by RatOS post processor: ' + lines[zdrop_line].rstrip() + '\n'
 						if self.rmmu_hub == None:
@@ -292,6 +329,10 @@ class RatOS_Post_Processor:
 				if len(extruder_temps) > 0:
 					for tool in used_tools:
 						lines[extruder_temps_line] = lines[extruder_temps_line] + "M104 S" + str(extruder_temps[int(tool)]) + " T" + str(tool) + "\n"
+					for i in range(10):
+						if lines[extruder_temps_line + i].rstrip().startswith("M104 S"):
+							lines[extruder_temps_line + i] = '; Removed by RatOS post processor: ' + lines[extruder_temps_line + i].rstrip() + '\n'
+							break
 
 			# console output 
 			self.ratos_echo("USED TOOLS: " + ','.join(used_tools))
