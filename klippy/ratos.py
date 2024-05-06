@@ -48,7 +48,14 @@ class RatOS:
 	# Gcode commands
 	#####
 	def register_commands(self):
+		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('RATOS_POST_PROCESSOR', self.cmd_RATOS_POST_PROCESSOR, desc=(self.desc_RATOS_POST_PROCESSOR))
+
+	desc_RATOS_LOG = "G-code logging command "
+	def cmd_RATOS_LOG(self, gcmd):
+		prefix = gcmd.get('PREFIX')
+		msg = gcmd.get('MSG')
+		logging.info(prefix + ": " + msg)
 
 	desc_RATOS_POST_PROCESSOR = "G-code post processor for IDEX and RMMU"
 	def cmd_RATOS_POST_PROCESSOR(self, gcmd):
