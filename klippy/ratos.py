@@ -1,8 +1,3 @@
-# RatOS IDEX and RMMU Gcode Post Processor
-#
-# Copyright (C) 2024 Helge Magnus Keck <helgekeck@hotmail.com>
-#
-# This file may be distributed under the terms of the GNU GPLv3 license.
 from math import fabs
 from shutil import ReadError, copy2
 from os import path, remove, getenv
@@ -10,27 +5,23 @@ import os, logging, io
 import re
 
 #####
-# RatOS Gcode Post Processor
+# RatOS
 #####
-class RatOS_Post_Processor:
+class RatOS:
 
 	#####
 	# Initialize
 	#####
 	def __init__(self, config):
+		self.config = config
 		self.printer = config.get_printer()
 		self.name = config.get_name()
-		self.config = config
 		self.gcode = self.printer.lookup_object('gcode')
 		self.reactor = self.printer.get_reactor()
 
-		self.enabled = True if self.config.get('enable', "true").lower() == "true" else False 
-
+		self.load_settings()
 		self.register_commands()
 		self.register_handler()
-
-	def get_status(self, eventtime):
-		return {'name': self.name}
 
 	#####
 	# Handler
@@ -45,14 +36,23 @@ class RatOS_Post_Processor:
 		self.rmmu_hub = self.printer.lookup_object("rmmu_hub", None)
 
 	#####
+	# Settings
+	#####
+	def load_settings(self):
+		self.enable_post_processing = True if self.config.get('enable_post_processing', "false").lower() == "true" else False 
+		
+	def get_status(self, eventtime):
+		return {'name': self.name}
+
+	#####
 	# Gcode commands
 	#####
 	def register_commands(self):
 		self.gcode.register_command('RATOS_POST_PROCESSOR', self.cmd_RATOS_POST_PROCESSOR, desc=(self.desc_RATOS_POST_PROCESSOR))
 
-	desc_RATOS_POST_PROCESSOR = ""
+	desc_RATOS_POST_PROCESSOR = "G-code post processor for IDEX and RMMU"
 	def cmd_RATOS_POST_PROCESSOR(self, gcmd):
-		if self.dual_carriage == None and self.rmmu_hub == None or not self.enabled:
+		if (self.dual_carriage == None and self.rmmu_hub == None) or not self.enable_post_processing:
 			self.v_sd.cmd_SDCARD_PRINT_FILE(gcmd)
 		else:
 			filename = gcmd.get('FILENAME', "")
@@ -64,16 +64,18 @@ class RatOS_Post_Processor:
 				raise self.printer.command_error("Could not process gcode file")
 
 	#####
-	# Post Processor
+	# G-code post processor
 	#####
 	def process_file(self, filename):
+		echo_prefix = "POST_PROCESSOR"
+
 		path = self.get_file_path(filename)
 		lines = self.get_file_lines(path)
 
 		if self.already_processed(path):
 			return True
 
-		self.ratos_echo("processing...")
+		self.ratos_echo(echo_prefix, "processing...")
 
 		slicer = self.get_slicer(lines)
 
@@ -161,7 +163,7 @@ class RatOS_Post_Processor:
 								if x > first_x:
 									first_x = x
 							except Exception as exc:
-								self.ratos_echo("Can not get first x coordinate. " + str(exc))
+								self.ratos_echo(echo_prefix, "Can not get first x coordinate. " + str(exc))
 								return False
 						if split[s].lower().startswith("y"):
 							try:
@@ -169,7 +171,7 @@ class RatOS_Post_Processor:
 								if y > first_y:
 									first_y = y
 							except Exception as exc:
-								self.ratos_echo("Can not get first y coordinate. " + str(exc))
+								self.ratos_echo(echo_prefix, "Can not get first y coordinate. " + str(exc))
 								return False
 
 			# get x boundaries 
@@ -185,7 +187,7 @@ class RatOS_Post_Processor:
 								if x > max_x:
 									max_x = x
 							except Exception as exc:
-								self.ratos_echo("Can not get x boundaries . " + str(exc))
+								self.ratos_echo(echo_prefix, "Can not get x boundaries . " + str(exc))
 								return False
 
 			# toolshift processing
@@ -337,16 +339,16 @@ class RatOS_Post_Processor:
 							break
 
 			# console output 
-			self.ratos_echo("USED TOOLS: " + ','.join(used_tools))
-			self.ratos_echo("TOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1))
-			self.ratos_echo("SLICER: " + slicer["Name"] + " " + slicer["Version"])
+			self.ratos_echo(echo_prefix, "USED TOOLS: " + ','.join(used_tools))
+			self.ratos_echo(echo_prefix, "TOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1))
+			self.ratos_echo(echo_prefix, "SLICER: " + slicer["Name"] + " " + slicer["Version"])
 
 			# save file if it has changed 
 			if file_has_changed:
 				lines.append("; processed by RatOS\n")
 				self.save_file(path, lines)
 
-		self.ratos_echo("Done!")
+		self.ratos_echo(echo_prefix, "Done!")
 		return True
 
 	def already_processed(self, path):
@@ -415,14 +417,14 @@ class RatOS_Post_Processor:
 	#####
 	# Helper
 	#####
-	def ratos_echo(self, msg):
-		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='POST_PROCESSOR' MSG='" + str(msg) + "'")
+	def ratos_echo(self, prefix, msg):
+		self.gcode.run_script_from_command("RATOS_ECHO PREFIX=" + str(prefix) + " MSG='" + str(msg) + "'")
 
-	def ratos_debug_echo(self, msg):
-		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX='POST_PROCESSOR' MSG='" + str(msg) + "'")
+	def debug_echo(self, prefix, msg):
+		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX=" + str(prefix) + " MSG='" + str(msg) + "'")
 
 #####
 # Loader
 #####
 def load_config(config):
-	return RatOS_Post_Processor(config)
+	return RatOS(config)

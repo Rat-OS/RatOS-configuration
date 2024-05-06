@@ -112,11 +112,11 @@ register_z_offset_probe()
     _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }
 
-register_ratos_post_processor()
+register_ratos()
 {
-    EXT_NAME="ratos_post_processor_extension"
+    EXT_NAME="ratos_extension"
     EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
-    EXT_FILE="ratos_post_processor.py"
+    EXT_FILE="ratos.py"
 	# Don't error if extension is already registered
     _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }

@@ -86,7 +86,7 @@ install_hooks
 ensure_node_18
 patch_klipperscreen_service_restarts
 register_z_offset_probe
-register_ratos_post_processor
+register_ratos
 register_resonance_generator
 symlink_extensions
 restart_configurator
