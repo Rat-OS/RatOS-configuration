@@ -56,8 +56,7 @@ class RatOS_Post_Processor:
 			if filename[0] == '/':
 				filename = filename[1:]
 			if self.process_file(filename):
-				# self.v_sd.cmd_SDCARD_PRINT_FILE(gcmd)
-				x = 0
+				self.v_sd.cmd_SDCARD_PRINT_FILE(gcmd)
 			else:
 				raise self.printer.command_error("Could not process gcode file")
 
