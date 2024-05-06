@@ -6,7 +6,7 @@ import argparse
 from shutil import ReadError, copy2
 from os import path, remove, getenv
 
-POST_PROCESSOR_VERSION=1
+POST_PROCESSOR_VERSION=2
 
 def argumentparser():
 	parser = argparse.ArgumentParser(
@@ -52,8 +52,10 @@ def process_file(args, sourcefile, rmmu):
 		slicer = "prusaslicer"
 	elif "superslicer" in lines[0].rstrip().lower():
 		slicer = "superslicer"
+	elif "orcaslicer" in lines[1].rstrip().lower():
+		slicer = "orcaslicer"
 	
-	if slicer == "prusaslicer" or slicer == "superslicer":
+	if slicer == "prusaslicer" or slicer == "superslicer" or slicer == "orcaslicer":
 		# START_PRINT parameter and toolshift processing
 		min_x = 1000
 		max_x = 0
@@ -65,7 +67,6 @@ def process_file(args, sourcefile, rmmu):
 		file_has_changed = False
 		wipe_accel = 0
 		used_tools = []
-		layer_number = 0
 		extruder_temps = []
 		extruder_temps_line = 0
 		for line in range(len(lines)):
@@ -82,23 +83,30 @@ def process_file(args, sourcefile, rmmu):
 					start_print_line = line
 					lines[line] = lines[line].replace("#", "") # fix color variable format
 
-			# fix superslicer other layer temperature bug
-			if start_print_line > 0 and slicer == "superslicer":
-				if extruder_temps_line == 0:
-					if lines[line].rstrip().startswith(";LAYER_CHANGE"):
-						layer_number += 1
-						if layer_number == 2:
-							extruder_temps_line = line
-							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
-							matches = re.search(pattern, lines[start_print_line].rstrip())
-							if matches:
-								extruder_temps = matches.group(1).split(",")
+			# fix superslicer and orcaslicer other layer temperature bug
+			if start_print_line > 0 and extruder_temps_line == 0:
+				if slicer == "superslicer" or slicer == "orcaslicer":
+					if lines[line].rstrip().startswith("_ON_LAYER_CHANGE LAYER=2"):
+						extruder_temps_line = line
+						pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
+						matches = re.search(pattern, lines[start_print_line].rstrip())
+						if matches:
+							extruder_temps = matches.group(1).split(",")
+
+			# fix orcaslicer set acceleration gcode command
+			if start_print_line > 0 and slicer == "orcaslicer":
+				if lines[line].rstrip().startswith("SET_VELOCITY_LIMIT"):
+					pattern = r"ACCEL=(\d+)"
+					matches = re.search(pattern, lines[line].rstrip())
+					if matches:
+						accel = matches.group(1)
+						lines[line] = 'M204 S' + str(accel) + ' ; Changed by RatOS post processor: ' + lines[line].rstrip() + '\n'
 
 			# count toolshifts
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 					if toolshift_count == 0:
-						lines[line] = '' # remove first toolchange
+						lines[line] = '; Removed by RatOS post processor: ' + lines[line].rstrip() + '\n' # remove first toolchange
 					toolshift_count += 1
 
 			# get first tools usage in order
@@ -156,7 +164,7 @@ def process_file(args, sourcefile, rmmu):
 
 			# toolshift processing
 			if start_print_line > 0:
-				if lines[line].rstrip().startswith("T0") or lines[line].rstrip().startswith("T1"):
+				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 
 					# purge tower
 					if tower_line == -1:
@@ -171,28 +179,43 @@ def process_file(args, sourcefile, rmmu):
 					zhop_line = 0
 					if tower_line == 0:
 						for i2 in range(20):
-							if lines[line-i2].rstrip().startswith("; custom gcode: end_filament_gcode"):
-								if lines[line-i2-1].rstrip().startswith("G1 Z"):
-									split = lines[line-i2-1].rstrip().split(" ")
+							if slicer == "prusaslicer" or slicer == "superslicer":
+								if lines[line-i2].rstrip().startswith("; custom gcode: end_filament_gcode"):
+									if lines[line-i2-1].rstrip().startswith("G1 Z"):
+										split = lines[line-i2-1].rstrip().split(" ")
+										if split[1].startswith("Z"):
+											zhop = float(split[1].replace("Z", ""))
+											if zhop > 0.0:
+												zhop_line = line-i2-1
+												break
+							elif slicer == "orcaslicer":
+								if lines[line+i2].rstrip().startswith("G1 Z"):
+									split = lines[line+i2].rstrip().split(" ")
 									if split[1].startswith("Z"):
 										zhop = float(split[1].replace("Z", ""))
 										if zhop > 0.0:
-											zhop_line = line-i2-1
+											zhop_line = line+i2
+											break
 
 					# toolchange line
 					toolchange_line = 0
 					for i2 in range(20):
-						if lines[line + i2].rstrip().startswith("T0") or lines[line + i2].rstrip().startswith("T1"):
+						if lines[line + i2].rstrip().startswith("T") and lines[line + i2].rstrip()[1:].isdigit():
 							toolchange_line = line + i2
 							break
 
-					# retraction after toolchange
+					# toolchange retraction
 					retraction_line = 0
 					if tower_line == 0 and toolchange_line > 0:
 						for i2 in range(20):
-							if lines[toolchange_line + i2].rstrip().startswith("G1 E-"):
-								retraction_line = toolchange_line + i2
-								break
+							if slicer == "prusaslicer" or slicer == "superslicer":
+								if lines[toolchange_line + i2].rstrip().startswith("G1 E-"):
+									retraction_line = toolchange_line + i2
+									break
+							elif slicer == "orcaslicer":
+								if lines[toolchange_line - i2].rstrip().startswith("G1 E-"):
+									retraction_line = toolchange_line - i2
+									break
 
 					# move after toolchange
 					move_x = ''
@@ -213,14 +236,25 @@ def process_file(args, sourcefile, rmmu):
 					move_z = ''
 					zdrop_line = 0
 					if tower_line == 0:
-						if lines[move_line + 1].rstrip().startswith("G1 Z"):
-							zdrop_line = move_line + 1
-						elif lines[move_line + 2].rstrip().startswith("G1 Z"):
-							zdrop_line = move_line + 2
-						if zdrop_line > 0:
-							split = lines[zdrop_line].rstrip().split(" ")
-							if split[1].startswith("Z"):
-								move_z = split[1].rstrip()
+						if slicer == "prusaslicer" or slicer == "superslicer":
+							if lines[move_line + 1].rstrip().startswith("G1 Z"):
+								zdrop_line = move_line + 1
+							elif lines[move_line + 2].rstrip().startswith("G1 Z"):
+								zdrop_line = move_line + 2
+							if zdrop_line > 0:
+								split = lines[zdrop_line].rstrip().split(" ")
+								if split[1].startswith("Z"):
+									move_z = split[1].rstrip()
+						elif slicer == "orcaslicer":
+							if zhop_line > 0:
+								for i in range(5):
+									if lines[zhop_line+i].rstrip().startswith("G1 Z"):
+										for i2 in range(5):
+											if lines[zhop_line+i+i2].rstrip().startswith("G1 Z"):
+												zdrop_line = zhop_line+i+i2
+												split = lines[zdrop_line].rstrip().split(" ")
+												if split[1].startswith("Z"):
+													move_z = split[1].rstrip()
 
 					# extrusion after move
 					extrusion_line = 0
@@ -235,25 +269,30 @@ def process_file(args, sourcefile, rmmu):
 						file_has_changed = True
 
 						if zhop_line > 0:
-							print("Z-Hop removed            " + lines[zhop_line].rstrip())
+							print("Z-Hop removed               " + lines[zhop_line].rstrip())
 							lines[zhop_line] = '; Removed by RatOS post processor: ' + lines[zhop_line].rstrip() + '\n'
+							if slicer == "orcaslicer":
+								for i in range(5):
+									if lines[zhop_line+i].rstrip().startswith("G1 Z"):
+										lines[zhop_line+i] = '; Removed by RatOS post processor: ' + lines[zhop_line+i].rstrip() + '\n'
+										break
 
 						if zdrop_line > 0:
-							print("Z-Drop removed           " + lines[zdrop_line].rstrip())
+							print("Z-Drop removed              " + lines[zdrop_line].rstrip())
 							lines[zdrop_line] = '; Removed by RatOS post processor: ' + lines[zdrop_line].rstrip() + '\n'
 						if not rmmu:
 							new_toolchange_gcode = (lines[toolchange_line].rstrip() + ' ' + move_x + ' ' + move_y + ' ' + move_z).rstrip()
 						else:
 							new_toolchange_gcode = ('TOOL T=' + lines[toolchange_line].rstrip().replace("T", "") + ' ' + move_x.replace("X", "X=") + ' ' + move_y.replace("Y", "Y=") + ' ' + move_z.replace("Z", "Z=")).rstrip()
-						print('parameter added          ' + new_toolchange_gcode)
+						print('parameter added             ' + new_toolchange_gcode)
 						lines[toolchange_line] = new_toolchange_gcode + '\n'
-						print('Horizontal move removed  ' + lines[move_line].rstrip().replace("  ", " "))
+						print('Horizontal move removed     ' + lines[move_line].rstrip().replace("  ", " "))
 						lines[move_line] = '; Removed by RatOS post processor: ' + lines[move_line].rstrip().replace("  ", " ") + '\n'
 
 						if retraction_line > 0 and extrusion_line > 0:
-							print("Retraction move removed  " + lines[retraction_line].rstrip())
+							print("Retraction removed          " + lines[retraction_line].rstrip())
 							lines[retraction_line] = '; Removed by RatOS post processor: ' + lines[retraction_line].rstrip() + '\n'
-							print("Deretraction move removed   " + lines[extrusion_line].rstrip())
+							print("Deretraction removed        " + lines[extrusion_line].rstrip())
 							lines[extrusion_line] = '; Removed by RatOS post processor: ' + lines[extrusion_line].rstrip() + '\n'
 
 						print("\n")
@@ -278,6 +317,10 @@ def process_file(args, sourcefile, rmmu):
 				if len(extruder_temps) > 0:
 					for tool in used_tools:
 						lines[extruder_temps_line] = lines[extruder_temps_line] + "M104 S" + str(extruder_temps[int(tool)]) + " T" + str(tool) + "\n"
+					for i in range(10):
+						if lines[extruder_temps_line + i].rstrip().startswith("M104 S"):
+							lines[extruder_temps_line + i] = '; Removed by RatOS post processor: ' + lines[extruder_temps_line + i].rstrip() + '\n'
+							break
 
 		# save file if it has changed 
 		if file_has_changed:
