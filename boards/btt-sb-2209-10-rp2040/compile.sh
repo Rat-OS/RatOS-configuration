@@ -3,7 +3,7 @@ if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
 fi
-cp -f /home/pi/printer_data/config/RatOS/boards/btt-sb2209-10/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/printer_data/config/RatOS/boards/btt-sb2209-10-rp2040/firmware.config /home/pi/klipper/.config
 pushd /home/pi/klipper || exit
 make olddefconfig
 make clean
