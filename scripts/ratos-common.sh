@@ -118,7 +118,7 @@ register_ratos_kinematics() {
 		rm -rf /home/pi/ratos-kinematics
 	fi
     EXT_NAME="ratos_hybrid_corexy"
-    EXT_PATH=$(realpath "${SRCDIR}/klippy/kinematics/ratos_hybrid_corexy.py")
+    EXT_PATH=$(realpath "${SCRIPT_DIR}/../klippy/kinematics/ratos_hybrid_corexy.py")
     ratos extensions register klipper -k $EXT_NAME "$EXT_PATH"
 }
 
