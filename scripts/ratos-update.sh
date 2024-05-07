@@ -88,5 +88,6 @@ patch_klipperscreen_service_restarts
 register_z_offset_probe
 register_ratos
 register_resonance_generator
+register_ratos_kinematics
 symlink_extensions
 restart_configurator
