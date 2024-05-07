@@ -1,9 +1,9 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"isToolboard": true,
-	"name": "SB2240 v1.0",
+	"name": "SB2240 v1.0 RP2040",
 	"manufacturer": "BIGTREETECH",
-	"id": "btt-sb-2240-10",
+	"id": "btt-sb-2240-10-rp",
 	"firmwareBinaryName": "firmware-btt-sb-2240-10-rp.uf2",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
