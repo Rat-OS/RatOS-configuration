@@ -14,6 +14,6 @@ then
     mkdir /home/pi/printer_data/config/firmware_binaries
     chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb2240-10.bin
-chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb2240-10.bin
+cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb2240-10-rp.bin
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb2240-10-rp.bin
 popd || exit
