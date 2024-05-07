@@ -171,7 +171,7 @@ ratos-configurator
 
 patch_klipperscreen_service_restarts()
 {
-	if ! grep "StartLimitIntervalSec=0" /etc/systemd/system/klipperscreen.service &>/dev/null; then
+	if grep "StartLimitIntervalSec=0" /etc/systemd/system/klipperscreen.service &>/dev/null; then
 		report_status "Patching KlipperScreen service restarts..."
 		# Fix restarts
 		sudo sed -i 's/\RestartSec=1/\RestartSec=5/g' /etc/systemd/system/KlipperScreen.service
