@@ -169,8 +169,7 @@ variable_filament_loading_nozzle_offset: -10                # offset tuning valu
                                                             # different nozzles can lead to too much or not enough extrusion while loading the filament
 ```
 
-## Auto resume print configuration
-After a runout has been detected the printer has paused the print, the print 
+## Useful configuration which can be used to tune the runout and auto resume workflow
 ```
 [gcode_macro PAUSE]
 variable_retract: 1.5   # retract on pause print
