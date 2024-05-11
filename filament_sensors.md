@@ -126,6 +126,69 @@ runout_gcode:
 insert_gcode:
 ```
 
+## Example configuration for the Orbiter filament sensor with action button and a additional bowden filament sensor
+When combining toolhead and bowden sensors then each sensor has only one function.
+The Toolhead reacts to the insert detection and the bowden sensor is responsible for the runout detection.
+This has the benefit that one doesnt need to remove the bowden tube from the toolhead sensor to remove the old filament, it will be ejected and can be easily removed at the end of the bowden tube.
+```
+[filament_switch_sensor toolhead_filament_sensor_t0]
+pause_on_runout: False
+event_delay: 0.1
+switch_pin: ^!toolboard_t0:PB3
+runout_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0
+insert_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0
+
+[gcode_button toolhead_filament_sensor_button_t0]
+pin: ^!toolboard_t0:PB4 
+release_gcode:     
+  _ON_FILAMENT_SENSOR_BUTTON_PRESSED TOOLHEAD=0
+press_gcode:
+
+[filament_switch_sensor bowden_filament_sensor_t0]
+pause_on_runout: False
+event_delay: 0.1
+switch_pin: ^!PC15
+runout_gcode: 
+    _ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0
+insert_gcode: 
+    _ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=0
+```
+
+## Example configuration for a toolhead filament sensor, a inline motion sensor for clog detection and a bowden filament sensor
+Toolhead sensor will be responsible for insert actions, motion sensor for clog detection and bowden sensor for runout detection.
+```
+[filament_switch_sensor toolhead_filament_sensor_t0]
+pause_on_runout: False
+event_delay: 0.1
+switch_pin: ^!toolboard_t0:PB3
+runout_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0
+insert_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0
+
+[filament_motion_sensor bowden_filament_clog_t0]
+switch_pin: ^PG15
+detection_length: 8
+extruder: extruder   # extruder for T0, extreuder1 for T1
+pause_on_runout: False
+event_delay: 3.0
+pause_delay: 0.5
+runout_gcode:
+  _ON_BOWDEN_FILAMENT_SENSOR_CLOG TOOLHEAD=0
+insert_gcode:
+
+[filament_switch_sensor bowden_filament_sensor_t0]
+pause_on_runout: False
+event_delay: 0.1
+switch_pin: ^!PC15
+runout_gcode: 
+    _ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0
+insert_gcode: 
+    _ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=0
+```
+
 ## Enable filament sensor RatOS features
 ```
 [gcode_macro T0]
