@@ -134,7 +134,6 @@ variable_enable_runout_detection: True     # enables the runout detection
 variable_enable_clog_detection: True       # enables the clog detection
 variable_unload_after_runout: True         # unload filament after runout has been detected
 variable_resume_after_insert: True         # resumes the print after inserting new filament
-gcode:
 ```
 
 ## Filament grabbing on filament insert
@@ -143,7 +142,6 @@ When inserting a filament into the toolhead filament sensor, the extruder gears 
 [gcode_macro T0]
 variable_filament_grabbing_speed: 1     # filament grabbing speed in mm/s
 variable_filament_grabbing_length: 5    # filament grabbing length in mm
-gcode:
 ```
 
 ## Purge on load/unload filament
@@ -151,7 +149,6 @@ gcode:
 [gcode_macro T0]
 variable_purge_after_load: 30      # purge x mm after the filament has been loaded to the nozzle tip
 variable_purge_before_unload: 0    # purge x mm before the filament unloads
-gcode:
 ```
 
 ## Load/unload feedrates
@@ -159,7 +156,6 @@ gcode:
 [gcode_macro T0]
 variable_filament_load_speed: 10   # filament nozzle loading speed
 variable_extruder_load_speed: 60   # extruder/cooling zone loading speed
-gcode:
 ```
 
 ## Advanced configuration
@@ -171,5 +167,12 @@ variable_tooolhead_sensor_to_extruder_gear_distance: 15     # distance between t
 variable_extruder_gear_to_cooling_position_distance: 30     # distance between the extruder gears and the center of the heatsink cooling tube
 variable_filament_loading_nozzle_offset: -10                # offset tuning value. positive or negative number. 
                                                             # different nozzles can lead to too much or not enough extrusion while loading the filament
-gcode:
+```
+
+## Auto resume print configuration
+After a runout has been detected the printer has paused the print, the print 
+```
+[gcode_macro PAUSE]
+variable_retract: 1.5   # retract on pause print
+variable_extrude: 1.5   # extrude before resume print
 ```
