@@ -85,6 +85,47 @@ release_gcode:
 press_gcode:
 ```
 
+## Example configuration for the Orbiter filament sensor with action button
+```
+[filament_switch_sensor toolhead_filament_sensor_t0]
+pause_on_runout: False
+event_delay: 0.1
+switch_pin: ^!toolboard_t0:PB3
+runout_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0
+insert_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0
+
+[gcode_button toolhead_filament_sensor_button_t0]
+pin: ^!toolboard_t0:PB4 
+release_gcode:     
+  _ON_FILAMENT_SENSOR_BUTTON_PRESSED TOOLHEAD=0
+press_gcode:
+```
+
+## Example configuration for the BTT SFS V2 filament sensor with clog detection
+```
+[filament_switch_sensor toolhead_filament_sensor_t0]
+pause_on_runout: False
+event_delay: 0.1
+switch_pin: ^!toolboard_t0:PB3
+runout_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0
+insert_gcode: 
+    _ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0
+
+[filament_motion_sensor feeder_filament_clog_t0]
+switch_pin: ^PG15
+detection_length: 8
+extruder: extruder   # extruder for T0, extreuder1 for T1
+pause_on_runout: False
+event_delay: 3.0
+pause_delay: 0.5
+runout_gcode:
+  _ON_BOWDEN_FILAMENT_SENSOR_CLOG TOOLHEAD=0
+insert_gcode:
+```
+
 ## Enable filament sensor RatOS features
 ```
 [gcode_macro T0]
