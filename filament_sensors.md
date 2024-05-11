@@ -64,7 +64,7 @@ insert_gcode:
 ## Filament motion sensor configuration
 example configuration for the BTT SFS Filament Sensor
 ```
-[filament_motion_sensor feeder_filament_clog_t0]
+[filament_motion_sensor bowden_filament_clog_t0]
 switch_pin: ^PG15
 detection_length: 8
 extruder: extruder   # extruder for T0, extreuder1 for T1
@@ -114,7 +114,7 @@ runout_gcode:
 insert_gcode: 
     _ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=0
 
-[filament_motion_sensor feeder_filament_clog_t0]
+[filament_motion_sensor bowden_filament_clog_t0]
 switch_pin: ^PG15
 detection_length: 8
 extruder: extruder   # extruder for T0, extreuder1 for T1
