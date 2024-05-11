@@ -112,6 +112,16 @@ register_z_offset_probe()
     _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }
 
+register_ratos_kinematics() {
+	if ratos extensions list | grep "ratos-kinematics" &>/dev/null; then
+		ratos extensions unregister klipper -k ratos_hybrid_corexy
+		rm -rf /home/pi/ratos-kinematics
+	fi
+    EXT_NAME="ratos_hybrid_corexy"
+    EXT_PATH=$(realpath "${SCRIPT_DIR}/../klippy/kinematics/ratos_hybrid_corexy.py")
+    ratos extensions register klipper -k $EXT_NAME "$EXT_PATH"
+}
+
 register_ratos()
 {
     EXT_NAME="ratos_extension"
@@ -161,7 +171,7 @@ ratos-configurator
 
 patch_klipperscreen_service_restarts()
 {
-	if ! grep "StartLimitIntervalSec=0" /etc/systemd/system/klipperscreen.service &>/dev/null; then
+	if grep "StartLimitIntervalSec=0" /etc/systemd/system/klipperscreen.service &>/dev/null; then
 		report_status "Patching KlipperScreen service restarts..."
 		# Fix restarts
 		sudo sed -i 's/\RestartSec=1/\RestartSec=5/g' /etc/systemd/system/KlipperScreen.service
