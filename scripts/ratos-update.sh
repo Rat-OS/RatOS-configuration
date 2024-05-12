@@ -86,6 +86,7 @@ install_hooks
 ensure_node_18
 patch_klipperscreen_service_restarts
 register_z_offset_probe
+remove_old_postprocessor
 register_ratos
 register_resonance_generator
 register_ratos_kinematics

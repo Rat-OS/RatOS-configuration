@@ -115,6 +115,9 @@ register_z_offset_probe()
 register_ratos_kinematics() {
 	if ratos extensions list | grep "ratos-kinematics" &>/dev/null; then
 		ratos extensions unregister klipper -k ratos_hybrid_corexy
+	fi
+	if [ -e /home/pi/ratos-kinematics ]; then
+		report_status "Removing old ratos-kinematics directory..."
 		rm -rf /home/pi/ratos-kinematics
 	fi
     EXT_NAME="ratos_hybrid_corexy"
@@ -129,6 +132,14 @@ register_ratos()
     EXT_FILE="ratos.py"
 	# Don't error if extension is already registered
     _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
+}
+
+remove_old_postprocessor()
+{
+	if [ -L /home/pi/klipper/klippy/extras/ratos_post_processor.py ]; then
+		report_status "Removing old postprocessor.py..."
+		rm /home/pi/klipper/klippy/extras/ratos_post_processor.py
+	fi
 }
 
 install_hooks()
