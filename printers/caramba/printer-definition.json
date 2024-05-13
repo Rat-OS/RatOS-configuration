@@ -9,7 +9,7 @@
 	"driverCountRequired": 6,
 	"bedMargin": {
 		"x": [60, 60],
-		"y": [0, 0]
+		"y": [15, 30]
 	},
 	"sizes": {
 		"300": {
