@@ -4,7 +4,7 @@
 	"manufacturer": "Rat Rig",
 	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-pro",
 	"description": "Discontinued CoreXY printer from Rat Rig which comes in 3 sizes",
-	"image": "rat-rig-v-core-pro-13.jpg",
+	"image": "v-core-pro.png",
 	"template": "v-core-pro-printer.template.cfg",
 	"driverCountRequired": 6,
 	"sizes": {
