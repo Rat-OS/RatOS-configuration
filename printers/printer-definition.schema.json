@@ -22,6 +22,11 @@
 			"description": "The name of the manufacturer of this printer",
 			"type": "string"
 		},
+		"releaseDate": {
+			"description": "The release date of this printer in ISO 8601/RFC3339 eg. 2023-12-31",
+			"type": "string",
+			"format": "date"
+		},
 		"documentationLink": {
 			"description": "Link to the RatOS documentation for this printer",
 			"type": "string"

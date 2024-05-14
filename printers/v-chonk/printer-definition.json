@@ -1,11 +1,12 @@
 {
 	"$schema": "../printer-definition.schema.json",
-	"name": "Caramba! Chonk",
-	"description": "Who knows...",
-	"manufacturer": "¡Ay,",
-	"documentationLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-	"image": "caramba.webp",
-	"template": "caramba-chonk-printer.template.cfg",
+	"name": "V-Chonk",
+	"description": "Mostly 3d printed, \"use what you've got\" 3d printer, Rat Rig style.",
+	"manufacturer": "Rat Rig",
+	"releaseDate": "2024-02-23",
+	"documentationLink": "https://www.ratrig.com",
+	"image": "v-chonk.png",
+	"template": "v-chonk-printer.template.cfg",
 	"driverCountRequired": 5,
 	"bedMargin": {
 		"x": [0, 0],

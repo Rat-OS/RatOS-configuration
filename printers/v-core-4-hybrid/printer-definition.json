@@ -1,11 +1,12 @@
 {
 	"$schema": "../printer-definition.schema.json",
-	"name": "Caramba! Hybrid",
-	"description": "Who knows... but hybrid",
-	"manufacturer": "¡Ay,",
-	"documentationLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-	"image": "caramba.webp",
-	"template": "caramba-hybrid-printer.template.cfg",
+	"name": "V-Core 4 Hybrid",
+	"description": "Rat Rig flagship 3d printer with the hybrid upgrade kit",
+	"manufacturer": "Rat Rig",
+	"releaseDate": "2024-04-26",
+	"documentationLink": "https://v-core4.ratrig.com/",
+	"image": "v-core-4-hybrid.png",
+	"template": "v-core-4-hybrid-printer.template.cfg",
 	"driverCountRequired": 8,
 	"sizes": {
 		"300": {
@@ -25,8 +26,8 @@
 		}
 	},
 	"bedMargin": {
-		"x": [60, 60],
-		"y": [15, 30]
+		"x": [59.8, 59.8],
+		"y": [14.35, 30]
 	},
 	"speedLimits": {
 		"basic": {
@@ -58,7 +59,7 @@
 				"hotend": "rapido",
 				"partFan": "4pin-toolboard",
 				"hotendFan": "2pin-toolboard",
-				"probe": "superpinda",
+				"probe": "beacon",
 				"xEndstop": "endstop-toolboard",
 				"yEndstop": "endstop"
 			}

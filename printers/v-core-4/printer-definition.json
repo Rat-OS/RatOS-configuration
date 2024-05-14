@@ -1,12 +1,17 @@
 {
 	"$schema": "../printer-definition.schema.json",
-	"name": "Caramba! IDEX",
-	"description": "Who knows... but IDEX",
-	"manufacturer": "¡Ay,",
-	"documentationLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-	"image": "caramba.webp",
-	"template": "caramba-idex-printer.template.cfg",
-	"driverCountRequired": 9,
+	"name": "V-Core 4",
+	"description": "Rat Rig flagship 3d printer in CoreXY mode",
+	"releaseDate": "2024-04-26",
+	"manufacturer": "Rat Rig",
+	"documentationLink": "https://v-core4.ratrig.com/",
+	"image": "v-core-4.png",
+	"template": "v-core-4-printer.template.cfg",
+	"driverCountRequired": 6,
+	"bedMargin": {
+		"x": [60, 60],
+		"y": [15, 30]
+	},
 	"sizes": {
 		"300": {
 			"x": 300,
@@ -23,10 +28,6 @@
 			"y": 500,
 			"z": 500
 		}
-	},
-	"bedMargin": {
-		"x": [60, 60],
-		"y": [15, 34]
 	},
 	"speedLimits": {
 		"basic": {
@@ -46,51 +47,24 @@
 			"travel_accel": 8000
 		}
 	},
-	"kinematics": "hybrid-corexy-idex",
 	"defaults": {
 		"board": "btt-octopus-11",
 		"toolheads": [
 			{
 				"axis": "x",
-				"description": "The left toolhead",
 				"extruder": "orbiter-2",
-				"toolboard": "btt-ebb42-12",
 				"hotend": "rapido",
-				"partFan": "4pin-toolboard",
-				"hotendFan": "2pin-toolboard",
+				"partFan": "4pin",
+				"hotendFan": "2pin",
 				"probe": "superpinda",
-				"xEndstop": "endstop-toolboard",
-				"yEndstop": "endstop"
-			},
-			{
-				"axis": "dual_carriage",
-				"description": "The right toolhead",
-				"extruder": "orbiter-2",
-				"toolboard": "btt-ebb42-12",
-				"hotend": "rapido",
-				"partFan": "4pin-toolboard",
-				"hotendFan": "2pin-toolboard",
-				"probe": "superpinda",
-				"xEndstop": "endstop-toolboard",
+				"xEndstop": "endstop",
 				"yEndstop": "endstop"
 			}
 		],
 		"rails": [
 			{
 				"axis": "x",
-				"axisDescription": "The X axis motor for the left toolhead, located at the rear left of the printer",
-				"current": 1.1,
-				"driver": "BTT-TMC2209-13",
-				"stepper": "LDO-42STH48-2504AC",
-				"rotationDistance": 40,
-				"homingSpeed": 50,
-				"performanceMode": {
-					"current": 1.6
-				}
-			},
-			{
-				"axis": "dual_carriage",
-				"axisDescription": "The X axis motor for the right toolhead, located at the rear right of the printer",
+				"axisDescription": "The A motor in the CoreXY system, located at the rear left of the printer",
 				"current": 1.1,
 				"driver": "BTT-TMC2209-13",
 				"stepper": "LDO-42STH48-2504AC",
@@ -102,19 +76,7 @@
 			},
 			{
 				"axis": "y",
-				"axisDescription": "The left Y motor used for cartesian Y control in Hybrid CoreXY, located at the rear left of the printer",
-				"current": 1.1,
-				"driver": "BTT-TMC2209-13",
-				"stepper": "LDO-42STH48-2504AC",
-				"rotationDistance": 40,
-				"homingSpeed": 50,
-				"performanceMode": {
-					"current": 1.6
-				}
-			},
-			{
-				"axis": "y1",
-				"axisDescription": "The right Y motor used for cartesian Y control in Hybrid CoreXY, located at the rear right of the printer",
+				"axisDescription": "The B motor in the CoreXY system, located at the rear right of the printer",
 				"current": 1.1,
 				"driver": "BTT-TMC2209-13",
 				"stepper": "LDO-42STH48-2504AC",
@@ -160,15 +122,7 @@
 			},
 			{
 				"axis": "extruder",
-				"axisDescription": "The extruder motor used for pushing filament through the left toolhead (T0)",
-				"rotationDistance": 0,
-				"current": 0.707,
-				"driver": "BTT-TMC2209-13",
-				"stepper": "LDO-36STH20-1004AHG"
-			},
-			{
-				"axis": "extruder1",
-				"axisDescription": "The extruder motor used for pushing filament through the right toolhead (T1)",
+				"axisDescription": "The extruder motor used for pushing filament through the toolhead",
 				"rotationDistance": 0,
 				"current": 0.707,
 				"driver": "BTT-TMC2209-13",
