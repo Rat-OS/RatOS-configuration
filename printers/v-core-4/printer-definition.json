@@ -1,11 +1,12 @@
 {
 	"$schema": "../printer-definition.schema.json",
-	"name": "Caramba!",
-	"description": "Who knows...",
-	"manufacturer": "¡Ay,",
-	"documentationLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-	"image": "caramba.webp",
-	"template": "caramba-printer.template.cfg",
+	"name": "V-Core 4",
+	"description": "Rat Rig flagship 3d printer in CoreXY mode",
+	"releaseDate": "2024-04-26",
+	"manufacturer": "Rat Rig",
+	"documentationLink": "https://v-core4.ratrig.com/",
+	"image": "v-core-4.png",
+	"template": "v-core-4-printer.template.cfg",
 	"driverCountRequired": 6,
 	"bedMargin": {
 		"x": [60, 60],
