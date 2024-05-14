@@ -57,8 +57,6 @@ update_beacon_fw()
 	KLIPPER_DIR="/home/pi/klipper"
 	KLIPPER_ENV="/home/pi/klippy-env"
 	BEACON_DIR="/home/pi/beacon"
-    report_status "Installing beacon module..."
-
 	if [ ! -d "$BEACON_DIR" ] || [ ! -e "$KLIPPER_DIR/klippy/extras/beacon.py" ]; then
 		echo "beacon: beacon isn't installed, skipping..."
 		return
@@ -69,11 +67,11 @@ update_beacon_fw()
 		return
 	fi
 
-	if [ ! -e "$BEACON_DIR/update-firmware.py" ]; then
+	if [ ! -f "$BEACON_DIR/update_firmware.py" ]; then
 		echo "beacon: beacon firmware updater script doesn't exist, skipping..."
 		return
 	fi
-	$KLIPPER_ENV/bin/python $BEACON_DIR/update-firmware.py update all --no-sudo
+	$KLIPPER_ENV/bin/python $BEACON_DIR/update_firmware.py update all --no-sudo
 }
 
 # Run update symlinks
