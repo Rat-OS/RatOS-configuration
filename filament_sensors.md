@@ -67,7 +67,7 @@ example configuration for the BTT SFS Filament Sensor
 [filament_motion_sensor bowden_filament_clog_t0]
 switch_pin: ^PG15
 detection_length: 8
-extruder: extruder   # extruder for T0, extreuder1 for T1
+extruder: extruder   # extruder for T0, extruder1 for T1
 pause_on_runout: False
 event_delay: 3.0
 pause_delay: 0.5
@@ -117,7 +117,7 @@ insert_gcode:
 [filament_motion_sensor bowden_filament_clog_t0]
 switch_pin: ^PG15
 detection_length: 8
-extruder: extruder   # extruder for T0, extreuder1 for T1
+extruder: extruder   # extruder for T0, extruder1 for T1
 pause_on_runout: False
 event_delay: 3.0
 pause_delay: 0.5
