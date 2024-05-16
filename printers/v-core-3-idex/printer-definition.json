@@ -1,7 +1,7 @@
 {
 	"$schema": "../printer-definition.schema.json",
 	"name": "V-Core 3 IDEX",
-	"description": "Rat Rig's current flagship CoreXY printer in IDEX configuration which comes in 4 sizes",
+	"description": "Rat Rig's former flagship CoreXY printer in IDEX Wideboy configuration, available in 4 sizes",
 	"manufacturer": "Rat Rig",
 	"documentationLink": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 	"image": "rat-rig-v-core-3.png",
