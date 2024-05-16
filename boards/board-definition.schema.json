@@ -39,6 +39,18 @@
 			"description": "Link to the RatOS configuration for this board",
 			"type": "string"
 		},
+		"manualFileName": {
+			"description": "The filename of the manual for this board, should be placed in the board directory.",
+			"type": "string"
+		},
+		"wireDiagramFileName": {
+			"description": "The filename of the wire diagram for this board, should be placed in the board directory.",
+			"type": "string"
+		},
+		"boardImageFileName": {
+			"description": "The filename of the image of this board, should be placed in the board directory.",
+			"type": "string"
+		},
 		"isToolboard": {
 			"description": "Whether this controlboard is a toolboard",
 			"type": "boolean"
