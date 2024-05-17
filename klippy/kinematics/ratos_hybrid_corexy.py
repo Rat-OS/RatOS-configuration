@@ -107,7 +107,6 @@ class RatOSHybridCoreXYKinematics:
                     rail = self.dc_module.get_primary_rail().get_rail()
                 else:
                     rail = self.rails[axis]
-                ###################
     def note_z_not_homed(self):
         # Helper for Safe Z Home
         self.limits[2] = (1.0, -1.0)
