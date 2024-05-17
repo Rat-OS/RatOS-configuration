@@ -85,11 +85,9 @@ class RatOSHybridCoreXYKinematics:
         if (self.dc_module is not None and 'PRIMARY' == \
                     self.dc_module.get_status()['carriage_1']):
             if self.inverted == False:
-                return stepper_positions['dual_carriage'] \
-                        - pos[1], pos[1], pos[2]
+                return [pos[3] - pos[1], pos[1], pos[2]]
             else:
-                return stepper_positions['dual_carriage']  \
-                        + pos[1], pos[1], pos[2]
+                return [pos[3] + pos[1], pos[1], pos[2]]
         else:
             if self.inverted == False:
                 return pos[0] + pos[1], pos[1], pos[2]
@@ -101,13 +99,15 @@ class RatOSHybridCoreXYKinematics:
         # otherwise leave in un-homed state.
         if l <= h:
             self.limits[i] = range
-    def override_rail(self, i, rail):
-        self.rails[i] = rail
     def set_position(self, newpos, homing_axes):
         for i, rail in enumerate(self.rails):
             rail.set_position(newpos)
-            if i in homing_axes:
-                self.limits[i] = rail.get_range()
+            for axis in homing_axes:
+                if self.dc_module and axis == self.dc_module.axis:
+                    rail = self.dc_module.get_primary_rail().get_rail()
+                else:
+                    rail = self.rails[axis]
+                ###################
     def note_z_not_homed(self):
         # Helper for Safe Z Home
         self.limits[2] = (1.0, -1.0)
@@ -164,3 +164,4 @@ class RatOSHybridCoreXYKinematics:
 
 def load_kinematics(toolhead, config):
     return RatOSHybridCoreXYKinematics(toolhead, config)
+
