@@ -3,7 +3,7 @@ if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
 fi
-cp -f /home/pi/printer_data/config/RatOS/boards/btt-sb2209-10/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/printer_data/config/RatOS/boards/btt-sb-2209-10-stm32/firmware.config /home/pi/klipper/.config
 pushd /home/pi/klipper || exit
 make olddefconfig
 make clean
@@ -14,6 +14,6 @@ then
     mkdir /home/pi/printer_data/config/firmware_binaries
     chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb2209-10.bin
-chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb2209-10.bin
+cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb-2209-10-stm.bin
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-btt-sb-2209-10-stm.bin
 popd || exit

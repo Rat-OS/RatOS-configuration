@@ -1,7 +1,7 @@
 {
 	"$schema": "../printer-definition.schema.json",
 	"name": "V-Core 3",
-	"description": "Rat Rig's current flagship CoreXY printer which comes in 4 sizes",
+	"description": "Rat Rig's former flagship CoreXY printer in 4 sizes",
 	"manufacturer": "Rat Rig",
 	"documentationLink": "https://os.ratrig.com/docs/printers/v-core-3",
 	"image": "rat-rig-v-core-3.png",
