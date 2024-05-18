@@ -1,13 +1,13 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"isToolboard": true,
-	"name": "SB2209 v1.0",
+	"name": "SB2240 v1.0 RP2040",
 	"manufacturer": "BIGTREETECH",
-	"id": "btt-sb2209-10",
-	"firmwareBinaryName": "firmware-btt-ebb36-10.bin",
+	"id": "btt-sb-2240-10-rp",
+	"firmwareBinaryName": "firmware-btt-sb-2240-10-rp.uf2",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
-	"documentationLink": "https://os.ratrig.com/docs/boards/btt/sb2209-10",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/sb2240-10",
 	"fourPinFanConnectorCount": 1,
 	"driverVoltages": [24],
 	"hasMcuTempSensor": false,
@@ -20,7 +20,7 @@
 	],
 	"driverCount": 1,
 	"integratedDrivers": {
-		"extruder": "BTT-TMC2209-13"
+		"extruder": "BTT-TMC2240-10"
 	},
 	"dfu": {
 		"flashDevice": "0483:df11",

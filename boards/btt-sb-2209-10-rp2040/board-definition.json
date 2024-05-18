@@ -1,0 +1,45 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"isToolboard": true,
+	"name": "SB2209 v1.0 RP2040",
+	"manufacturer": "BIGTREETECH",
+	"id": "btt-sb-2209-10-rp",
+	"firmwareBinaryName": "firmware-btt-sb-2209-10-rp.uf2",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/sb2209-10",
+	"fourPinFanConnectorCount": 1,
+	"driverVoltages": [24],
+	"hasMcuTempSensor": false,
+	"outputPins": [
+		{
+			"name": "part_fan_power",
+			"pin": "gpio14",
+			"value": 0
+		}
+	],
+	"driverCount": 1,
+	"integratedDrivers": {
+		"extruder": "BTT-TMC2209-13"
+	},
+	"dfu": {
+		"flashDevice": "0483:df11",
+		"dfuBootImage": "dfubooting.png",
+		"instructions": [
+			"Connect the board via USB to the Raspberry Pi",
+			"Make sure the board is powered (you can use usb power by placing a jumper on the VBUS pins.",
+			"Press and hold the BOOT button on the board.",
+			"Press and release the RESET button on the board.",
+			"Release the BOOT button."
+		],
+		"hasBoot0Jumper": false
+	},
+	"ADXL345SPI": {
+		"cs_pin": "gpio1",
+		"software": {
+			"sclk": "gpio2",
+			"mosi": "gpio0",
+			"miso": "gpio3"
+		}
+	}
+}
