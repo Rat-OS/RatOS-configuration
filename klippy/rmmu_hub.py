@@ -343,6 +343,16 @@ class RMMU_Hub:
 				# disable toolhead filament sensor
 				rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
 
+			# cool toolhead down to standby temp if needed to avoid oozing on the build plate after loading filaments
+			preheat_extruder_temp = float(self.get_macro_variable("RatOS", "preheat_extruder_temp"))
+			self.rmmu[0].extruder_set_temperature(0, False)
+			self.ratos_echo("Waiting for extruder T0 to cool down to " + str(preheat_extruder_temp) + "°C...")
+			self.gcode.run_script_from_command('TEMPERATURE_WAIT SENSOR="extruder" MINIMUM=0 MAXIMUM=' + str(preheat_extruder_temp))
+			if self.dual_carriage != None:
+				self.rmmu[1].extruder_set_temperature(0, False)
+				self.ratos_echo("Waiting for extruder T1 to cool down to " + str(preheat_extruder_temp) + "°C...")
+				self.gcode.run_script_from_command('TEMPERATURE_WAIT SENSOR="extruder1" MINIMUM=0 MAXIMUM=' + str(preheat_extruder_temp))
+
 			# test if all demanded filaments are available and raises an error if not
 			self.test_filaments(logical_tools)
 
