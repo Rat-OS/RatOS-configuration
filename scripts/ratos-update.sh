@@ -62,6 +62,8 @@ patch_klipperscreen_service_restarts
 register_z_offset_probe
 remove_old_postprocessor
 register_ratos
+register_rmmu
+register_rmmu_hub
 register_resonance_generator
 register_ratos_kinematics
 symlink_extensions
