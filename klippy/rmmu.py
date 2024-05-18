@@ -830,12 +830,12 @@ class RMMU:
 	# Filament presence check
  	#####
 	def test_filament(self, filament):
-		if len(self.parking_t_sensor_endstop) == self.tool_count or len(self.feeder_filament_sensors) == self.tool_count:
+		if len(self.parking_t_sensor_endstop) == self.tool_count or len(self.bowdenfilament_sensors) == self.tool_count:
 			if len(self.parking_t_sensor_endstop) == self.tool_count:
 				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[filament]):
 					return False
-			if len(self.feeder_filament_sensors) == self.tool_count:
-				if not self.is_sensor_triggered(self.feeder_filament_sensors[filament]):
+			if len(self.bowdenfilament_sensors) == self.tool_count:
+				if not self.is_sensor_triggered(self.bowdenfilament_sensors[filament]):
 					return False
 			return True
 		else:
@@ -864,9 +864,9 @@ class RMMU:
 		# select filament
 		self.select_filament(tool)
 
-		if len(self.feeder_filament_sensors) == self.tool_count:
+		if len(self.bowdenfilament_sensors) == self.tool_count:
 			# check filament runout sensor
-			if not self.is_sensor_triggered(self.feeder_filament_sensors[tool]):
+			if not self.is_sensor_triggered(self.bowdenfilament_sensors[tool]):
 				self.ratos_echo("Filament T" + str(tool) + " already ejected!")
 				return
 
@@ -1226,9 +1226,9 @@ class RMMU:
 		result = self.name + " Sensors:\n"
 		if self.toolhead_filament_sensor != None:
 			result += "Toolhead sensor triggered: " + str(self.is_sensor_triggered(self.toolhead_filament_sensor)) + "\n"
-		if len(self.feeder_filament_sensors) == self.tool_count:
+		if len(self.bowdenfilament_sensors) == self.tool_count:
 			for i in range(0, self.tool_count):
-				result += "Feeder sensor T" + str(i) + " triggered: " + str(self.is_sensor_triggered(self.feeder_filament_sensors[i])) + "\n"
+				result += "Bowden sensor T" + str(i) + " triggered: " + str(self.is_sensor_triggered(self.bowdenfilament_sensors[i])) + "\n"
 		result += "\n" + self.name + " Endstops:\n"
 		if self.toolhead_sensor_endstop != None:
 			result += "Toolhead endstop triggered: " + str(self.is_endstop_triggered(self.toolhead_sensor_endstop)) + "\n"

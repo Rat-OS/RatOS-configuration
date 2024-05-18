@@ -48,13 +48,13 @@ class RMMU_Hub:
 			for tool in range(start_tool_count, self.total_tool_count):
 				self.mapping[str(tool)] = {"TOOLHEAD": rmmu[1].name.lower().replace("rmmu_t", ""), "FILAMENT": tool - start_tool_count}
 
-			# feeder filament sensors
-			rmmu[1].feeder_filament_sensors = []
+			# bowden filament sensors
+			rmmu[1].bowdenfilament_sensors = []
 			for i in range(start_tool_count, self.total_tool_count):
 				for filament_sensor in self.printer.lookup_objects('filament_switch_sensor'):
 					sensor_name = filament_sensor[1].runout_helper.name
-					if sensor_name == 'feeder_filament_sensor_t' + str(i):
-						rmmu[1].feeder_filament_sensors.append(filament_sensor[1])
+					if sensor_name == 'bowdenfilament_sensor_t' + str(i):
+						rmmu[1].bowdenfilament_sensors.append(filament_sensor[1])
 
 			start_tool_count = self.total_tool_count
 
@@ -133,7 +133,7 @@ class RMMU_Hub:
 	def cmd_RMMU_UNLOAD_FILAMENT(self, param):
 		self.cmd_unload_filament(param)
 
-	desc_RMMU_FILAMENT_INSERT = "Called from the RatOS feeder sensor insert detection."
+	desc_RMMU_FILAMENT_INSERT = "Called from the RatOS bowden sensor insert detection."
 	def cmd_RMMU_FILAMENT_INSERT(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.total_tool_count)
 		if tool >= self.rmmu[0].tool_count:
@@ -141,7 +141,7 @@ class RMMU_Hub:
 		else:
 			self.rmmu[0].on_filament_insert(tool)
 
-	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS feeder sensor runout detection."
+	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS bowden sensor runout detection."
 	def cmd_RMMU_FILAMENT_RUNOUT(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.total_tool_count)
 		clogged = param.get_int('CLOGGED', "true")
