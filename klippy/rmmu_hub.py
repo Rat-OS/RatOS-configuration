@@ -228,6 +228,7 @@ class RMMU_Hub:
 				self.gcode.run_script_from_command('_IDEX_SINGLE X=' + str(parking_position))
 
 			# unload / load filaments
+			needs_cool_down = False
 			for physical_toolhead in physical_toolheads:
 				for t in logical_tools:
 					if physical_toolhead == int(self.mapping[str(t)]["TOOLHEAD"]):
@@ -247,6 +248,7 @@ class RMMU_Hub:
 				if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
 					if loaded_filament != initial_filament:
 						if loaded_filament_temp > rmmu.heater.min_extrude_temp and loaded_filament_temp < rmmu.heater.max_temp:
+							needs_cool_down = True
 
 							# unloaded the filament that is already loaded
 							self.ratos_echo("Wrong filament detected in toolhead T" + str(physical_toolhead) + ".")
@@ -291,6 +293,7 @@ class RMMU_Hub:
 
 				# load initial filament if needed
 				if loaded_filament != initial_filament:
+					needs_cool_down = True
 
 					# start heating up extruder but dont wait for it so we can save some time
 					self.ratos_echo("Preheating extruder to " + str(self.extruder_temp[physical_toolhead]) + "°C")
@@ -344,14 +347,15 @@ class RMMU_Hub:
 				rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
 
 			# cool toolhead down to standby temp if needed to avoid oozing on the build plate after loading filaments
-			preheat_extruder_temp = float(self.get_macro_variable("RatOS", "preheat_extruder_temp"))
-			self.rmmu[0].extruder_set_temperature(0, False)
-			self.ratos_echo("Waiting for extruder T0 to cool down to " + str(preheat_extruder_temp) + "°C...")
-			self.gcode.run_script_from_command('TEMPERATURE_WAIT SENSOR="extruder" MINIMUM=0 MAXIMUM=' + str(preheat_extruder_temp))
-			if self.dual_carriage != None:
-				self.rmmu[1].extruder_set_temperature(0, False)
-				self.ratos_echo("Waiting for extruder T1 to cool down to " + str(preheat_extruder_temp) + "°C...")
-				self.gcode.run_script_from_command('TEMPERATURE_WAIT SENSOR="extruder1" MINIMUM=0 MAXIMUM=' + str(preheat_extruder_temp))
+			if needs_cool_down:
+				preheat_extruder_temp = float(self.get_macro_variable("RatOS", "preheat_extruder_temp"))
+				self.rmmu[0].extruder_set_temperature(0, False)
+				self.ratos_echo("Waiting for extruder T0 to cool down to " + str(preheat_extruder_temp) + "°C...")
+				self.gcode.run_script_from_command('TEMPERATURE_WAIT SENSOR="extruder" MINIMUM=0 MAXIMUM=' + str(preheat_extruder_temp))
+				if self.dual_carriage != None:
+					self.rmmu[1].extruder_set_temperature(0, False)
+					self.ratos_echo("Waiting for extruder T1 to cool down to " + str(preheat_extruder_temp) + "°C...")
+					self.gcode.run_script_from_command('TEMPERATURE_WAIT SENSOR="extruder1" MINIMUM=0 MAXIMUM=' + str(preheat_extruder_temp))
 
 			# test if all demanded filaments are available and raises an error if not
 			self.test_filaments(logical_tools)
