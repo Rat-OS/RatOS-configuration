@@ -34,6 +34,8 @@ class RatOS:
 		self.sdcard_dirname = self.v_sd.sdcard_dirname
 		self.dual_carriage = self.printer.lookup_object("dual_carriage", None)
 		self.rmmu_hub = self.printer.lookup_object("rmmu_hub", None)
+		self.rmmu_t0 = self.printer.lookup_object("rmmu RMMU_T0", None)
+		self.rmmu_t1 = self.printer.lookup_object("rmmu RMMU_T1", None)
 
 	#####
 	# Settings
@@ -94,6 +96,8 @@ class RatOS:
 		first_x = -1
 		first_y = -1
 		toolshift_count = 0
+		filament_count = 0
+		last_physical_toolhead = -1
 		tower_line = -1
 		start_print_line = 0
 		file_has_changed = False
@@ -143,9 +147,28 @@ class RatOS:
 			# count toolshifts
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
-					if toolshift_count == 0:
-						lines[line] = '; Removed by RatOS post processor: ' + lines[line].rstrip() + '\n' # remove first toolchange
-					toolshift_count += 1
+					if self.dual_carriage == None and self.rmmu_hub != None:
+						# single toolhead printer rmmu
+						if filament_count == 0:
+							lines[line] = '; Removed by RatOS post processor: ' + lines[line].rstrip() + '\n' # remove first toolchange
+						filament_count += 1
+
+					elif self.dual_carriage != None and self.rmmu_hub == None:
+						# idex printer 
+						if toolshift_count == 0:
+							lines[line] = '; Removed by RatOS post processor: ' + lines[line].rstrip() + '\n' # remove first toolchange
+						toolshift_count += 1
+
+					elif self.dual_carriage != None and self.rmmu_hub != None:
+						# idex printer rmmu
+						filament = lines[line].rstrip().replace("T", "")
+						physical_toolhead = int(self.rmmu_hub.mapping[filament]["TOOLHEAD"])
+						if last_physical_toolhead != physical_toolhead:
+							toolshift_count += 1
+						last_physical_toolhead = physical_toolhead
+						if filament_count == 0:
+							lines[line] = '; Removed by RatOS post processor: ' + lines[line].rstrip() + '\n' # remove first toolchange
+						filament_count += 1
 
 			# get first tools usage in order
 			if start_print_line > 0:
@@ -299,8 +322,8 @@ class RatOS:
 								extrusion_line = move_line + i2
 								break
 
-					# make toolshift changes
-					if toolshift_count > 0 and toolchange_line > 0 and move_line > 0:
+					# make toolshift/filament changes
+					if (toolshift_count > 0 or filament_count > 0) and toolchange_line > 0 and move_line > 0:
 						file_has_changed = True
 						if zhop_line > 0:
 							lines[zhop_line] = '; Removed by RatOS post processor: ' + lines[zhop_line].rstrip() + '\n'
@@ -347,7 +370,10 @@ class RatOS:
 
 			# console output 
 			self.ratos_echo(echo_prefix, "USED TOOLS: " + ','.join(used_tools))
-			self.ratos_echo(echo_prefix, "TOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1))
+			if toolshift_count > 0:
+				self.ratos_echo(echo_prefix, "TOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1))
+			if filament_count > 0:
+				self.ratos_echo(echo_prefix, "FILAMENT CHANGES: " + str(0 if filament_count == 0 else filament_count - 1))
 			self.ratos_echo(echo_prefix, "SLICER: " + slicer["Name"] + " " + slicer["Version"])
 
 			# save file if it has changed 
