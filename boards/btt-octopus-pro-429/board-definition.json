@@ -1,5 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.png",
 	"name": "Octopus Pro 429",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-octopus-pro-429",
