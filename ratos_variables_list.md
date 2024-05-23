@@ -51,49 +51,49 @@ variable_adaptive_prime_offset_threshold: -1.0   # float = threshold value used 
 [gcode_macro RatOS]
 variable_start_print_park_in: "back"              # back|front|center = gantry parking position before the print starts
 variable_start_print_park_z_height: 50            # float = toolhead parking z-position before the print starts
-variable_start_print_heat_chamber_bed_temp: 115   # int
-variable_end_print_park_in: "back"                # back|front|center
-variable_pause_print_park_in: "back"              # back|front|center 
-variable_end_print_park_z_hop: 20                 # float
+variable_start_print_heat_chamber_bed_temp: 115   # int = bed temperature during chamber preheating
+variable_end_print_park_in: "back"                # back|front|center = gantry parking position after the print has finished
+variable_pause_print_park_in: "back"              # back|front|center = gantry parking position if the print has paused
+variable_end_print_park_z_hop: 20                 # float = toolhead z-hop after the print has finished
 ```
 
 ## Priming 
 ```
 [gcode_macro RatOS]
-variable_nozzle_priming: "primeblob"      # primeblob|false
-variable_nozzle_prime_start_x: "max"      # non IDEX priming x position = min|max|float
-variable_nozzle_prime_start_y: "min"      # non IDEX priming y position = min|max|float
-variable_nozzle_prime_direction: "auto"   # non IDEX priming y direction = auto|forwards|backwards
-variable_nozzle_prime_bridge_fan: 102     # priming fan speed = 0-255
+variable_nozzle_priming: "primeblob"      # primeblob|false = To prime, or not to prime, that is the question.
+variable_nozzle_prime_start_x: "max"      # min|max|float = non IDEX priming x-location
+variable_nozzle_prime_start_y: "min"      # min|max|float = non IDEX priming y-location
+variable_nozzle_prime_direction: "auto"   # auto|forwards|backwards = non IDEX priming y-direction
+variable_nozzle_prime_bridge_fan: 102     # int = priming fan speed 0-255
 variable_last_z_offset: None              # internal use only. Do not touch!
 ```
 
 ## IDEX 
 ```
 [gcode_macro RatOS]
-variable_auto_center_subject: False        # True|False
-variable_toolchange_zhop: 2.0              # float
-variable_toolchange_zspeed: 25             # int
-variable_toolchange_sync_fans: False       # True|False
-variable_toolchange_combined_zhop: False   # True|False
-variable_toolchange_travel_speed: 300      # int
-variable_toolchange_travel_accel: 5000     # int
-variable_toolchange_extrusion: 2.0         # float
-variable_toolchange_retraction: 2.0        # float
-variable_toolchange_feedrate: 7200         # int
-variable_toolchange_prepurging_timer: 0    # int
-variable_toolchange_standby_temp: -1       # int
-variable_toolchange_purge: 25              # float
-variable_toolchange_first_purge: 50        # float
+variable_auto_center_subject: False        # True|False = Experimental auto centering subject on build plate for copy and mirror mode
+variable_toolchange_zhop: 2.0              # float = toolshifts z-hop
+variable_toolchange_zspeed: 25             # int = toolshifts z-hop speed
+variable_toolchange_sync_fans: False       # True|False = synchronizes fan speeds while printing.
+variable_toolchange_combined_zhop: False   # True|False = combines z-hop and retract/deretract moves for toolshifts
+variable_toolchange_travel_speed: 300      # int = toolshift travel speed
+variable_toolchange_travel_accel: 5000     # int = toolshift travel acceleration
+variable_toolchange_extrusion: 2.0         # float = toolshift deretraction
+variable_toolchange_retraction: 2.0        # float = toolshift retraction
+variable_toolchange_feedrate: 7200         # int = extruder feedrate for retract/deretract moves for toolshifts
+variable_toolchange_prepurging_timer: 0    # int = prepurge some filament before going back to the buildplate after X seconds of inactivity
+variable_toolchange_purge: 25              # float = mm of filament that gets prepruged in case the timer has been configured
+variable_toolchange_standby_temp: -1       # int = if configured the toolheads are going into standby mode when parked 
+variable_toolchange_first_purge: 50        # float = mm of filament that gets purged before a toolheads first use
 ```
 
 ## Stowable Probes
 ```
 [gcode_macro RatOS]
-variable_stowable_probe_position_preflight: [30, 60]    # x,y coordinates = [float, float]
-variable_stowable_probe_position_side:      [13, 60]    # x,y coordinates = [float, float]
-variable_stowable_probe_position_dock:      [13, 6.5]   # x,y coordinates = [float, float]
-variable_stowable_probe_position_exit:      [60, 6.5]   # x,y coordinates = [float, float]
+variable_stowable_probe_position_preflight: [30, 60]    # [float, float] = x,y preflight coordinates
+variable_stowable_probe_position_side:      [13, 60]    # [float, float] = x,y side coordinates
+variable_stowable_probe_position_dock:      [13, 6.5]   # [float, float] = x,y dock coordinates
+variable_stowable_probe_position_exit:      [60, 6.5]   # [float, float] = x,y exit coordinates
 variable_stowable_probe_batch_mode_enabled: False       # internal use only. Do not touch!
 variable_stowable_probe_state: None                     # internal use only. Do not touch!
 ```
@@ -101,17 +101,17 @@ variable_stowable_probe_state: None                     # internal use only. Do 
 ## Beacon 
 ```
 [gcode_macro RatOS]
-variable_beacon_bed_mesh_scv: 25                         # int
-variable_beacon_contact_z_homing: False                  # True|False
-variable_beacon_contact_z_calibration: False             # True|False
-variable_beacon_contact_calibration_location: "center"   # center|front|corner
-variable_beacon_contact_calibrate_margin_x: 30           # float
-variable_beacon_contact_bed_mesh: False                  # True|False
-variable_beacon_contact_bed_mesh_samples: 2              # int
-variable_beacon_contact_z_tilt_adjust: False             # True|False
-variable_beacon_contact_z_tilt_adjust_samples: 2         # int
-variable_beacon_contact_prime_probing: False             # True|False
-variable_beacon_contact_calibration_temp: 170            # int
+variable_beacon_bed_mesh_scv: 25                         # int = square corner velocity for beacon proximity bed meshing
+variable_beacon_contact_z_homing: False                  # True|False = use beacon contact for z-homing
+variable_beacon_contact_z_calibration: False             # True|False = use beacon contact z-calibration
+variable_beacon_contact_calibration_location: "center"   # center|front|corner = beacon contact z-calibration location
+variable_beacon_contact_calibrate_margin_x: 30           # float = use beacon contact z-calibration x-margin 
+variable_beacon_contact_bed_mesh: False                  # True|False = use beacon contact for bed meshing
+variable_beacon_contact_bed_mesh_samples: 2              # int = beacon contact bed mesh probe samples
+variable_beacon_contact_z_tilt_adjust: False             # True|False = use beacon contact for z-tilting
+variable_beacon_contact_z_tilt_adjust_samples: 2         # int = beacon contact z-tilt probe samples
+variable_beacon_contact_prime_probing: False             # True|False = use beacon contact to probe for prime blobs
+variable_beacon_contact_calibration_temp: 150            # int = beacon contact z-calibration nozzle temperature
 ```
 
 ## Toolhead variables
@@ -120,44 +120,44 @@ variable_beacon_contact_calibration_temp: 170            # int
 variable_active: True                                     # internal use only. Do not touch!
 variable_standby: False                                   # internal use only. Do not touch!
 variable_color: "7bff33"                                  # internal use only. Do not touch!
-variable_hotend_type: "UHF"                               # SF|HF|UHF
-variable_has_cht_nozzle: False                            # True|False
-variable_cooling_position_to_nozzle_distance: 40          # float
-variable_tooolhead_sensor_to_extruder_gear_distance: 15   # flaot
-variable_extruder_gear_to_cooling_position_distance: 30   # float
-variable_filament_loading_nozzle_offset: -5               # float
-variable_filament_grabbing_length: 5                      # float
-variable_filament_grabbing_speed: 1                       # int
-variable_enable_insert_detection: True                    # True|False
-variable_enable_runout_detection: True                    # True|False
-variable_enable_clog_detection: True                      # True|False
-variable_unload_after_runout: True                        # True|False
-variable_resume_after_insert: True                        # True|False
-variable_purge_after_load: 0                              # float
-variable_purge_before_unload: 0                           # float
-variable_extruder_load_speed: 60                          # int
-variable_filament_load_speed: 10                          # int
-variable_temperature_offset: 0                            # int
-variable_has_oozeguard: False                             # True|False
-variable_has_front_arm_nozzle_wiper: False                # True|False
-variable_loading_position: -30                            # float
-variable_parking_position: -55                            # float
+variable_hotend_type: "UHF"                               # SF|HF|UHF = nozzle type. used for loading/unloading macros
+variable_has_cht_nozzle: False                            # True|False = nozzle type. used for loading/unloading macros
+variable_cooling_position_to_nozzle_distance: 40          # float = mm from the cooling position to the nozzles melting zone
+variable_tooolhead_sensor_to_extruder_gear_distance: 15   # flaot = mm from the toolhead filament sensor trigger point to the extruder gears
+variable_extruder_gear_to_cooling_position_distance: 30   # float = mm from the extruder gears to the cooling zone
+variable_filament_loading_nozzle_offset: -5               # float = mm loading offset for fine tuning
+variable_filament_grabbing_length: 5                      # float = mm filament grabbing length when inserting filament into the extruder
+variable_filament_grabbing_speed: 1                       # int = filament grabbing speed
+variable_enable_insert_detection: True                    # True|False = enable the filament sensor insert detection
+variable_enable_runout_detection: True                    # True|False = enable the filament sensor runout detection
+variable_enable_clog_detection: True                      # True|False = enable the filament sensor clog detection
+variable_unload_after_runout: True                        # True|False = unload filament from toolhead after if runout has been detected
+variable_resume_after_insert: True                        # True|False = auto resume a paused print after runout and insert
+variable_purge_after_load: 0                              # float = purge x mm after the filament has been loaded to the nozzle tip
+variable_purge_before_unload: 0                           # float = purge x mm before the filament unloads
+variable_extruder_load_speed: 60                          # int = extruder/cooling zone loading speed
+variable_filament_load_speed: 10                          # int = filament nozzle loading speed
+variable_temperature_offset: 0                            # int = adds a positive or negative offset to the nozzle temperature
+variable_has_oozeguard: False                             # True|False = toolhead has a oozeguard
+variable_has_front_arm_nozzle_wiper: False                # True|False = toolhead has a front arm nozzle wiper
+variable_loading_position: -30                            # float = x-position for filament loading/unloading actions
+variable_parking_position: -55                            # float = toolhead parking x-position
 ```
 
 ## VAOC variables
 ```
 [gcode_macro _VAOC]
-variable_is_fixed: False                       # True|False
-variable_additional_safe_distance: 50          # float
-variable_safe_z: 60                            # float
-variable_auto_z_offset_calibration: True       # True|False
-variable_enable_camera_cooling: True           # True|False
-variable_camera_cooling_temperature: 50        # int
-variable_camera_cooling_fan_speed: 0.3         # float
-variable_is_started: False                     # True|False
-variable_toolchange_travel_speed: 300          # int
-variable_toolchange_travel_accel: 5000         # int
+variable_is_fixed: False                       # True|False = vaoc is installed on a fix position
+variable_additional_safe_distance: 50          # internal use only. Do not touch!
+variable_safe_z: 60                            # float = safe z-height for xy travel moves
+variable_auto_z_offset_calibration: True       # True|False = performs a auto z-offset calibration before the print starts if needed
+variable_enable_camera_cooling: True           # True|False = enables the part cooling fan of the currently loaded toolhead
+variable_camera_cooling_fan_speed: 0.3         # float = part cooling fan speed of the currently loaded toolhead
+variable_camera_cooling_temperature: 50        # int = enables the integrated VAOC fan at the configured bed temperature 
+variable_is_started: False                     # internal use only. Do not touch!
+variable_toolchange_travel_speed: 300          # int = xy travel move speeds
+variable_toolchange_travel_accel: 5000         # int = xy travel move sccelerations
 variable_cache_toolchange_travel_speed: 300    # internal use only. Do not touch!
 variable_cache_toolchange_travel_accel: 5000   # internal use only. Do not touch!
-variable_cache_toolchange_zhop: 1.0            # float
+variable_cache_toolchange_zhop: 1.0            # internal use only. Do not touch!
 ```
