@@ -151,3 +151,22 @@ variable_has_front_arm_nozzle_wiper: False
 variable_loading_position: -30
 variable_parking_position: -55
 ```
+
+## VAOC variables
+
+```
+[gcode_macro _VAOC]
+variable_is_fixed: False
+variable_additional_safe_distance: 50
+variable_safe_z: 60
+variable_auto_z_offset_calibration: True
+variable_enable_camera_cooling: True
+variable_camera_cooling_temperature: 50
+variable_camera_cooling_fan_speed: 0.3
+variable_is_started: False
+variable_toolchange_travel_speed: 300
+variable_toolchange_travel_accel: 5000
+variable_cache_toolchange_travel_speed: 300
+variable_cache_toolchange_travel_accel: 5000
+variable_cache_toolchange_zhop: 1.0
+```
