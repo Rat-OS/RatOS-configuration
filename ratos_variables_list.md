@@ -52,12 +52,12 @@ variable_adaptive_prime_offset_threshold: -1.0
 
 ```
 [gcode_macro RatOS]
-variable_start_print_park_in: "back"
-variable_start_print_park_z_height: 50
-variable_start_print_heat_chamber_bed_temp: 115
-variable_end_print_park_in: "back"
-variable_pause_print_park_in: "back"
-variable_end_print_park_z_hop: 20
+variable_start_print_park_in: "back"               # back|front|center
+variable_start_print_park_z_height: 50             # float
+variable_start_print_heat_chamber_bed_temp: 115    # int
+variable_end_print_park_in: "back"                 # back|front|center
+variable_pause_print_park_in: "back"               # back|front|center 
+variable_end_print_park_z_hop: 20                  # float
 ```
 
 ## Priming 
