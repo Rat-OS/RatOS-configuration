@@ -1,6 +1,6 @@
 # RatOS Configuration
 
-This is the repository for the [RatOS](os.ratrig.com) modular configuration.
+This is the repository for the [RatOS](https://os.ratrig.com) modular configuration.
 
 ## Contributing
 
