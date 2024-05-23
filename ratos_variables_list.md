@@ -64,12 +64,12 @@ variable_end_print_park_z_hop: 20
 
 ```
 [gcode_macro RatOS]
-variable_nozzle_priming: "primeblob"
-variable_nozzle_prime_start_x: "max"
-variable_nozzle_prime_start_y: "min"
-variable_nozzle_prime_direction: "auto"
-variable_nozzle_prime_bridge_fan: 102
-variable_last_z_offset: None
+variable_nozzle_priming: "primeblob"             # primeblob|false
+variable_nozzle_prime_start_x: "max"             # non IDEX priming x position = min|max|float
+variable_nozzle_prime_start_y: "min"             # non IDEX priming y position = min|max|float
+variable_nozzle_prime_direction: "auto"          # non IDEX priming y direction = auto|forwards|backwards
+variable_nozzle_prime_bridge_fan: 102            # priming fan speed = 0-255
+variable_last_z_offset: None                     # internal use only
 ```
 
 ## IDEX 
