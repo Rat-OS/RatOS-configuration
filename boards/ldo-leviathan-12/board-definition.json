@@ -1,5 +1,8 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.png",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "LDO leviathan v1.20",
 	"manufacturer": "LDO",
 	"id": "ldo-leviathan-12",

@@ -1,5 +1,6 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"manualFileName": "manual.pdf",
 	"isToolboard": true,
 	"name": "SB2209 v1.0 RP2040",
 	"manufacturer": "BIGTREETECH",

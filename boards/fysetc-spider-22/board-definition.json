@@ -1,5 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.png",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "Spider v2.2",
 	"manufacturer": "Fysetc",
 	"id": "fysetc-spider-22",

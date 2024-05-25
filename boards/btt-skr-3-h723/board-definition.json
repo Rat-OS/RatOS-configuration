@@ -1,5 +1,8 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.png",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "SKR 3 H723",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-skr-3-h723",
