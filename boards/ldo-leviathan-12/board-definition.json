@@ -3,7 +3,7 @@
 	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.svg",
-	"name": "LDO leviathan v1.20",
+	"name": "Leviathan v1.2",
 	"manufacturer": "LDO",
 	"id": "ldo-leviathan-12",
 	"firmwareBinaryName": "firmware-ldo-leviathan-12.bin",
