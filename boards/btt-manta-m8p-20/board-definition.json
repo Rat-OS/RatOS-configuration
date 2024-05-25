@@ -1,7 +1,7 @@
 
 {
 	"$schema": "../board-definition.schema.json",
-	"boardImageFileName": "board.png",
+	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "Manta M8P v2.0",
