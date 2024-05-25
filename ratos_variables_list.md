@@ -112,6 +112,7 @@ variable_beacon_contact_z_tilt_adjust: False             # True|False = use beac
 variable_beacon_contact_z_tilt_adjust_samples: 2         # int = beacon contact z-tilt probe samples
 variable_beacon_contact_prime_probing: False             # True|False = use beacon contact to probe for prime blobs
 variable_beacon_contact_calibration_temp: 150            # int = beacon contact z-calibration nozzle temperature
+variable_beacon_contact_expansion_compensation: False    # True|False = use nozzle thermal expansion compensation
 ```
 
 ## Toolhead variables
