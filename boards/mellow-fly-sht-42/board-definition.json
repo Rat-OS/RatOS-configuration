@@ -1,5 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.webp",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"isToolboard": true,
 	"name": "FLY-SHT42",
 	"manufacturer": "Mellow",
