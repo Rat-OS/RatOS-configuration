@@ -289,7 +289,7 @@
 		"integratedDrivers": {
 			"description": "Describes the drivers integrated on this board, if any",
 			"type": "object",
-			"additionalProperties": false,
+			"additionalProperties": true,
 			"properties": {
 				"x": {
 					"description": "The driver for the X axis",

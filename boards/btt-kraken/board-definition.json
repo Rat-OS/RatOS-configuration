@@ -41,6 +41,16 @@
 			"miso": "PE13"
 		}
 	},
+	"integratedDrivers": {
+		"MOTOR1": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR2": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR3": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR4": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR5": "BTT-KRAKEN-2160",
+		"MOTOR6": "BTT-KRAKEN-2160",
+		"MOTOR7": "BTT-KRAKEN-2160",
+		"MOTOR8": "BTT-KRAKEN-2160"
+	},
 	"motorSlots": {
 		"MOTOR1": {
 			"title": "MOTOR 1",
