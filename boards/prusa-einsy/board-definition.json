@@ -1,5 +1,6 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.webp",
 	"name": "Einsy",
 	"manufacturer": "Prusa",
 	"id": "prusa-einsy",
@@ -23,7 +24,7 @@
 	},
 	"motorSlots": {
 		"X": {
-			"title": "X", 
+			"title": "X",
 			"enable_pin": "PA7",
 			"step_pin": "PC0",
 			"dir_pin": "PL0",

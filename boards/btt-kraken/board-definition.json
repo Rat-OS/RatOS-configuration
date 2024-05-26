@@ -1,5 +1,8 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.webp",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "Kraken",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-kraken",
@@ -37,6 +40,16 @@
 			"mosi": "PE14",
 			"miso": "PE13"
 		}
+	},
+	"integratedDrivers": {
+		"MOTOR1": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR2": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR3": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR4": "BTT-KRAKEN-2160-PLUS",
+		"MOTOR5": "BTT-KRAKEN-2160",
+		"MOTOR6": "BTT-KRAKEN-2160",
+		"MOTOR7": "BTT-KRAKEN-2160",
+		"MOTOR8": "BTT-KRAKEN-2160"
 	},
 	"motorSlots": {
 		"MOTOR1": {

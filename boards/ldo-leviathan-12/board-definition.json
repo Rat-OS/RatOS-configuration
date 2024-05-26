@@ -1,6 +1,9 @@
 {
 	"$schema": "../board-definition.schema.json",
-	"name": "LDO leviathan v1.20",
+	"boardImageFileName": "board.webp",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.svg",
+	"name": "Leviathan v1.2",
 	"manufacturer": "LDO",
 	"id": "ldo-leviathan-12",
 	"firmwareBinaryName": "firmware-ldo-leviathan-12.bin",

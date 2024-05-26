@@ -1,5 +1,8 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.png",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.png",
 	"name": "SKR 2 407",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-skr-2-407",

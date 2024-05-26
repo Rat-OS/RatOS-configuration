@@ -1,5 +1,8 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.webp",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "Manta M4P v2.2",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-manta-m4p-22",

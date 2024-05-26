@@ -1,5 +1,6 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.webp",
 	"name": "Spider v1.1",
 	"manufacturer": "Fysetc",
 	"id": "fysetc-spider",

@@ -1,5 +1,6 @@
 {
 	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.webp",
 	"name": "Buddy",
 	"manufacturer": "Prusa",
 	"id": "prusa-buddy",
@@ -58,5 +59,4 @@
 			"diag_pin": "PA15"
 		}
 	}
-
 }
