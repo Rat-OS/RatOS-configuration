@@ -1,7 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"manualFileName": "manual.pdf",
-	"wireDiagramFileName": "wiring.drawio.png",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "Octopus Pro 446",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-octopus-pro-446",
