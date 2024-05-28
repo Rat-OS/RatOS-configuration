@@ -150,6 +150,7 @@ variable_parking_position: -55                            # float = toolhead par
 ```
 [gcode_macro _VAOC]
 variable_is_fixed: False                       # True|False = vaoc is installed on a fix position
+variable_is_started: False                     # internal use only. Do not touch!
 variable_additional_safe_distance: 50          # internal use only. Do not touch!
 variable_safe_z: 60                            # float = safe z-height for xy travel moves
 variable_auto_z_offset_calibration: True       # True|False = performs a auto z-offset calibration before the print starts if needed
@@ -162,4 +163,8 @@ variable_toolchange_travel_accel: 5000         # int = xy travel move sccelerati
 variable_cache_toolchange_travel_speed: 300    # internal use only. Do not touch!
 variable_cache_toolchange_travel_accel: 5000   # internal use only. Do not touch!
 variable_cache_toolchange_zhop: 1.0            # internal use only. Do not touch!
+variable_t0_toolhead_sensor_enabled: 0         # internal use only. Do not touch!
+variable_t1_toolhead_sensor_enabled: 0         # internal use only. Do not touch!
+variable_t0_bowden_sensor_enabled: 0           # internal use only. Do not touch!
+variable_t1_bowden_sensor_enabled: 0           # internal use only. Do not touch!
 ```
