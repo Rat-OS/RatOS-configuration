@@ -130,6 +130,10 @@ install_hooks()
 	then
  	   ln -s /home/pi/printer_data/config/RatOS/scripts/moonraker-post-merge.sh /home/pi/moonraker/.git/hooks/post-merge
 	fi
+	if [[ ! -L /home/pi/beacon/.git/hooks/post-merge ]]
+	then
+ 	   ln -s "$SCRIPT_DIR"/beacon-post-merge.sh /home/pi/beacon/.git/hooks/post-merge
+	fi
 }
 
 ensure_service_permission()
@@ -170,6 +174,7 @@ ensure_sudo_command_whitelisting()
 	cat << '#EOF' > /tmp/030-ratos-githooks
 pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/ratos-update.sh
 pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/klipper-mcu-update.sh
+pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/beacon-update.sh
 pi  ALL=(ALL) NOPASSWD: /home/pi/printer_data/config/RatOS/scripts/moonraker-update.sh
 #EOF
 
