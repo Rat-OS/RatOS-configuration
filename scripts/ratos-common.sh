@@ -16,6 +16,30 @@ disable_modem_manager()
 	fi
 }
 
+
+update_beacon_fw()
+{
+	report_status "Updating beacon firmware..."
+	KLIPPER_DIR="/home/pi/klipper"
+	KLIPPER_ENV="/home/pi/klippy-env"
+	BEACON_DIR="/home/pi/beacon"
+	if [ ! -d "$BEACON_DIR" ] || [ ! -e "$KLIPPER_DIR/klippy/extras/beacon.py" ]; then
+		echo "beacon: beacon isn't installed, skipping..."
+		return
+	fi
+
+	if [ ! -d "$KLIPPER_DIR" ] || [ ! -d "$KLIPPER_ENV" ]; then
+		echo "beacon: klipper or klippy env doesn't exist"
+		return
+	fi
+
+	if [ ! -f "$BEACON_DIR/update_firmware.py" ]; then
+		echo "beacon: beacon firmware updater script doesn't exist, skipping..."
+		return
+	fi
+	$KLIPPER_ENV/bin/python $BEACON_DIR/update_firmware.py update all --no-sudo
+}
+
 install_beacon()
 {
 	KLIPPER_DIR="/home/pi/klipper"
