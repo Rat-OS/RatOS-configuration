@@ -68,4 +68,4 @@ variable_beacon_contact_expansion_multiplier: 1.0        # multiplier for the no
 
 ## First print and fine tuning
 - Print a 50x50mm one layer thick square in the middle of the buildplate. 
-- Use the `beacon_contact_expansion_multiplier` variable to fine tune your first layer squish. Higher value means less squish and lower value means more squish. 
+- Use the `beacon_contact_expansion_multiplier` variable to fine tune your first layer squish. Higher value means less squish and lower value means more squish. 1.1 = a bit less squish, 0.9 = a bit more squish, ....
