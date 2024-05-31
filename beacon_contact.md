@@ -47,7 +47,7 @@ on a VC4 the beacon contact feature is by default activated, on a VC3.1 or aothe
 # Beacon probe configuration
 #####
 [gcode_macro RatOS]
-variable_beacon_bed_mesh_scv: 75                         # square corner velocity for bed meshing with proximity method
+variable_beacon_bed_mesh_scv: 25                         # square corner velocity for bed meshing with proximity method
 variable_beacon_contact_z_homing: False                  # printer z-homing with contact method
 variable_beacon_contact_z_calibration: True              # contact z-calibration before the print starts
                                                          # after changing this variable please run a recalibration before you use the printer  
