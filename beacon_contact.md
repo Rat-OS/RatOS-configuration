@@ -6,7 +6,7 @@
 
 ## Initial calibration
 We need to create a intial beacon model to be able to home the printer. **DO NOT USE** the `SET_CENTER_KINEMATIC_POSITION` command.
-Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a torleance error, in this case just repeat it command until the command gets successfully executed. 
+Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a torleance error, in this case just repeat it until the command gets successfully executed. 
 ```
 G28 X
 G28 Y
@@ -40,7 +40,14 @@ RatOS comes with a built in temperature expansion calibration and compensation.
 - Make sure the nozzle is clean and that no filament is leaking out of it. Make a cold pull for example.
 - Let the machine cool down to ambient temperature
 - Do NOT make this calibration on a smooth PEI sheet, in this case turn the sheet arround and make the calibration on the bare metall of it. 
+
+**Single toolhead printer**
 - run the macro `BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET`. It will home your printer and run the calibration fully automated, this will take some minutes
+
+**IDEX printer**
+- Start VAOC
+- Center both nozzles over the camera
+- run the macro `_VAOC_CALIBRATE_TEMP_OFFSET`. This will calibrate both nozzles fully automated, this will take some minutes
 
 It is recommended to repeat that process always when you change a nozzle and before loading any new filament into it.
 
@@ -50,11 +57,11 @@ RatOS | Beacon: T0 expansion coefficient: 0.075000
 ```
 This value is in mm and represents the thermal expansion for a temperature difference of 100°C. RatOS uses this value to calculate the needed offset and applies it automatically.
 
-The `BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET` command automatically saves the values to the configuration file, there is no user action required.
+The result will be saved automatically to the configuration file, there is no user action required.
 
 
 ## RatOS configuration
-on a VC4 the beacon contact feature is by default activated, on a VC3.1 or aother printers you need to enable it manually by overriding the needed variables. This is the recommended beacon contact configuration.
+On a VC4 the beacon contact feature is by default activated, for any other printer you need to enable it manually by overriding the needed variables. This is the recommended beacon contact configuration.
 ```
 #####
 # Beacon probe configuration
