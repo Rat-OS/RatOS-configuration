@@ -6,7 +6,7 @@
 
 ## Initial calibration
 We need to create a intial beacon model to be able to home the printer. **DO NOT USE** the `SET_CENTER_KINEMATIC_POSITION` command.
-Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a torleance error, in this case just repeat it command until the command gets successfully executed. 
+Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a torleance error, in this case just repeat it until the command gets successfully executed. 
 ```
 G28 X
 G28 Y
@@ -61,7 +61,7 @@ The result will be saved automatically to the configuration file, there is no us
 
 
 ## RatOS configuration
-on a VC4 the beacon contact feature is by default activated, on a VC3.1 or aother printers you need to enable it manually by overriding the needed variables. This is the recommended beacon contact configuration.
+On a VC4 the beacon contact feature is by default activated, for any other printer you need to enable it manually by overriding the needed variables. This is the recommended beacon contact configuration.
 ```
 #####
 # Beacon probe configuration
