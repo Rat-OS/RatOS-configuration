@@ -250,3 +250,30 @@ z_hop_speed: 15   # homing z-hop speed
 [gcode_macro SET_PRESSURE_ADVANCE]
 variable_snyc_toolheads: False   # internal use only. Do not touch!
 ```
+
+## _ON_LAYER_CHANGE
+```
+[gcode_macro _ON_LAYER_CHANGE]
+variable_layer_number: 0   # internal use only. Do not touch!
+```
+
+## END_FEATURE
+```
+[gcode_macro END_FEATURE]
+variable_scv: 5         # internal use only. Do not touch!
+variable_accel: 10000   # internal use only. Do not touch!
+variable_ratio: 0.5     # internal use only. Do not touch!
+```
+
+## DEBUG_ECHO
+```
+[gcode_macro DEBUG_ECHO]
+variable_enabled: False      # internal use only. Do not touch!
+variable_prefix_filter: ''   # internal use only. Do not touch!
+```
+
+## CACHE_TOOLHEAD_SETTINGS
+```
+[gcode_macro CACHE_TOOLHEAD_SETTINGS]
+variable_cache: {"global": {"accel": 1000, "ratio": 0.5, "speed": 50, "scv": 5}}   # internal use only. Do not touch!
+```
