@@ -50,6 +50,9 @@ RatOS | Beacon: T0 expansion coefficient: 0.075000
 ```
 This value is in mm and represents the thermal expansion for a temperature difference of 100°C. RatOS uses this value to calculate the needed offset and applies it automatically.
 
+The `BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET` command automatically saves the values to the configuration file, there is no user action required.
+
+
 ## RatOS configuration
 on a VC4 the beacon contact feature is by default activated, on a VC3.1 or aother printers you need to enable it manually by overriding the needed variables. This is the recommended beacon contact configuration.
 ```
