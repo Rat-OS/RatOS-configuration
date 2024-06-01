@@ -40,7 +40,14 @@ RatOS comes with a built in temperature expansion calibration and compensation.
 - Make sure the nozzle is clean and that no filament is leaking out of it. Make a cold pull for example.
 - Let the machine cool down to ambient temperature
 - Do NOT make this calibration on a smooth PEI sheet, in this case turn the sheet arround and make the calibration on the bare metall of it. 
+
+**Single toolhead printer**
 - run the macro `BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET`. It will home your printer and run the calibration fully automated, this will take some minutes
+
+**IDEX printer**
+- Start VAOC
+- Center both nozzles over the camera
+- run the macro `_VAOC_CALIBRATE_TEMP_OFFSET`. This will calibrate both nozzles fully automated, this will take some minutes
 
 It is recommended to repeat that process always when you change a nozzle and before loading any new filament into it.
 
@@ -50,7 +57,7 @@ RatOS | Beacon: T0 expansion coefficient: 0.075000
 ```
 This value is in mm and represents the thermal expansion for a temperature difference of 100°C. RatOS uses this value to calculate the needed offset and applies it automatically.
 
-The `BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET` command automatically saves the values to the configuration file, there is no user action required.
+The result will be saved automatically to the configuration file, there is no user action required.
 
 
 ## RatOS configuration
