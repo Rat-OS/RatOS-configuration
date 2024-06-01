@@ -1,6 +1,4 @@
-# RatOS 2.1 Slicer g-code settings 
-
-# Prusa slicer
+# RatOS 2.1 Prusa slicer settings
 
 **START GCODE**
 ```
@@ -49,7 +47,7 @@ G92 E0
 SET_PRESSURE_ADVANCE ADVANCE=0.05
 ```
 
-## Super slicer
+# RatOS 2.1 Super slicer settings
 
 **START GCODE**
 ```
@@ -98,7 +96,7 @@ G92 E0
 SET_PRESSURE_ADVANCE ADVANCE=0.05
 ```
 
-## Orca slicer
+# RatOS 2.1 Orca slicer settings
 
 **START GCODE**
 ```
