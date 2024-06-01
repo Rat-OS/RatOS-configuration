@@ -51,8 +51,8 @@ update_symlinks
 ensure_sudo_command_whitelisting
 ensure_service_permission
 install_beacon
-update_beacon_fw
 install_hooks
 register_ratos_homing
 symlink_klippy_extensions
 symlink_moonraker_extensions
+update_beacon_fw
