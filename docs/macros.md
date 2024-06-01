@@ -32,13 +32,13 @@
 - MEASURE_COREXY_BELT_TENSION
 - generate_belt_tension_graph
 
-# calibration.cfg 
+# macros/calibration.cfg 
 
 - PID_CALIBRATE_HOTEND
 - PID_CALIBRATE_BED
 - INITIALIZE_PA_TUNING
 
-# led_control.cfg 
+# macros/led_control.cfg 
 
 - _LED_START_PRINTING
 - _LED_START_PRINTING_ERROR
@@ -66,7 +66,7 @@
 - _LED_STANDBY
 - _LED_SET
 
-# load_filament.cfg 
+# macros/load_filament.cfg 
 
 - LOAD_FILAMENT
 - _DEFAULT_LOAD_FILAMENT
@@ -82,7 +82,7 @@
 - _MOVE_TO_LOADING_POSITION
 - _CLEANING_MOVE
 
-# unload_filament.cfg 
+# macros/unload_filament.cfg 
 
 - UNLOAD_FILAMENT
 - _DEFAULT_UNLOAD_FILAMENT
@@ -105,12 +105,12 @@
 - _ON_FILAMENT_END
 - M600
 
-# mesh.cfg 
+# macros/mesh.cfg 
 
 - _START_PRINT_BED_MESH
 - CALIBRATE_ADAPTIVE_MESH
 
-# overrides.cfg 
+# macros/overrides.cfg 
 
 - M84
 - M104
@@ -118,13 +118,13 @@
 - SET_HEATER_TEMPERATURE
 - TEMPERATURE_WAIT
 
-# parking.cfg 
+# macros/parking.cfg 
 
 - _START_PRINT_PARK
 - _END_PRINT_PARK
 - _PARK
 
-# priming.cfg 
+# macros/priming.cfg 
 
 - SAVE_PROBE_RESULT
 - PROBE_FOR_PRIMING
@@ -132,7 +132,7 @@
 - PROBE_CURRENT_POSITION
 - PRIME_BLOB
 
-# user-hooks.cfg 
+# macros/user-hooks.cfg 
 
 - _USER_START_PRINT_BEFORE_HOMING
 - _USER_START_PRINT_AFTER_HEATING_BED
@@ -148,7 +148,7 @@
 - _USER_START_FEATURE
 - _USER_END_FEATURE
 
-# util.cfg 
+# macros/util.cfg 
 
 - ECHO_RATOS_VARS
 - RATOS_INIT
@@ -168,7 +168,7 @@
 - END_FEATURE
 - _ON_LAYER_CHANGE
 
-# idex/idex_is.cfg 
+# macros/idex/idex_is.cfg 
 
 - SHAPER_CALIBRATE
 - GENERATE_SHAPER_GRAPHS
@@ -176,7 +176,7 @@
 - MEASURE_COREXY_BELT_TENSION
 - generate_tension_graphs
 
-# idex/idex.cfg 
+# macros/idex/idex.cfg 
 
 - IDEX_SINGLE
 - _IDEX_SINGLE
@@ -193,14 +193,14 @@
 - REMAP_TOOLHEADS
 - _IDEX_REMAP_TOOLHEADS
 
-# idex/overrides.cfg 
+# macros/idex/overrides.cfg 
 
 - SET_PRESSURE_ADVANCE
 - M106
 - M107
 - SDCARD_PRINT_FILE
 
-# idex/toolheads.cfg 
+# macros/idex/toolheads.cfg 
 
 - _SELECT_TOOL
 - _TOOLHEAD_STANDBY
@@ -214,7 +214,7 @@
 - _SET_TOOLHEAD_OFFSET
 - TOOLSHIFT_CONFIG
 
-# idex/vaoc.cfg 
+# macros/idex/vaoc.cfg 
 
 - _VAOC_START
 - _START_VAOC
@@ -236,3 +236,35 @@
 - _VAOC_RESET
 - _ECHO_VAOC_VARS
 - _VAOC_SWITCH_LED
+
+# z-probe/beacon.cfg 
+
+- _BEACON_INIT
+- _BEACON_SET_NOZZLE_TEMP_OFFSET
+- _BEACON_REMOVE_NOZZLE_TEMP_OFFSET
+- BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET
+- _BEACON_PROBE_NOZZLE_TEMP_OFFSET
+- _BEACON_STORE_NOZZLE_TEMP_OFFSET
+- _BEACON_ECHO_NOZZLE_TEMP_OFFSETS
+- BEACON_MEASURE_GANTRY_TWIST
+- POKELOOP
+
+# z-probe/microprobe.cfg 
+
+- BTT_MICROPROBE_ENABLE
+- BTT_MICROPROBE_DEPLOY
+- BTT_MICROPROBE_STOW
+
+# z-probe/stowable_probe.cfg 
+
+- _ASSERT_PROBE_STATE
+- ASSERT_PROBE_DEPLOYED
+- ASSERT_PROBE_STOWED
+- STOWABLE_PROBE_BEGIN_BATCH
+- STOWABLE_PROBE_END_BATCH
+- DEPLOY_PROBE
+- STOW_PROBE
+- BED_MESH_CALIBRATE
+- PROBE_CALIBRATE
+- PROBE
+- PROBE_ACCURACY
