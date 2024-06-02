@@ -96,7 +96,7 @@ For the scan method z-homing we should create a beacon model under real conditio
 G28
 G0 Z2 F1200
 M104 S150
-M190 S85                  # replace S85 with your print targert
+M190 S85                  # use your target bed temperature
 M109 S150
 BEACON_AUTO_CALIBRATE
 G0 Z15 F1200
