@@ -100,5 +100,7 @@ M190 S85                  # replace S85 with your print targert
 M109 S150
 BEACON_AUTO_CALIBRATE
 G0 Z15 F1200
+M104 S0
+M190 S0
 ```
 Click `SAVE CONFIG` to save the model to your printer.cfg file.
