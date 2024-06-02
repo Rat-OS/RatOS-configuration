@@ -15,7 +15,7 @@ BEACON_AUTO_CALIBRATE
 Click `SAVE CONFIG` to save the model to your printer.cfg file.
 
 ## First test
-Home your printer and then run 5 times `BEACON_POKE` from the mainsail console. Then check the console output, it should look like this: 
+Home your printer and then run 5 times `BEACON_POKE bottom=-0.6` from the mainsail console. Then check the console output, it should look like this: 
 ```
 Overshoot: 35.625 um
 Triggered at: z=0.07369 with latency=2
