@@ -44,7 +44,7 @@
 			"title": "Y",
 			"enable_pin": "PB1",
 			"step_pin": "PB0",
-			"dir_pin": "!PC5",
+			"dir_pin": "PC5",
 			"uart_pin": "PC9",
 			"cs_pin": "PC9",
 			"diag_pin": "PC2",

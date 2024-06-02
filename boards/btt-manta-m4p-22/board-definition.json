@@ -22,7 +22,7 @@
 			"uart_pin": "PB12",
 			"cs_pin": "PB12",
 			"diag_pin": "PC0",
-			"endstop_pin": "^PC0",
+			"endstop_pin": "PC0",
 			"spi_software_mosi_pin": "PA7",
 			"spi_software_miso_pin": "spi1",
 			"spi_software_sclk_pin": "PA5"
@@ -44,7 +44,7 @@
 			"title": "MOTOR 2",
 			"enable_pin": "PB1",
 			"step_pin": "PB0",
-			"dir_pin": "!PC5",
+			"dir_pin": "PC5",
 			"uart_pin": "PC9",
 			"cs_pin": "PC9",
 			"diag_pin": "PC2",
