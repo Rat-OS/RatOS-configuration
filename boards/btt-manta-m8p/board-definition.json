@@ -119,8 +119,8 @@
 			"enable_pin": "PD9",
 			"step_pin": "PD10",
 			"dir_pin": "PD8",
-			"uart_pin": "PD10",
-			"cs_pin": "PD10",
+			"uart_pin": "PC7",
+			"cs_pin": "PC7",
 			"spi_software_mosi_pin": "PA7",
 			"spi_software_miso_pin": "PA6",
 			"spi_software_sclk_pin": "PA5"
