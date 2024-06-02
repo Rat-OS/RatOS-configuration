@@ -5,17 +5,10 @@
 - read the official [beacon contact documentation](https://docs.beacon3d.com/contact/)
 
 ## Initial calibration
-We need to create a intial beacon model to be able to home the printer. **DO NOT USE** the `SET_CENTER_KINEMATIC_POSITION` command.
-Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a torleance error, in this case just repeat it until the command gets successfully executed. 
-```
-G28 X
-G28 Y
-BEACON_AUTO_CALIBRATE
-```
-Click `SAVE CONFIG` to save the model to your printer.cfg file.
+We need to create a intial beacon model to be able to home the printer. Run `_BEACON_INITIAL_CALIBRATION` to create the intial model. It will home your printer and run the calibration fully automated. This command can throw a torleance error, in this case just repeat it until the command gets successfully completed. After it run `SAVE_CONFIG` to save the model to your printer.cfg file.
 
 ## First test
-Home your printer and then run 5 times `BEACON_POKE bottom=-0.6` from the mainsail console. Then check the console output, it should look like this: 
+Run `_BEACON_POKE_TEST`, it will home your printer and poke the bed multiple times. After it check the console output, it should look like this: 
 ```
 Overshoot: 35.625 um
 Triggered at: z=0.07369 with latency=2
@@ -23,7 +16,7 @@ Armed at: z=4.76021
 Poke test from 5.000 to -0.300, at 3.000 mm/s
 ```
 
-We are interested in the latency value. Compare your results with the following list.
+Compare your latency values with the following list.
 
 | Score	| Notes |
 | :------------ |:--------------- |
@@ -39,10 +32,10 @@ RatOS comes with a built in temperature expansion calibration and compensation.
 - Unload filament from the nozzle
 - Make sure the nozzle is clean and that no filament is leaking out of it. Make a cold pull for example.
 - Let the machine cool down to ambient temperature
-- Do NOT make this calibration on a smooth PEI sheet, in this case turn the sheet arround and make the calibration on the bare metall of it. 
+- Do **NOT** make this calibration on a smooth PEI sheet, in this case turn the sheet arround and make the calibration on the bare metall of it. 
 
 **Single toolhead printer**
-- run the macro `BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET`. It will home your printer and run the calibration fully automated, this will take some minutes
+- run the macro `BEACON_CALIBRATE_NOZZLE_TEMP_OFFSET`. It will home your printer and run the calibration fully automated. This will take some minutes
 
 **IDEX printer**
 - Start VAOC
@@ -91,14 +84,4 @@ variable_beacon_contact_expansion_multiplier: 1.0        # multiplier for the no
 - Use the `beacon_contact_expansion_multiplier` variable to fine tune your first layer squish. Higher value means less squish and lower value means more squish. 1.1 = a bit less squish, 0.9 = a bit more squish, ....
 
 ## Final calibration
-For the scan method z-homing we should create a beacon model under real conditions. Run the following gcode commands to create the final beacon model. 
-```
-G28
-G0 Z2 F1200
-M104 S150
-M190 S85                  # replace S85 with your print targert
-M109 S150
-BEACON_AUTO_CALIBRATE
-G0 Z15 F1200
-```
-Click `SAVE CONFIG` to save the model to your printer.cfg file.
+For the scan method z-homing we should create a beacon model under real conditions. Run `_BEACON_FINAL_CALIBRATION BED_TEMP=85`, use your target bed temperature for the `BED_TEMP` parameter. It will home your printer and run the calibration fully automated. After it run `SAVE_CONFIG` to save the model to your printer.cfg file.
