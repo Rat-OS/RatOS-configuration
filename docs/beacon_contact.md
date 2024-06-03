@@ -6,7 +6,7 @@
 
 ## Initial calibration
 We need to create a intial beacon model to be able to home the printer. **DO NOT USE** the `SET_CENTER_KINEMATIC_POSITION` command.
-Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a torleance error, in this case just repeat it until the command gets successfully executed. 
+Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a tolerance error, in this case just repeat it until the command gets successfully executed. 
 
 For safety and peace of mind, the LED will turn on as soon as the contact system determines it has a strong enough signal for detection. It should normally turn on up to 10mm in advance of the metal target, allowing enough time to manually estop the machine if necessary.
 
