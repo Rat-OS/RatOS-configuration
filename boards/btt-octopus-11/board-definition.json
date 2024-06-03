@@ -2,7 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
-	"wireDiagramFileName": "wiring.drawio.png",
+	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "Octopus V1.1",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-octopus-11",
