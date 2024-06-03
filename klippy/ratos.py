@@ -48,8 +48,14 @@ class RatOS:
 	# Gcode commands
 	#####
 	def register_commands(self):
+		self.gcode.register_command('CONSOLE_ECHO', self.cmd_CONSOLE_ECHO, desc=(self.desc_CONSOLE_ECHO))
 		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('PROCESS_GCODE_FILE', self.cmd_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
+
+	desc_CONSOLE_ECHO = "Multiline console output"
+	def cmd_CONSOLE_ECHO(self, gcmd):
+		msg = gcmd.get('MSG')
+		self.gcode.respond_raw(msg.replace("_N_","\n"))
 
 	desc_RATOS_LOG = "G-code logging command "
 	def cmd_RATOS_LOG(self, gcmd):
