@@ -2,11 +2,14 @@
 
 ## Prerequisites
 - update RatOS 2.1 via mainsail
-- read the official [beacon contact documentation](https://docs.beacon3d.com/contact/)
+- read the official [beacon contact documentation](https://docs.beacon3d.com/contact/), but do not follow any installation instructions from there. 
 
 ## Initial calibration
 We need to create a intial beacon model to be able to home the printer. **DO NOT USE** the `SET_CENTER_KINEMATIC_POSITION` command.
 Run the following gcode commands to create the intial model. the `BEACON_AUTO_CALIBRATE` command can throw a torleance error, in this case just repeat it until the command gets successfully executed. 
+
+For safety and peace of mind, the LED will turn on as soon as the contact system determines it has a strong enough signal for detection. It should normally turn on up to 10mm in advance of the metal target, allowing enough time to manually estop the machine if necessary.
+
 ```
 G28 X
 G28 Y
@@ -61,7 +64,7 @@ The result will be saved automatically to the configuration file, there is no us
 
 
 ## RatOS configuration
-On a VC4 the beacon contact feature is by default activated, for any other printer you need to enable it manually by overriding the needed variables. This is the recommended beacon contact configuration.
+The beacon contact feature is deactivated by default, enable it by copying this recommended configuration into your printer.cfg. 
 ```
 #####
 # Beacon probe configuration
