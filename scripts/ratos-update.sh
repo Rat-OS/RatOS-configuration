@@ -55,7 +55,6 @@ update_symlinks
 ensure_sudo_command_whitelisting root
 ensure_service_permission
 install_beacon
-update_beacon_fw
 install_hooks
 ensure_node_18
 patch_klipperscreen_service_restarts
@@ -65,4 +64,5 @@ register_ratos
 register_resonance_generator
 register_ratos_kinematics
 symlink_extensions
+update_beacon_fw
 restart_configurator
