@@ -102,6 +102,7 @@ M104 S150
 M190 S85                  # use your target bed temperature
 M109 S150
 BEACON_AUTO_CALIBRATE
+G4 P90000
 G0 Z15 F1200
 M104 S0
 M190 S0
