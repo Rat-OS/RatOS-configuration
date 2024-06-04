@@ -54,8 +54,20 @@ class RatOS:
 
 	desc_CONSOLE_ECHO = "Multiline console output"
 	def cmd_CONSOLE_ECHO(self, gcmd):
-		msg = gcmd.get('MSG')
-		self.gcode.respond_raw(msg.replace("_N_","\n"))
+		title = gcmd.get('TITLE', '')
+		msg = gcmd.get('MSG', '')
+		type = gcmd.get('TYPE', '')
+
+		color = "white" 
+		if type == 'warning': color = "gold" 
+		if type == 'alert': color = "red" 
+		if type == 'result': color = "lime" 
+		if type == 'info': color = "cyan" 
+
+		_title = '<b><p style="font-weight-bold; margin:0; color:' + color + '">' + title + '</p></b>'
+		_msg = '<p style="margin:0; color:' + color + '">' + msg.replace("_N_","\n") + '</p>'
+
+		self.gcode.respond_raw(_title + _msg)
 
 	desc_RATOS_LOG = "G-code logging command "
 	def cmd_RATOS_LOG(self, gcmd):
