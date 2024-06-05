@@ -92,10 +92,12 @@ class RatOS:
 				if file_path not in self.old_is_graph_files:
 					file_name = file_path.replace("/home/pi/printer_data/config/input_shaper/", "")
 					url = file_path.replace("/home/pi/printer_data", "../server/files")
-					_title = '<b><p style="font-weight-bold; margin:0; color:white">' + title + ': ' + file_name + '</p></b>'
+					title = title + ': ' if title != '' else ''
+					_title = '<b><p style="font-weight-bold; margin:0; color:white">' + title + file_name + '</p></b>'
 					_link = 'Click image to download or right click for options.'
 					_img = '<a href="' + url + '" target="_blank" ><img src="' + url + '" width="100%"></a>'
 					self.gcode.respond_raw(_title + _link + _img)
+			self.old_is_graph_files = []
 		except Exception as exc:
 			self.debug_echo("SHOW_IS_GRAPH_FILES", "Something went wrong. " + str(exc))
 
