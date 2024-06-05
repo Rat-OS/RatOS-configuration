@@ -61,9 +61,9 @@ class RatOS:
 	def cmd_HELLO_RATOS(self, gcmd):
 		url = "https://os.ratrig.com/"
 		img = "../server/files/config/RatOS/Logo-white.png"
-		_title = '<b><p style="font-weight-bold; margin:0; color:white">Welcome to RatOS V2.1.x</p></b>'
+		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:8px; color:white">Welcome to RatOS V2.1.x</p></b>'
 		_info = '\nClick image to open documentation.'
-		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="250px"></a>'
+		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="258px"></a>'
 		self.gcode.respond_raw(_title + _img + _info)
 
 	desc_CONSOLE_ECHO = "Multiline console output"
