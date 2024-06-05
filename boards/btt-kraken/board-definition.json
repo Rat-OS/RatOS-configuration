@@ -70,8 +70,8 @@
 			"step_pin": "PE5",
 			"dir_pin": "PE4",
 			"cs_pin": "PD5",
-			"diag_pin": "PF2",
-			"endstop_pin": "PF2",
+			"diag_pin": "PF0",
+			"endstop_pin": "PF0",
 			"spi_software_mosi_pin": "PC8",
 			"spi_software_miso_pin": "PC7",
 			"spi_software_sclk_pin": "PC6"
@@ -114,7 +114,7 @@
 		},
 		"MOTOR6": {
 			"title": "MOTOR 6",
-			"enable_pin": "PG12 ",
+			"enable_pin": "PG12",
 			"step_pin": "PG11",
 			"dir_pin": "PD7",
 			"cs_pin": "PA15",

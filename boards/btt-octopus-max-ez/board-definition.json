@@ -110,7 +110,7 @@
 		},
 		"MOTOR6": {
 			"title": "MOTOR 6",
-			"enable_pin": "PD5 ",
+			"enable_pin": "PD5",
 			"step_pin": "PG15",
 			"dir_pin": "PB3",
 			"uart_pin": "PG9",
