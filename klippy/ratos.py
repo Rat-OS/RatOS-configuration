@@ -89,11 +89,9 @@ class RatOS:
 		except Exception as exc:
 			self.debug_echo("SHOW_IS_GRAPH_FILES", "Something went wrong. " + str(exc))
 
-
 	desc_CACHE_IS_GRAPH_FILES = "Caches the current is graph files"
 	def cmd_CACHE_IS_GRAPH_FILES(self, gcmd):
 		self.old_is_graph_files = self.get_is_graph_files()
-
 
 	desc_RATOS_LOG = "G-code logging command "
 	def cmd_RATOS_LOG(self, gcmd):
