@@ -50,11 +50,21 @@ class RatOS:
 	# Gcode commands
 	#####
 	def register_commands(self):
+		self.gcode.register_command('HELLO_RATOS', self.cmd_HELLO_RATOS, desc=(self.desc_HELLO_RATOS))
 		self.gcode.register_command('CACHE_IS_GRAPH_FILES', self.cmd_CACHE_IS_GRAPH_FILES, desc=(self.desc_CACHE_IS_GRAPH_FILES))
 		self.gcode.register_command('SHOW_IS_GRAPH_FILES', self.cmd_SHOW_IS_GRAPH_FILES, desc=(self.desc_SHOW_IS_GRAPH_FILES))
 		self.gcode.register_command('CONSOLE_ECHO', self.cmd_CONSOLE_ECHO, desc=(self.desc_CONSOLE_ECHO))
 		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('PROCESS_GCODE_FILE', self.cmd_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
+
+	desc_HELLO_RATOS = "RatOS mainsail welcome message"
+	def cmd_HELLO_RATOS(self, gcmd):
+		url = "https://os.ratrig.com/"
+		img = "../server/files/config/RatOS/Logo-white.png"
+		_title = '<b><p style="font-weight-bold; margin:0; color:white">Welcome to RatOS V2.1.x</p></b>'
+		_info = '\nClick image to open documentation.'
+		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="250px"></a>'
+		self.gcode.respond_raw(_title + _img + _info)
 
 	desc_CONSOLE_ECHO = "Multiline console output"
 	def cmd_CONSOLE_ECHO(self, gcmd):
