@@ -2,7 +2,7 @@ from math import fabs
 from shutil import ReadError, copy2
 from os import path, remove, getenv
 import os, logging, io
-import re
+import re, glob
 
 #####
 # RatOS
@@ -18,6 +18,8 @@ class RatOS:
 		self.name = config.get_name()
 		self.gcode = self.printer.lookup_object('gcode')
 		self.reactor = self.printer.get_reactor()
+
+		self.old_is_graph_files = []
 
 		self.load_settings()
 		self.register_commands()
@@ -48,8 +50,60 @@ class RatOS:
 	# Gcode commands
 	#####
 	def register_commands(self):
+		self.gcode.register_command('HELLO_RATOS', self.cmd_HELLO_RATOS, desc=(self.desc_HELLO_RATOS))
+		self.gcode.register_command('CACHE_IS_GRAPH_FILES', self.cmd_CACHE_IS_GRAPH_FILES, desc=(self.desc_CACHE_IS_GRAPH_FILES))
+		self.gcode.register_command('SHOW_IS_GRAPH_FILES', self.cmd_SHOW_IS_GRAPH_FILES, desc=(self.desc_SHOW_IS_GRAPH_FILES))
+		self.gcode.register_command('CONSOLE_ECHO', self.cmd_CONSOLE_ECHO, desc=(self.desc_CONSOLE_ECHO))
 		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('PROCESS_GCODE_FILE', self.cmd_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
+
+	desc_HELLO_RATOS = "RatOS mainsail welcome message"
+	def cmd_HELLO_RATOS(self, gcmd):
+		url = "https://os.ratrig.com/"
+		img = "../server/files/config/RatOS/Logo-white.png"
+		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:8px; color:white">Welcome to RatOS V2.1.x</p></b>'
+		_info = '\nClick image to open documentation.'
+		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="258px"></a>'
+		self.gcode.respond_raw(_title + _img + _info)
+
+	desc_CONSOLE_ECHO = "Multiline console output"
+	def cmd_CONSOLE_ECHO(self, gcmd):
+		title = gcmd.get('TITLE', '')
+		msg = gcmd.get('MSG', '')
+		type = gcmd.get('TYPE', '')
+
+		color = "white" 
+		if type == 'warning': color = "gold" 
+		if type == 'alert': color = "red" 
+		if type == 'result': color = "lime" 
+		if type == 'info': color = "cyan" 
+
+		_title = '<b><p style="font-weight-bold; margin:0; color:' + color + '">' + title + '</p></b>'
+		_msg = '<p style="margin:0; color:' + color + '">' + msg.replace("_N_","\n") + '</p>'
+
+		self.gcode.respond_raw(_title + _msg)
+
+	desc_SHOW_IS_GRAPH_FILES = "Shows the last generated IS graph in the console"
+	def cmd_SHOW_IS_GRAPH_FILES(self, gcmd):
+		title = gcmd.get('TITLE', '')
+		try:
+			new_is_graph_files = self.get_is_graph_files()
+			for file_path in new_is_graph_files:
+				if file_path not in self.old_is_graph_files:
+					file_name = file_path.replace("/home/pi/printer_data/config/input_shaper/", "")
+					url = file_path.replace("/home/pi/printer_data", "../server/files")
+					title = title + ': ' if title != '' else ''
+					_title = '<b><p style="font-weight-bold; margin:0; color:white">' + title + file_name + '</p></b>'
+					_link = 'Click image to download or right click for options.'
+					_img = '<a href="' + url + '" target="_blank" ><img src="' + url + '" width="100%"></a>'
+					self.gcode.respond_raw(_title + _link + _img)
+			self.old_is_graph_files = []
+		except Exception as exc:
+			self.debug_echo("SHOW_IS_GRAPH_FILES", "Something went wrong. " + str(exc))
+
+	desc_CACHE_IS_GRAPH_FILES = "Caches the current is graph files"
+	def cmd_CACHE_IS_GRAPH_FILES(self, gcmd):
+		self.old_is_graph_files = self.get_is_graph_files()
 
 	desc_RATOS_LOG = "G-code logging command "
 	def cmd_RATOS_LOG(self, gcmd):
@@ -429,6 +483,15 @@ class RatOS:
 
 	def debug_echo(self, prefix, msg):
 		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX=" + str(prefix) + " MSG='" + str(msg) + "'")
+
+	def get_is_graph_files(self):
+		try:
+			folder_path = r"/home/pi/printer_data/config/input_shaper/"
+			file_type = r"*.png"
+			return glob.glob(os.path.join(folder_path, file_type))
+		except Exception as exc:
+			self.debug_echo("get_is_graph_files", "Something went wrong. " + str(exc))
+		return None
 
 #####
 # Loader

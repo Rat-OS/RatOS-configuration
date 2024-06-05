@@ -1,23 +1,24 @@
 ## Common
 ```
 [gcode_macro RatOS]
-variable_relative_extrusion: False        # True|False = enable relative extrusion mode
-variable_force_absolute_position: False   # True|False = force absolute positioning before the print starts
-variable_preheat_extruder: True           # True|False = enable preheating for inductive probes
-variable_preheat_extruder_temp: 150       # int = the preheating nozzle temperature
-variable_end_print_motors_off: True       # True|False = Keeps the motors for none IDEX printer on after a print ends
-variable_macro_travel_speed: 150          # int = xy macro travel move speed  
-variable_macro_travel_accel: 2000         # int = xy macro travel move acceleration
-variable_macro_z_speed: 15                # int = z macro travel move speed
-variable_bed_margin_x: [0, 0]             # [float, float] = left and right bed margin
-variable_bed_margin_y: [0, 0]             # [float, float] = front and back bed margin
-variable_printable_x_min: 0               # internal use only. Do not touch!
-variable_printable_x_max: 0               # internal use only. Do not touch!
-variable_printable_y_min: 0               # internal use only. Do not touch!
-variable_printable_y_max: 0               # internal use only. Do not touch!
-variable_status_color_ok: "00FF00"        # internal use only. Do not touch!
-variable_status_color_error: "FF0000"     # internal use only. Do not touch!
-variable_status_color_unknown: "FFFF00"   # internal use only. Do not touch!
+variable_relative_extrusion: False                # True|False = enable relative extrusion mode
+variable_force_absolute_position: False           # True|False = force absolute positioning before the print starts
+variable_preheat_extruder: True                   # True|False = enable preheating for inductive probes
+variable_preheat_extruder_temp: 150               # int = the preheating nozzle temperature
+variable_end_print_motors_off: True               # True|False = Keeps the motors for none IDEX printer on after a print ends
+variable_macro_travel_speed: 150                  # int = xy macro travel move speed  
+variable_macro_travel_accel: 2000                 # int = xy macro travel move acceleration
+variable_macro_z_speed: 15                        # int = z macro travel move speed
+variable_bed_margin_x: [0, 0]                     # [float, float] = left and right bed margin
+variable_bed_margin_y: [0, 0]                     # [float, float] = front and back bed margin
+variable_printable_x_min: 0                       # internal use only. Do not touch!
+variable_printable_x_max: 0                       # internal use only. Do not touch!
+variable_printable_y_min: 0                       # internal use only. Do not touch!
+variable_printable_y_max: 0                       # internal use only. Do not touch!
+variable_status_color_ok: "00FF00"                # internal use only. Do not touch!
+variable_status_color_error: "FF0000"             # internal use only. Do not touch!
+variable_status_color_unknown: "FFFF00"           # internal use only. Do not touch!
+variable_start_print_heat_chamber_bed_temp: 115   # int = bed temperature during chamber preheating
 ```
 
 ## Homing
@@ -49,23 +50,32 @@ variable_adaptive_prime_offset_threshold: -1.0   # float = threshold value used 
 ## Parking 
 ```
 [gcode_macro RatOS]
-variable_start_print_park_in: "back"              # back|front|center = gantry parking position before the print starts
-variable_start_print_park_z_height: 50            # float = toolhead parking z-position before the print starts
-variable_start_print_heat_chamber_bed_temp: 115   # int = bed temperature during chamber preheating
-variable_end_print_park_in: "back"                # back|front|center = gantry parking position after the print has finished
-variable_pause_print_park_in: "back"              # back|front|center = gantry parking position if the print has paused
-variable_end_print_park_z_hop: 20                 # float = toolhead z-hop after the print has finished
+variable_start_print_park_in: "back"     # back|front|center = gantry parking position before the print starts
+variable_start_print_park_z_height: 50   # float = toolhead parking z-position before the print starts
+variable_end_print_park_in: "back"       # back|front|center = gantry parking position after the print has finished
+variable_pause_print_park_in: "back"     # back|front|center = gantry parking position if the print has paused
+variable_end_print_park_z_hop: 20        # float = toolhead z-hop after the print has finished
 ```
 
 ## Priming 
 ```
 [gcode_macro RatOS]
-variable_nozzle_priming: "primeblob"      # primeblob|false = To prime, or not to prime, that is the question.
-variable_nozzle_prime_start_x: "max"      # min|max|float = non IDEX priming x-location
-variable_nozzle_prime_start_y: "min"      # min|max|float = non IDEX priming y-location
-variable_nozzle_prime_direction: "auto"   # auto|forwards|backwards = non IDEX priming y-direction
-variable_nozzle_prime_bridge_fan: 102     # int = priming fan speed 0-255
-variable_last_z_offset: None              # internal use only. Do not touch!
+variable_nozzle_priming: "primeblob"             # primeblob|false = To prime, or not to prime, that is the question.
+variable_nozzle_prime_start_x: "max"             # min|max|float = non IDEX priming x-location
+variable_nozzle_prime_start_y: "min"             # min|max|float = non IDEX priming y-location
+variable_nozzle_prime_direction: "auto"          # auto|forwards|backwards = non IDEX priming y-direction
+variable_nozzle_prime_bridge_fan: 102            # int = priming fan speed 0-255
+variable_probe_for_priming_result: None          # internal use only. Do not touch!
+variable_probe_for_priming_end_result: None      # internal use only. Do not touch!
+variable_probe_for_priming_result_t1: None       # internal use only. Do not touch!
+variable_probe_for_priming_end_result_t1: None   # internal use only. Do not touch!
+variable_last_z_offset: None                     # internal use only. Do not touch!
+```
+
+## Prime blob 
+```
+[gcode_macro PRIME_BLOB]
+variable_x_offset: 5   # the prime blob x-margin 
 ```
 
 ## IDEX 
@@ -85,6 +95,30 @@ variable_toolchange_prepurging_timer: 0    # int = prepurge some filament before
 variable_toolchange_purge: 25              # float = mm of filament that gets prepruged in case the timer has been configured
 variable_toolchange_standby_temp: -1       # int = if configured the toolheads are going into standby mode when parked 
 variable_toolchange_first_purge: 50        # float = mm of filament that gets purged before a toolheads first use
+```
+
+## IDEX join spools 
+```
+[gcode_macro _IDEX_JOIN_SPOOLS]
+variable_enabled: False   # internal use only. Do not touch!
+```
+
+## IDEX remap toolheads 
+```
+[gcode_macro _IDEX_REMAP_TOOLHEADS]
+variable_enabled: False   # internal use only. Do not touch! 
+```
+
+## IDEX select tool 
+```
+[gcode_macro _SELECT_TOOL]
+variable_last_timestamp: 0   # internal use only. Do not touch! 
+```
+
+## IDEX toolchange 
+```
+[gcode_macro _TOOLCHANGE]
+variable_toolshift_count: 0   # internal use only. Do not touch! 
 ```
 
 ## Stowable Probes
@@ -150,6 +184,7 @@ variable_parking_position: -55                            # float = toolhead par
 ```
 [gcode_macro _VAOC]
 variable_is_fixed: False                       # True|False = vaoc is installed on a fix position
+variable_is_started: False                     # internal use only. Do not touch!
 variable_additional_safe_distance: 50          # internal use only. Do not touch!
 variable_safe_z: 60                            # float = safe z-height for xy travel moves
 variable_auto_z_offset_calibration: True       # True|False = performs a auto z-offset calibration before the print starts if needed
@@ -162,4 +197,83 @@ variable_toolchange_travel_accel: 5000         # int = xy travel move sccelerati
 variable_cache_toolchange_travel_speed: 300    # internal use only. Do not touch!
 variable_cache_toolchange_travel_accel: 5000   # internal use only. Do not touch!
 variable_cache_toolchange_zhop: 1.0            # internal use only. Do not touch!
+variable_t0_toolhead_sensor_enabled: 0         # internal use only. Do not touch!
+variable_t1_toolhead_sensor_enabled: 0         # internal use only. Do not touch!
+variable_t0_bowden_sensor_enabled: 0           # internal use only. Do not touch!
+variable_t1_bowden_sensor_enabled: 0           # internal use only. Do not touch!
+```
+
+## VAOC calibrate nozzle temp offset
+```
+[gcode_macro _VAOC_CALIBRATE_NOZZLE_TEMP_OFFSET]
+variable_reference_z: 0.0   # internal use only. Do not touch!
+touch!
+```
+
+## PAUSE
+```
+[gcode_macro PAUSE]
+variable_extrude: 1.5           # extrusion in mm when resuming the print
+variable_retract: 1.5           # retraction in mm when print is paused
+variable_fan_speed: 0           # internal use only. Do not touch!
+variable_idex_mode: ""          # internal use only. Do not touch!
+variable_idex_toolhead: 0       # internal use only. Do not touch!
+variable_idex_toolhead_x: 0.0   # internal use only. Do not touch!
+variable_idex_toolhead_y: 0.0   # internal use only. Do not touch!
+variable_idex_toolhead_z: 0.0   # internal use only. Do not touch!
+```
+
+## START_PRINT
+```
+[gcode_macro START_PRINT]
+variable_post_processor_version: 2       # internal use only. Do not touch!
+variable_is_printing_gcode: False        # internal use only. Do not touch!
+variable_both_toolheads: True            # internal use only. Do not touch!
+variable_object_xoffset: 0               # internal use only. Do not touch!
+variable_first_x: -1                     # internal use only. Do not touch!
+variable_first_y: -1                     # internal use only. Do not touch!
+variable_total_toolshifts: 0             # internal use only. Do not touch!
+variable_initial_tool: 0                 # internal use only. Do not touch!
+variable_extruder_first_layer_temp: ""   # internal use only. Do not touch!
+variable_extruder_other_layer_temp: ""   # internal use only. Do not touch!
+```
+
+## ratos_homing
+```
+[ratos_homing]
+z_hop: 15         # homing z-hop distance
+z_hop_speed: 15   # homing z-hop speed
+```
+
+## SET_PRESSURE_ADVANCE
+```
+[gcode_macro SET_PRESSURE_ADVANCE]
+variable_snyc_toolheads: False   # internal use only. Do not touch!
+```
+
+## _ON_LAYER_CHANGE
+```
+[gcode_macro _ON_LAYER_CHANGE]
+variable_layer_number: 0   # internal use only. Do not touch!
+```
+
+## END_FEATURE
+```
+[gcode_macro END_FEATURE]
+variable_scv: 5         # internal use only. Do not touch!
+variable_accel: 10000   # internal use only. Do not touch!
+variable_ratio: 0.5     # internal use only. Do not touch!
+```
+
+## DEBUG_ECHO
+```
+[gcode_macro DEBUG_ECHO]
+variable_enabled: False      # internal use only. Do not touch!
+variable_prefix_filter: ''   # internal use only. Do not touch!
+```
+
+## CACHE_TOOLHEAD_SETTINGS
+```
+[gcode_macro CACHE_TOOLHEAD_SETTINGS]
+variable_cache: {"global": {"accel": 1000, "ratio": 0.5, "speed": 50, "scv": 5}}   # internal use only. Do not touch!
 ```
