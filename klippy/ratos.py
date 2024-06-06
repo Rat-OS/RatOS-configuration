@@ -87,6 +87,7 @@ class RatOS:
 	def cmd_SHOW_IS_GRAPH_FILES(self, gcmd):
 		title = gcmd.get('TITLE', '')
 		try:
+			counter = 0
 			new_is_graph_files = self.get_is_graph_files()
 			for file_path in new_is_graph_files:
 				if file_path not in self.old_is_graph_files:
@@ -97,6 +98,9 @@ class RatOS:
 					_link = 'Click image to download or right click for options.'
 					_img = '<a href="' + url + '" target="_blank" ><img src="' + url + '" width="100%"></a>'
 					self.gcode.respond_raw(_title + _link + _img)
+					counter += 1
+					if counter == 10:
+						break
 			self.old_is_graph_files = []
 		except Exception as exc:
 			self.debug_echo("SHOW_IS_GRAPH_FILES", "Something went wrong. " + str(exc))
