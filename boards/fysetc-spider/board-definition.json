@@ -5,6 +5,7 @@
 	"manufacturer": "Fysetc",
 	"id": "fysetc-spider",
 	"firmwareBinaryName": "firmware-fysetc-spider.bin",
+	"wireDiagramFileName": "wiring.png",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"driverCount": 8,

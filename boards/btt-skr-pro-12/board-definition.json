@@ -1,6 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"boardImageFileName": "board.webp",
+	"wireDiagramFileName": "wiring.png",
 	"manualFileName": "manual.pdf",
 	"name": "SKR Pro v1.2",
 	"manufacturer": "BIGTREETECH",

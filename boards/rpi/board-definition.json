@@ -3,6 +3,7 @@
 	"name": "Pi",
 	"id": "klipper_host_mcu",
 	"manufacturer": "Raspberry",
+	"wireDiagramFileName": null,
 	"isHost": true,
 	"serialPath": "/tmp/klipper_host_mcu",
 	"firmwareBinaryName": "rpi.elf",

@@ -3,6 +3,7 @@
 	"boardImageFileName": "board.webp",
 	"name": "Einsy",
 	"manufacturer": "Prusa",
+	"wireDiagramFileName": null,
 	"id": "prusa-einsy",
 	"firmwareBinaryName": "firmware-prusa-einsy.elf.hex",
 	"driverCount": 4,

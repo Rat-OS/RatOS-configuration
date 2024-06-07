@@ -2,6 +2,7 @@
 	"$schema": "../board-definition.schema.json",
 	"boardImageFileName": "board.webp",
 	"name": "Buddy",
+	"wireDiagramFileName": null,
 	"manufacturer": "Prusa",
 	"id": "prusa-buddy",
 	"firmwareBinaryName": "firmware-prusa-buddy.bin",

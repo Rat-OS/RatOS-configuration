@@ -45,7 +45,14 @@
 		},
 		"wireDiagramFileName": {
 			"description": "The filename of the wire diagram for this board, should be placed in the board directory.",
-			"type": "string"
+			"anyOf": [
+				{
+					"type": "string"
+				},
+				{
+					"type": "null"
+				}
+			]
 		},
 		"boardImageFileName": {
 			"description": "The filename of the image of this board, should be placed in the board directory.",

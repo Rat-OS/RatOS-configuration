@@ -1,6 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"isToolboard": true,
+	"wireDiagramFileName": null,
 	"name": "Caramba",
 	"manufacturer": "Ay",
 	"id": "ay-caramba",
