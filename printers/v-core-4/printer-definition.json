@@ -53,7 +53,7 @@
 			{
 				"axis": "x",
 				"extruder": "orbiter-2",
-				"hotend": "rapido",
+				"hotend": "rapido-plus-uhf",
 				"partFan": "4pin",
 				"hotendFan": "2pin",
 				"probe": "superpinda",
