@@ -8,7 +8,7 @@ fi
 pushd /home/pi/klipper || exit
 service klipper stop
 
-if su -c "./scripts/flash-sdcard.sh /dev/btt-skr-pro-12 btt-skr-pro-v1.2" pi -eq 0; then
+if [ "$(su -c ./scripts/flash-sdcard.sh /dev/btt-skr-pro-12 btt-skr-pro-v1.2 pi)" -eq 0 ]; then
     echo "Flashing successful!"
 else
     echo "Flashing failed :("
