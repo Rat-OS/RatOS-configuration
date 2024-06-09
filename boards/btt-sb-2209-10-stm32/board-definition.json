@@ -33,7 +33,7 @@
 		"software": {
 			"sclk": "PB10",
 			"mosi": "PB11",
-			"miso": "PB12"
+			"miso": "PB2"
 		}
 	}
 }
