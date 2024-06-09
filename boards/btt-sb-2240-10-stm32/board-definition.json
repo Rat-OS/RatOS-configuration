@@ -1,6 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"manualFileName": "manual.pdf",
+	"boardImageFileName": "board.png",
 	"isToolboard": true,
 	"name": "SB2240 v1.0 STM32",
 	"manufacturer": "BIGTREETECH",
@@ -14,7 +15,7 @@
 	"hasMcuTempSensor": false,
 	"driverCount": 1,
 	"integratedDrivers": {
-		"extruder": "BTT-TMC2240-13"
+		"extruder": "BTT-TMC2240-10"
 	},
 	"dfu": {
 		"flashDevice": "0483:df11",
