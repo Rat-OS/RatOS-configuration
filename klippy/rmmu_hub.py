@@ -361,11 +361,12 @@ class RMMU_Hub:
 			self.test_filaments(logical_tools)
 
 			# restore idex mode
-			act_idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
-			if idex_mode == "copy" and idex_mode != act_idex_mode:
-				self.gcode.run_script_from_command('_IDEX_COPY DANCE=0')
-			elif idex_mode == "mirror" and idex_mode != act_idex_mode:
-				self.gcode.run_script_from_command('_IDEX_MIRROR DANCE=0')
+			if self.dual_carriage != None:
+				act_idex_mode = self.dual_carriage.get_status(self.toolhead.get_last_move_time())['carriage_1'].lower()
+				if idex_mode == "copy" and idex_mode != act_idex_mode:
+					self.gcode.run_script_from_command('_IDEX_COPY DANCE=0')
+				elif idex_mode == "mirror" and idex_mode != act_idex_mode:
+					self.gcode.run_script_from_command('_IDEX_MIRROR DANCE=0')
 
 		# call RatOS start print gcode macro
 		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
