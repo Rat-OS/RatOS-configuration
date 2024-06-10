@@ -3,6 +3,7 @@
 	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.svg",
+	"fanWiringDiagramFileName": "fan-wiring.drawio.svg",
 	"name": "Kraken",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-kraken",

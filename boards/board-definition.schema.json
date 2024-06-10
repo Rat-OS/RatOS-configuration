@@ -40,11 +40,22 @@
 			"type": "string"
 		},
 		"manualFileName": {
-			"description": "The filename of the manual for this board, should be placed in the board directory.",
+			"description": "The filename of the manual for this board, should be placed in the board directory. Prefer using manual.pdf",
 			"type": "string"
 		},
 		"wireDiagramFileName": {
-			"description": "The filename of the wire diagram for this board, should be placed in the board directory.",
+			"description": "The filename of the wire diagram for this board, should be placed in the board directory. Prefer using wiring.drawio.svg.",
+			"anyOf": [
+				{
+					"type": "string"
+				},
+				{
+					"type": "null"
+				}
+			]
+		},
+		"fanWiringDiagramFileName": {
+			"description": "The filename of the fan wiring diagram for this board, should be placed in the board directory. Prefer using fan-wiring.drawio.svg.",
 			"anyOf": [
 				{
 					"type": "string"
@@ -55,7 +66,7 @@
 			]
 		},
 		"boardImageFileName": {
-			"description": "The filename of the image of this board, should be placed in the board directory.",
+			"description": "The filename of the image of this board, should be placed in the board directory. Prefer using board.webp",
 			"type": "string"
 		},
 		"isToolboard": {

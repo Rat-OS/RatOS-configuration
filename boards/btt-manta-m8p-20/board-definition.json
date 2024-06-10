@@ -1,9 +1,9 @@
-
 {
 	"$schema": "../board-definition.schema.json",
 	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.svg",
+	"fanWiringDiagramFileName": "fan-wiring.drawio.svg",
 	"name": "Manta M8P v2.0",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-manta-m8p-20",
@@ -140,6 +140,6 @@
 			"sclk": "PC10",
 			"mosi": "PC12",
 			"miso": "PC11"
-		}	
+		}
 	}
 }

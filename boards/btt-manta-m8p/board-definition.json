@@ -3,6 +3,7 @@
 	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.svg",
+	"fanWiringDiagramFileName": "fan-wiring.drawio.svg",
 	"name": "Manta M8P",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-manta-m8p",

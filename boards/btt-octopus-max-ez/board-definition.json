@@ -10,6 +10,7 @@
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"flashInstructions": "Flashing only works if the SD card slot on the Octopus is empty.",
+	"fanWiringDiagramFileName": "fan-wiring.drawio.svg",
 	"documentationLink": "https://os.ratrig.com/docs/boards/btt/btt-octopus-max-ez",
 	"driverCount": 10,
 	"driverVoltages": [24, 36, 48, 56],

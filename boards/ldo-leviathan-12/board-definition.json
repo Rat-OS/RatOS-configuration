@@ -3,6 +3,7 @@
 	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.svg",
+	"fanWiringDiagramFileName": "fan-wiring.drawio.svg",
 	"name": "Leviathan v1.2",
 	"manufacturer": "LDO",
 	"id": "ldo-leviathan-12",
