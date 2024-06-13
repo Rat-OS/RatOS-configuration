@@ -1,7 +1,7 @@
 #!/bin/sh
 logfile="/var/log/ratos.log"
-mainsail="http://localhost:7125/"
-printer="/tmp/printer"
+moonraker="http://localhost:7125/"
+printer="/home/pi/printer_data/comms/klippy.serial"
 
 touch "$logfile"
 chmod 664 "$logfile"
@@ -9,7 +9,7 @@ chmod 664 "$logfile"
 echo "$(date +"%Y-%m-%d %T"): MCU Detected" >> "$logfile"
 
 # Query moonraker to get printer state
-state=$(curl ${mainsail%/}/printer/info | \
+state=$(curl ${moonraker%/}/printer/info | \
     python3 -c "import sys, json; print(json.load(sys.stdin)['result']['state'])")
 echo State is \"${state}\"
 
@@ -30,7 +30,7 @@ done
 # Only proceed if state reported by moonraker is "shutdown"
 
 if [ -z "$state" ]; then 
-    echo "$(date +"%Y-%m-%d %T"): Error querying ${mainsail} or parsing response ${state}." >> "$logfile"
+    echo "$(date +"%Y-%m-%d %T"): Error querying ${moonraker} or parsing response ${state}." >> "$logfile"
 
 elif [ ${state} = shutdown ] || [ ${state} = error ]; then
 
@@ -41,5 +41,5 @@ elif [ ${state} = shutdown ] || [ ${state} = error ]; then
         echo "$(date +"%Y-%m-%d %T"): $printer does not exist" >> "$logfile"
     fi
 else
-    echo "$(date +"%Y-%m-%d %T"): Mainsail reported printer status of \"${state}\". Ignoring MCU detect event." >> "$logfile"
+    echo "$(date +"%Y-%m-%d %T"): Moonraker reported printer status of \"${state}\". Ignoring MCU detect event." >> "$logfile"
 fi
