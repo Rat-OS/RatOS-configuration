@@ -358,7 +358,8 @@ class RMMU_Hub:
 					self.gcode.run_script_from_command('TEMPERATURE_WAIT SENSOR="extruder1" MINIMUM=0 MAXIMUM=' + str(preheat_extruder_temp))
 
 			# test if all demanded filaments are available and raises an error if not
-			self.test_filaments(logical_tools)
+			if len(self.rmmu[physical_toolhead].parking_t_sensor_endstop) == self.rmmu[physical_toolhead].tool_count:
+				self.test_filaments(logical_tools)
 
 			# restore idex mode
 			if self.dual_carriage != None:
