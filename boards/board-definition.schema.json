@@ -90,7 +90,11 @@
 			"type": "boolean"
 		},
 		"alternativePT1000Resistor": {
-			"description": "The value of the resistor used for PT1000 sensors, if different from the default",
+			"description": "The value of an optional resistor used for PT1000 sensors, if different from the default 4700",
+			"type": "number"
+		},
+		"thermistorPullup": {
+			"description": "The value of the pullup resistor used for thermistors, if different from the default 4700",
 			"type": "number"
 		},
 		"driverCount": {

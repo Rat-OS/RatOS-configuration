@@ -24,6 +24,16 @@
 		],
 		"hasBoot0Jumper": false
 	},
+	"thermistorPullup": 2200,
+	"integratedDrivers": {
+		"HV-STEPPER-0": "LDO-TMC5160-HV",
+		"HV-STEPPER-1": "LDO-TMC5160-HV",
+		"STEPPER-0": "LDO-TMC2209",
+		"STEPPER-1": "LDO-TMC2209",
+		"STEPPER-2": "LDO-TMC2209",
+		"STEPPER-3": "LDO-TMC2209",
+		"STEPPER-4": "LDO-TMC2209"
+	},
 	"motorSlots": {
 		"HV-STEPPER-0": {
 			"title": "MOTOR X",

@@ -57,10 +57,9 @@ then
 				echo "ERROR: No y data found for T0"
 				exit 1
 			fi
-			cp "/tmp/resonances_y_$4_$5_$6_t0.csv" /tmp/t0_y.csv
+			mv "/tmp/resonances_y_$4_$5_$6_t0.csv" /tmp/t0_y.csv
 			echo "please wait..."
 			/home/pi/klipper/scripts/calibrate_shaper.py /tmp/t0_y.csv -o /home/pi/printer_data/config/input_shaper/t0_resonances_y_"$DATE".png
-			rm "/tmp/resonances_y_$4_$5_$6_t0.csv"
 		fi
 
 		if [ $T1 -eq 1 ]
@@ -70,10 +69,9 @@ then
 				echo "ERROR: No y data found for T1"
 				exit 1
 			fi
-			cp "/tmp/resonances_y_$4_$5_$6_t1.csv" /tmp/t1_y.csv
+			mv "/tmp/resonances_y_$4_$5_$6_t1.csv" /tmp/t1_y.csv
 			echo "please wait..."
 			/home/pi/klipper/scripts/calibrate_shaper.py /tmp/t1_y.csv -o /home/pi/printer_data/config/input_shaper/t1_resonances_y_"$DATE".png
-			rm "/tmp/resonances_y_$4_$5_$6_t1.csv"
 		fi
 	fi
 
@@ -87,9 +85,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_y_$4_$5_$6_t0_copy.csv" /tmp/t0_copy_y.csv
+			mv "/tmp/resonances_y_$4_$5_$6_t0_copy.csv" /tmp/t0_copy_y.csv
 			[ -e "/tmp/t0_copy_y.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t0_copy_y.csv -o /home/pi/printer_data/config/input_shaper/t0_copy_resonances_y_"$DATE".png
-			rm "/tmp/resonances_y_$4_$5_$6_t0_copy.csv"
 		fi
 		if [ $T1 -eq 1 ]
 		then
@@ -99,9 +96,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_y_$4_$5_$6_t1_copy.csv" /tmp/t1_copy_y.csv
+			mv "/tmp/resonances_y_$4_$5_$6_t1_copy.csv" /tmp/t1_copy_y.csv
 			[ -e "/tmp/t1_copy_y.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t1_copy_y.csv -o /home/pi/printer_data/config/input_shaper/t1_copy_resonances_y_"$DATE".png
-			rm "/tmp/resonances_y_$4_$5_$6_t1_copy.csv"
 		fi
 	fi
 
@@ -115,9 +111,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_y_$4_$5_$6_t0_mirror.csv" /tmp/t0_mirror_y.csv
+			mv "/tmp/resonances_y_$4_$5_$6_t0_mirror.csv" /tmp/t0_mirror_y.csv
 			[ -e "/tmp/t0_mirror_y.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t0_mirror_y.csv -o /home/pi/printer_data/config/input_shaper/t0_mirror_resonances_y_"$DATE".png
-			rm "/tmp/resonances_y_$4_$5_$6_t0_mirror.csv"
 		fi
 		if [ $T1 -eq 1 ]
 		then
@@ -127,9 +122,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_y_$4_$5_$6_t1_mirror.csv" /tmp/t1_mirror_y.csv
+			mv "/tmp/resonances_y_$4_$5_$6_t1_mirror.csv" /tmp/t1_mirror_y.csv
 			[ -e "/tmp/t1_mirror_y.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t1_mirror_y.csv -o /home/pi/printer_data/config/input_shaper/t1_mirror_resonances_y_"$DATE".png
-			rm "/tmp/resonances_y_$4_$5_$6_t1_mirror.csv"
 		fi
 	fi
 fi
@@ -153,10 +147,9 @@ then
 				echo "ERROR: No x data found for T0"
 				exit 1
 			fi
-			cp "/tmp/resonances_x_$4_$5_$6_t0.csv" /tmp/t0_x.csv
+			mv "/tmp/resonances_x_$4_$5_$6_t0.csv" /tmp/t0_x.csv
 			echo "please wait..."
 			/home/pi/klipper/scripts/calibrate_shaper.py /tmp/t0_x.csv -o /home/pi/printer_data/config/input_shaper/t0_resonances_x_"$DATE".png
-			rm "/tmp/resonances_x_$4_$5_$6_t0.csv"
 		fi
 
 		if [ $T1 -eq 1 ]
@@ -166,10 +159,9 @@ then
 				echo "ERROR: No x data found for T1"
 				exit 1
 			fi
-			cp "/tmp/resonances_x_$4_$5_$6_t1.csv" /tmp/t1_x.csv
+			mv "/tmp/resonances_x_$4_$5_$6_t1.csv" /tmp/t1_x.csv
 			echo "please wait..."
 			/home/pi/klipper/scripts/calibrate_shaper.py /tmp/t1_x.csv -o /home/pi/printer_data/config/input_shaper/t1_resonances_x_"$DATE".png
-			rm "/tmp/resonances_x_$4_$5_$6_t1.csv"
 		fi
 	fi
 
@@ -183,9 +175,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_x_$4_$5_$6_t0_copy.csv" /tmp/t0_copy_x.csv
+			mv "/tmp/resonances_x_$4_$5_$6_t0_copy.csv" /tmp/t0_copy_x.csv
 			[ -e "/tmp/t0_copy_x.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t0_copy_x.csv -o /home/pi/printer_data/config/input_shaper/t0_copy_resonances_x_"$DATE".png
-			rm "/tmp/resonances_x_$4_$5_$6_t0_copy.csv"
 		fi
 		if [ $T1 -eq 1 ]
 		then
@@ -195,9 +186,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_x_$4_$5_$6_t1_copy.csv" /tmp/t1_copy_x.csv
+			mv "/tmp/resonances_x_$4_$5_$6_t1_copy.csv" /tmp/t1_copy_x.csv
 			[ -e "/tmp/t1_copy_x.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t1_copy_x.csv -o /home/pi/printer_data/config/input_shaper/t1_copy_resonances_x_"$DATE".png
-			rm "/tmp/resonances_x_$4_$5_$6_t1_copy.csv"
 		fi
 	fi
 
@@ -211,9 +201,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_x_$4_$5_$6_t0_mirror.csv" /tmp/t0_mirror_x.csv
+			mv "/tmp/resonances_x_$4_$5_$6_t0_mirror.csv" /tmp/t0_mirror_x.csv
 			[ -e "/tmp/t0_mirror_x.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t0_mirror_x.csv -o /home/pi/printer_data/config/input_shaper/t0_mirror_resonances_x_"$DATE".png
-			rm "/tmp/resonances_x_$4_$5_$6_t0_mirror.csv"
 		fi
 		if [ $T1 -eq 1 ]
 		then
@@ -223,9 +212,8 @@ then
 				exit 1
 			fi
 			echo "please wait..."
-			cp "/tmp/resonances_x_$4_$5_$6_t1_mirror.csv" /tmp/t1_mirror_x.csv
+			mv "/tmp/resonances_x_$4_$5_$6_t1_mirror.csv" /tmp/t1_mirror_x.csv
 			[ -e "/tmp/t1_mirror_x.csv" ] && /home/pi/klipper/scripts/calibrate_shaper.py /tmp/t1_mirror_x.csv -o /home/pi/printer_data/config/input_shaper/t1_mirror_resonances_x_"$DATE".png
-			rm "/tmp/resonances_x_$4_$5_$6_t1_mirror.csv"
 		fi
 	fi
 fi

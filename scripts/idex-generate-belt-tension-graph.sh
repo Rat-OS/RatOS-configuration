@@ -53,8 +53,8 @@ then
 			echo "ERROR: No y data found for right toolhead (T1)"
 			exit 1
 		fi
-		cp /tmp/raw_data_y_toolboard_t0_t2.csv /tmp/left_y_belt_tension.csv
-		cp /tmp/raw_data_y_toolboard_t1_t2.csv /tmp/right_y_belt_tension.csv
+		mv /tmp/raw_data_y_toolboard_t0_t2.csv /tmp/left_y_belt_tension.csv
+		mv /tmp/raw_data_y_toolboard_t1_t2.csv /tmp/right_y_belt_tension.csv
 	fi
 
 	if [ $T2 -eq 0 ]
@@ -66,7 +66,7 @@ then
 				echo "ERROR: No y data found for left toolhead (T0)"
 				exit 1
 			fi
-			cp /tmp/raw_data_y_toolboard_t0_t0.csv /tmp/left_y_belt_tension.csv
+			mv /tmp/raw_data_y_toolboard_t0_t0.csv /tmp/left_y_belt_tension.csv
 		fi
 
 		if [ $T1 -eq 1 ]
@@ -76,7 +76,7 @@ then
 				echo "ERROR: No y data found for right toolhead (T1)"
 				exit 1
 			fi
-			cp /tmp/raw_data_y_toolboard_t1_t1.csv /tmp/right_y_belt_tension.csv
+			mv /tmp/raw_data_y_toolboard_t1_t1.csv /tmp/right_y_belt_tension.csv
 		fi
 	fi
 
@@ -94,7 +94,7 @@ then
 			echo "ERROR: No x data found for the left toolhead (T0)"
 			exit 1
 		fi
-		cp /tmp/raw_data_x_toolboard_t0_t0.csv /tmp/left_x_belt_tension.csv
+		mv /tmp/raw_data_x_toolboard_t0_t0.csv /tmp/left_x_belt_tension.csv
 	fi
 
 	if [ $T1 -eq 1 ]
@@ -104,7 +104,7 @@ then
 			echo "ERROR: No x data found for right toolhbead (T1)"
 			exit 1
 		fi
-		cp /tmp/raw_data_x_toolboard_t1_t1.csv /tmp/right_x_belt_tension.csv
+		mv /tmp/raw_data_x_toolboard_t1_t1.csv /tmp/right_x_belt_tension.csv
 	fi
 
 	/home/pi/klipper/scripts/graph_accelerometer.py -c /tmp/*_x_belt_tension.csv -o /home/pi/printer_data/config/input_shaper/x_tension_comparison_"$DATE".png
