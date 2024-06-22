@@ -61,7 +61,7 @@ symlink_extensions()
 update_symlinks
 ensure_sudo_command_whitelisting root
 ensure_service_permission
-fixn_klippy_env_ownership
+fix_klippy_env_ownership
 install_beacon
 install_hooks
 ensure_node_18
