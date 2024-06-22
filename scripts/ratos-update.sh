@@ -46,10 +46,19 @@ symlink_moonraker_extensions()
 		echo "Failed to symlink moonraker extensions. Is the RatOS configurator running? Ignore this if not on RatOS 2.0 yet"
 	fi
 }
+
+fix_klippy_env_ownership()
+{
+	if [ -n "$(find /home/pi/klippy-env/lib/python3.9/site-packages/matplotlib -user "root" -print -prune -o -prune)" ]; then
+		chown -R pi:pi /home/pi/klippy-env
+	fi
+}
+
 # Run update symlinks
 update_symlinks
 ensure_sudo_command_whitelisting
 ensure_service_permission
+fix_klippy_env_ownership
 install_beacon
 install_hooks
 register_ratos_homing
