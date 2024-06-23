@@ -73,10 +73,11 @@ class RatOS:
 		type = gcmd.get('TYPE', '')
 
 		color = "white" 
+		if type == 'success': color = "lime" 
 		if type == 'warning': color = "gold" 
 		if type == 'alert': color = "red" 
-		if type == 'result': color = "lime" 
 		if type == 'info': color = "cyan" 
+		if type == 'result': color = "white"
 
 		_title = '<b><p style="font-weight-bold; margin:0; color:' + color + '">' + title + '</p></b>'
 		_msg = '<p style="margin:0; color:' + color + '">' + msg.replace("_N_","\n") + '</p>'
