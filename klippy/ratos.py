@@ -76,7 +76,6 @@ class RatOS:
 		opacity = 1.0
 		if type == 'warning': color = "gold" 
 		if type == 'alert': color = "red" 
-		if type == 'result': color = "lime" 
 		if type == 'info': color = "cyan" 
 		if type == 'debug': color = "#38bdf8" 
 		if type == 'debug': opacity = 0.7 
