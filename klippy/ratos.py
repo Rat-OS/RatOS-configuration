@@ -74,6 +74,7 @@ class RatOS:
 
 		color = "white" 
 		opacity = 1.0
+		if type == 'result': color = "green" 
 		if type == 'warning': color = "gold" 
 		if type == 'alert': color = "red" 
 		if type == 'info': color = "cyan" 
