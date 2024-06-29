@@ -34,33 +34,11 @@ class MeshCompensator:
 	#####
 	def register_handler(self):
 		self.printer.register_event_handler("klippy:connect", self._connect)
-		# self.printer.register_event_handler("probe:update_results",
-		# 									self._update_z_compensation_value)
 
 	def _connect(self):
 		self.bed_mesh = self.printer.lookup_object('bed_mesh')
 		if "Contact" in self.pmgr.get_profiles():
 			self.contact_mesh = self.pmgr.load_profile("Contact")
-
-	# def _update_z_compensation_value(self, pos):
-	# 	if not self.enable_compensation or not self.contact_mesh:
-	# 		return
-
-	# 	x_coord = pos[0]
-
-	# 	z_compensations = self.z_compensations
-	# 	sample_count = len(z_compensations)
-	# 	spacing = ((self.calibrate_end_x - self.calibrate_start_x)
-	# 				/ (sample_count - 1))
-
-	# 	interpolate_t = (x_coord - self.calibrate_start_x) / spacing
-	# 	interpolate_i = int(math.floor(interpolate_t))
-	# 	interpolate_i = BedMesh.constrain(interpolate_i, 0, sample_count - 2)
-	# 	interpolate_t -= interpolate_i
-	# 	interpolated_z_compensation = BedMesh.lerp(
-	# 		interpolate_t, z_compensations[interpolate_i],
-	# 		z_compensations[interpolate_i + 1])
-	# 	pos[2] += interpolated_z_compensation
 
 	def clear_compensations(self):
 		self.z_compensations = []
