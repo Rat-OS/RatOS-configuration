@@ -50,6 +50,6 @@ register_gcode_shell_command
 register_ratos_homing
 register_z_offset_probe
 register_ratos
-register_mesh_compensator
+register_beacon_scan_compensator
 register_resonance_generator
 register_ratos_kinematics

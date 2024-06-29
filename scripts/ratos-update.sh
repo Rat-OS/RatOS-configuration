@@ -67,7 +67,7 @@ install_hooks
 ensure_node_18
 patch_klipperscreen_service_restarts
 register_z_offset_probe
-register_mesh_compensator
+register_beacon_scan_compensator
 remove_old_postprocessor
 register_ratos
 register_resonance_generator
