@@ -1,9 +1,5 @@
-from math import fabs
-from shutil import ReadError, copy2
-from os import path, remove, getenv
-import os, logging, io, collections
-import re, glob, math
-from . import manual_probe as ManualProbe, bed_mesh as BedMesh
+import logging, collections
+from . import bed_mesh as BedMesh
 
 #####
 # RatOS
@@ -22,7 +18,6 @@ class BeaconScanCompensator:
 
 		self.contact_mesh = None
 		self.pmgr = ProfileManager(self.config, self)
-
 		self.enable_compensation = False
 
 		self.load_settings()
@@ -57,39 +52,44 @@ class BeaconScanCompensator:
 	def cmd_BEACON_APPLY_SCAN_COMPENSATION(self, gcmd):
 		profile = gcmd.get('PROFILE', None)
 		if not profile:
-			raise self.printer.command_error("Profile parameter missing for BEACON_APPLY_SCAN_COMPENSATION")
+			raise self.printer.command_error("Profile parameter missing for Beacon scan compensation")
 		if profile not in self.pmgr.get_profiles():
-			raise self.printer.command_error("Profile " + str(profile) + " not found for BEACON_APPLY_SCAN_COMPENSATION")
+			raise self.printer.command_error("Profile " + str(profile) + " not found for Beacon scan compensation")
 		self.contact_mesh = self.pmgr.load_profile(profile)
 		if not self.contact_mesh:
-			raise self.printer.command_error("Could not load profile " + str(profile) + " for BEACON_APPLY_SCAN_COMPENSATION")
+			raise self.printer.command_error("Could not load profile " + str(profile) + " for Beacon scan compensation")
 		systime = self.printer.get_reactor().monotonic()
-		if self.bed_mesh.z_mesh:
-			profile_name = self.bed_mesh.z_mesh.get_profile_name()
-			if profile_name != profile:
-				points = self.bed_mesh.get_status(systime)["profiles"][profile_name]["points"]
-				params = self.bed_mesh.z_mesh.get_mesh_params()
-				min_x = params["min_x"]
-				min_y = params["min_y"]
-				max_x = params["max_x"]
-				max_y = params["max_y"]
-				x_count = params["y_count"]
-				y_count = params["x_count"]
-				x_step = ((max_x - min_x) / (x_count - 1))
-				y_step = ((max_y - min_y) / (y_count - 1))
-				new_points = []
-				for y in range(y_count):
-					new_points.append([])
-					for x in range(x_count):
-						x_pos = min_x + x * x_step
-						y_pos = min_y + y * y_step
-						z_val = points[y][x]
-						contact_z = self.contact_mesh.calc_z(x_pos, y_pos)
-						new_z = z_val - (z_val - contact_z)
-						new_points[y].append(new_z)
-				self.bed_mesh.z_mesh.build_mesh(new_points)
-				self.bed_mesh.save_profile(profile_name)
-				self.bed_mesh.set_mesh(self.bed_mesh.z_mesh)
+		try:
+			if self.bed_mesh.z_mesh:
+				profile_name = self.bed_mesh.z_mesh.get_profile_name()
+				if profile_name != profile:
+					points = self.bed_mesh.get_status(systime)["profiles"][profile_name]["points"]
+					params = self.bed_mesh.z_mesh.get_mesh_params()
+					min_x = params["min_x"]
+					min_y = params["min_y"]
+					max_x = params["max_x"]
+					max_y = params["max_y"]
+					x_count = params["y_count"]
+					y_count = params["x_count"]
+					x_step = ((max_x - min_x) / (x_count - 1))
+					y_step = ((max_y - min_y) / (y_count - 1))
+					new_points = []
+					for y in range(y_count):
+						new_points.append([])
+						for x in range(x_count):
+							x_pos = min_x + x * x_step
+							y_pos = min_y + y * y_step
+							z_val = points[y][x]
+							contact_z = self.contact_mesh.calc_z(x_pos, y_pos)
+							new_z = z_val - (z_val - contact_z)
+							new_points[y].append(new_z)
+					self.bed_mesh.z_mesh.build_mesh(new_points)
+					self.bed_mesh.save_profile(profile_name)
+					self.bed_mesh.set_mesh(self.bed_mesh.z_mesh)
+					self.gcode.run_script_from_command("CONSOLE_ECHO TYPE=debug TITLE='Beacon scan compensation' MSG='Mesh scan profile " + str(profile_name) + " compensated with contact profile " + str(profile) + "'")
+		except BedMesh.BedMeshError as e:
+			self.gcode.run_script_from_command("CONSOLE_ECHO TYPE=error TITLE='Beacon scan compensation error' MSG='" + str(e) + "'")
+
 
 class ProfileManager:
     def __init__(self, config, bedmesh):
