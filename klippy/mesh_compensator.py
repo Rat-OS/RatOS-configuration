@@ -64,7 +64,6 @@ class MeshCompensator:
 				if profile_name != "Contact":
 					points = self.bed_mesh.get_status(systime)["profiles"][profile_name]["points"]
 					params = self.bed_mesh.z_mesh.get_mesh_params()
-
 					min_x = params["min_x"]
 					min_y = params["min_y"]
 					max_x = params["max_x"]
@@ -73,20 +72,18 @@ class MeshCompensator:
 					y_count = params["x_count"]
 					x_step = ((max_x - min_x) / (x_count - 1))
 					y_step = ((max_y - min_y) / (y_count - 1))
-
-					line = ""
+					new_points = []
 					for y in range(y_count):
+						new_points.append([])
 						for x in range(x_count):
 							x_pos = min_x + x * x_step
 							y_pos = min_y + y * y_step
 							z_val = points[y][x]
 							contact_z = self.contact_mesh.calc_z(x_pos, y_pos)
 							new_z = z_val - (z_val - contact_z)
-							line += str(str(float("{:.6f}".format(new_z))))
-							if x < x_count - 1:
-								line += ", "
-						line += "\n"
-					self.gcode.respond_raw(str(line))
+							new_points[y].append(new_z)
+					self.bed_mesh.z_mesh.build_mesh(new_points)
+					self.bed_mesh.save_profile(profile_name)
 
 class ProfileManager:
     def __init__(self, config, bedmesh):
