@@ -84,6 +84,7 @@ class MeshCompensator:
 							new_points[y].append(new_z)
 					self.bed_mesh.z_mesh.build_mesh(new_points)
 					self.bed_mesh.save_profile(profile_name)
+					self.bed_mesh.set_mesh(self.bed_mesh.z_mesh)
 
 class ProfileManager:
     def __init__(self, config, bedmesh):
