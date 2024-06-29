@@ -40,9 +40,6 @@ class MeshCompensator:
 		if "Contact" in self.pmgr.get_profiles():
 			self.contact_mesh = self.pmgr.load_profile("Contact")
 
-	def clear_compensations(self):
-		self.z_compensations = []
-
 	#####
 	# Settings
 	#####
@@ -66,7 +63,6 @@ class MeshCompensator:
 				profile_name = self.bed_mesh.z_mesh.get_profile_name()
 				if profile_name != "Contact":
 					points = self.bed_mesh.get_status(systime)["profiles"][profile_name]["points"]
-
 					params = self.bed_mesh.z_mesh.get_mesh_params()
 
 					min_x = params["min_x"]
@@ -80,7 +76,6 @@ class MeshCompensator:
 
 					line = ""
 					for y in range(y_count):
-						line += "#*# 	  "
 						for x in range(x_count):
 							x_pos = min_x + x * x_step
 							y_pos = min_y + y * y_step
