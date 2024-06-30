@@ -54,9 +54,14 @@ class BeaconScanCompensator:
 		if not profile.strip():
 			raise gcmd.error("Value for parameter 'PROFILE' must be specified")
 
-		x_cnt, y_cnt = self.bed_mesh.parse_gcmd_pair(gcmd, 'PROBE_COUNT', minval=3)
-		mesh_min = self.bed_mesh.parse_gcmd_coord(gcmd, 'MESH_MIN')
-		mesh_max = self.bed_mesh.parse_gcmd_coord(gcmd, 'MESH_MAX')
+		# x_cnt, y_cnt = self.bed_mesh.parse_gcmd_pair(gcmd, 'PROBE_COUNT', minval=3)
+		# mesh_min = self.bed_mesh.parse_gcmd_coord(gcmd, 'MESH_MIN')
+		# mesh_max = self.bed_mesh.parse_gcmd_coord(gcmd, 'MESH_MAX')
+
+		# self.gcode.respond_raw("x_cnt " + str(x_cnt))
+		# self.gcode.respond_raw("y_cnt " + str(y_cnt))
+		# self.gcode.respond_raw("mesh_min " + str(mesh_min))
+		# self.gcode.respond_raw("mesh_max " + str(mesh_max))
 
 		if profile not in self.pmgr.get_profiles():
 			raise self.printer.command_error("Profile " + str(profile) + " not found for Beacon scan compensation")
