@@ -50,9 +50,14 @@ class BeaconScanCompensator:
 
 	desc_BEACON_APPLY_SCAN_COMPENSATION = "Compensates magnetic inaccuracies for beacon scan meshes."
 	def cmd_BEACON_APPLY_SCAN_COMPENSATION(self, gcmd):
-		profile = gcmd.get('PROFILE', None)
-		if not profile:
-			raise self.printer.command_error("Profile parameter missing for Beacon scan compensation")
+		profile = gcmd.get('PROFILE', "Contact")
+		if not profile.strip():
+			raise gcmd.error("Value for parameter 'PROFILE' must be specified")
+
+		x_cnt, y_cnt = self.bed_mesh.parse_gcmd_pair(gcmd, 'PROBE_COUNT', minval=3)
+		mesh_min = self.bed_mesh.parse_gcmd_coord(gcmd, 'MESH_MIN')
+		mesh_max = self.bed_mesh.parse_gcmd_coord(gcmd, 'MESH_MAX')
+
 		if profile not in self.pmgr.get_profiles():
 			raise self.printer.command_error("Profile " + str(profile) + " not found for Beacon scan compensation")
 		self.contact_mesh = self.pmgr.load_profile(profile)
@@ -61,16 +66,26 @@ class BeaconScanCompensator:
 		systime = self.printer.get_reactor().monotonic()
 		try:
 			if self.bed_mesh.z_mesh:
+
+				self.gcode.respond_raw(str(self.bed_mesh.get_status(systime)))
+
 				profile_name = self.bed_mesh.z_mesh.get_profile_name()
 				if profile_name != profile:
 					points = self.bed_mesh.get_status(systime)["profiles"][profile_name]["points"]
+
+					self.gcode.respond_raw(str(points))
+
 					params = self.bed_mesh.z_mesh.get_mesh_params()
 					min_x = params["min_x"]
 					min_y = params["min_y"]
 					max_x = params["max_x"]
 					max_y = params["max_y"]
-					x_count = params["y_count"]
-					y_count = params["x_count"]
+
+					x_count = len(points[0])
+					y_count = len(points)
+					# x_count = params["y_count"]
+					# y_count = params["x_count"]
+
 					x_step = ((max_x - min_x) / (x_count - 1))
 					y_step = ((max_y - min_y) / (y_count - 1))
 					new_points = []
@@ -79,7 +94,9 @@ class BeaconScanCompensator:
 						for x in range(x_count):
 							x_pos = min_x + x * x_step
 							y_pos = min_y + y * y_step
+
 							z_val = points[y][x]
+
 							contact_z = self.contact_mesh.calc_z(x_pos, y_pos)
 							new_z = z_val - (z_val - contact_z)
 							new_points[y].append(new_z)
