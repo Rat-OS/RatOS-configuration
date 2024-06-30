@@ -1,8 +1,6 @@
-from math import fabs
-from shutil import ReadError, copy2
-from os import path, remove, getenv
-import os, logging, io
-import re, glob
+import os, logging, re, glob
+import logging, collections
+from . import bed_mesh as BedMesh
 
 #####
 # RatOS
@@ -20,6 +18,8 @@ class RatOS:
 		self.reactor = self.printer.get_reactor()
 
 		self.old_is_graph_files = []
+		self.contact_mesh = None
+		self.pmgr = BedMeshProfileManager(self.config, self)
 
 		self.load_settings()
 		self.register_commands()
@@ -38,6 +38,7 @@ class RatOS:
 		self.rmmu_hub = self.printer.lookup_object("rmmu_hub", None)
 		self.rmmu_t0 = self.printer.lookup_object("rmmu RMMU_T0", None)
 		self.rmmu_t1 = self.printer.lookup_object("rmmu RMMU_T1", None)
+		self.bed_mesh = self.printer.lookup_object('bed_mesh')
 
 	#####
 	# Settings
@@ -58,6 +59,7 @@ class RatOS:
 		self.gcode.register_command('CONSOLE_ECHO', self.cmd_CONSOLE_ECHO, desc=(self.desc_CONSOLE_ECHO))
 		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('PROCESS_GCODE_FILE', self.cmd_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
+		self.gcode.register_command('BEACON_APPLY_SCAN_COMPENSATION', self.cmd_BEACON_APPLY_SCAN_COMPENSATION, desc=(self.desc_BEACON_APPLY_SCAN_COMPENSATION))
 
 	desc_HELLO_RATOS = "RatOS mainsail welcome message"
 	def cmd_HELLO_RATOS(self, gcmd):
@@ -76,6 +78,7 @@ class RatOS:
 
 		color = "white" 
 		opacity = 1.0
+		if type == 'result': color = "green" 
 		if type == 'warning': color = "gold" 
 		if type == 'alert': color = "red" 
 		if type == 'info': color = "cyan" 
@@ -131,6 +134,18 @@ class RatOS:
 				self.v_sd.cmd_SDCARD_PRINT_FILE(gcmd)
 			else:
 				raise self.printer.command_error("Could not process gcode file")
+
+	desc_BEACON_APPLY_SCAN_COMPENSATION = "Compensates magnetic inaccuracies for beacon scan meshes."
+	def cmd_BEACON_APPLY_SCAN_COMPENSATION(self, gcmd):
+		profile = gcmd.get('PROFILE', "Contact")
+		if not profile.strip():
+			raise gcmd.error("Value for parameter 'PROFILE' must be specified")
+		if profile not in self.pmgr.get_profiles():
+			raise self.printer.command_error("Profile " + str(profile) + " not found for Beacon scan compensation")
+		self.contact_mesh = self.pmgr.load_profile(profile)
+		if not self.contact_mesh:
+			raise self.printer.command_error("Could not load profile " + str(profile) + " for Beacon scan compensation")
+		self.compensate_beacon_scan(profile)
 
 	#####
 	# G-code post processor
@@ -524,6 +539,58 @@ class RatOS:
 		except Exception as exc:
 			self.debug_echo("get_is_graph_files", "Something went wrong. " + str(exc))
 		return None
+
+#####
+# Bed Mesh Profile Manager
+#####
+class BedMeshProfileManager:
+    def __init__(self, config, bedmesh):
+        self.name = "bed_mesh"
+        self.printer = config.get_printer()
+        self.gcode = self.printer.lookup_object('gcode')
+        self.bedmesh = bedmesh
+        self.profiles = {}
+        self.incompatible_profiles = []
+        # Fetch stored profiles from Config
+        stored_profs = config.get_prefix_sections(self.name)
+        stored_profs = [s for s in stored_profs
+                        if s.get_name() != self.name]
+        for profile in stored_profs:
+            name = profile.get_name().split(' ', 1)[1]
+            version = profile.getint('version', 0)
+            if version != BedMesh.PROFILE_VERSION:
+                logging.info(
+                    "bed_mesh: Profile [%s] not compatible with this version\n"
+                    "of bed_mesh.  Profile Version: %d Current Version: %d "
+                    % (name, version, BedMesh.PROFILE_VERSION))
+                self.incompatible_profiles.append(name)
+                continue
+            self.profiles[name] = {}
+            zvals = profile.getlists('points', seps=(',', '\n'), parser=float)
+            self.profiles[name]['points'] = zvals
+            self.profiles[name]['mesh_params'] = params = \
+                collections.OrderedDict()
+            for key, t in BedMesh.PROFILE_OPTIONS.items():
+                if t is int:
+                    params[key] = profile.getint(key)
+                elif t is float:
+                    params[key] = profile.getfloat(key)
+                elif t is str:
+                    params[key] = profile.get(key)
+    def get_profiles(self):
+        return self.profiles
+    def load_profile(self, prof_name):
+        profile = self.profiles.get(prof_name, None)
+        if profile is None:
+            return None
+        probed_matrix = profile['points']
+        mesh_params = profile['mesh_params']
+        z_mesh = BedMesh.ZMesh(mesh_params, prof_name)
+        try:
+            z_mesh.build_mesh(probed_matrix)
+        except BedMesh.BedMeshError as e:
+            raise self.gcode.error(str(e))
+        return z_mesh
 
 #####
 # Loader
