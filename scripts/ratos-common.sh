@@ -135,15 +135,6 @@ register_z_offset_probe()
     _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }
 
-register_beacon_scan_compensator()
-{
-    EXT_NAME="beacon_scan_compensator_extension"
-    EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
-    EXT_FILE="beacon_scan_compensator.py"
-	# Don't error if extension is already registered
-    _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
-}
-
 register_ratos_kinematics() {
 	if ratos extensions list | grep "ratos-kinematics" &>/dev/null; then
 		ratos extensions unregister klipper -k ratos_hybrid_corexy
