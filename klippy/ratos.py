@@ -76,15 +76,15 @@ class RatOS:
 
 		color = "white" 
 		opacity = 1.0
-		if type == 'result': color = "green" 
-		if type == 'warning': color = "gold" 
-		if type == 'alert': color = "red" 
-		if type == 'info': color = "cyan" 
+		if type == 'info': color = "#38bdf8" 
+		if type == 'success': color = "#a3e635" 
+		if type == 'warning': color = "#fbbf24" 
+		if type == 'alert': color = "#f87171" 
 		if type == 'debug': color = "#38bdf8" 
 		if type == 'debug': opacity = 0.7 
 
 		_title = '<b><p style="font-weight-bold; margin:0; opacity:' + str(opacity) + '; color:' + color + '">' + title + '</p></b>'
-		_msg = '<p style="margin:0; color:' + color + '">' + msg.replace("_N_","\n") + '</p>'
+		_msg = '<p style="margin:0; opacity:' + str(opacity) + '; color:' + color + '">' + msg.replace("_N_","\n") + '</p>'
 
 		self.gcode.respond_raw(_title + _msg)
 
