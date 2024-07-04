@@ -108,6 +108,48 @@
 				}
 			}
 		},
+		"customSections": {
+			"description": "Custom sections for this board",
+			"type": "object",
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\S+$": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"description": "The name of the custom section",
+							"type": "string"
+						},
+						"parameters": {
+							"description": "The parameters for this custom section",
+							"type": "object",
+							"additionalProperties": false,
+							"patternProperties": {
+								"^\\S+$": {
+									"description": "A parameter and value for this custom section",
+									"oneOf": [{ "type": "number" }, { "type": "string" }]
+								}
+							}
+						},
+						"comments": {
+							"description": "Comments for this custom section",
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": ["parameters"]
+				}
+			}
+		},
+		"invertPinLogic": {
+			"description": "A list of pins to invert the logic of",
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
 		"motorSlots": {
 			"description": "A specification of the motor slots available on this board",
 			"type": "object",
