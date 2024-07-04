@@ -32,7 +32,7 @@
 			"accel": 10000,
 			"velocity": 800,
 			"z_accel": 200,
-			"z_velocity": 25,
+			"z_velocity": 15,
 			"travel_velocity": 600,
 			"travel_accel": 8000
 		}
