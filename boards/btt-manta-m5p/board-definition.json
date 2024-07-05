@@ -3,7 +3,7 @@
 	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.svg",
-	"name": "Manta M4P",
+	"name": "Manta M5P",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-manta-m5p",
 	"firmwareBinaryName": "firmware-btt-manta-m5p.bin",

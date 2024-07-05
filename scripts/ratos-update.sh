@@ -32,10 +32,17 @@ ensure_node_18()
 	fi
 }
 
+fix_klippy_env_ownership()
+{
+	if [ -n "$(find /home/pi/klippy-env/lib/python3.9/site-packages/matplotlib -user "root" -print -prune -o -prune)" ]; then
+		chown -R pi:pi /home/pi/klippy-env
+	fi
+}
+
 restart_configurator()
 {
-  report_status "Restarting configurator..."
-  systemctl restart ratos-configurator
+	report_status "Restarting configurator..."
+	systemctl restart ratos-configurator
 }
 
 symlink_extensions()
@@ -54,6 +61,7 @@ symlink_extensions()
 update_symlinks
 ensure_sudo_command_whitelisting root
 ensure_service_permission
+fix_klippy_env_ownership
 install_beacon
 install_hooks
 ensure_node_18

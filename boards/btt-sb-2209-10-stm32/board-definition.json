@@ -1,6 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"manualFileName": "manual.pdf",
+	"boardImageFileName": "board.png",
 	"isToolboard": true,
 	"name": "SB2209 v1.0 STM32",
 	"manufacturer": "BIGTREETECH",
@@ -33,7 +34,7 @@
 		"software": {
 			"sclk": "PB10",
 			"mosi": "PB11",
-			"miso": "PB12"
+			"miso": "PB2"
 		}
 	}
 }

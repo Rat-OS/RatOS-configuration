@@ -1,8 +1,6 @@
-from math import fabs
-from shutil import ReadError, copy2
-from os import path, remove, getenv
-import os, logging, io
-import re
+import os, logging, re, glob
+import logging, collections
+from . import bed_mesh as BedMesh
 
 #####
 # RatOS
@@ -19,6 +17,10 @@ class RatOS:
 		self.gcode = self.printer.lookup_object('gcode')
 		self.reactor = self.printer.get_reactor()
 
+		self.old_is_graph_files = []
+		self.contact_mesh = None
+		self.pmgr = BedMeshProfileManager(self.config, self)
+
 		self.load_settings()
 		self.register_commands()
 		self.register_handler()
@@ -34,6 +36,7 @@ class RatOS:
 		self.sdcard_dirname = self.v_sd.sdcard_dirname
 		self.dual_carriage = self.printer.lookup_object("dual_carriage", None)
 		self.rmmu_hub = self.printer.lookup_object("rmmu_hub", None)
+		self.bed_mesh = self.printer.lookup_object('bed_mesh')
 
 	#####
 	# Settings
@@ -48,8 +51,68 @@ class RatOS:
 	# Gcode commands
 	#####
 	def register_commands(self):
+		self.gcode.register_command('HELLO_RATOS', self.cmd_HELLO_RATOS, desc=(self.desc_HELLO_RATOS))
+		self.gcode.register_command('CACHE_IS_GRAPH_FILES', self.cmd_CACHE_IS_GRAPH_FILES, desc=(self.desc_CACHE_IS_GRAPH_FILES))
+		self.gcode.register_command('SHOW_IS_GRAPH_FILES', self.cmd_SHOW_IS_GRAPH_FILES, desc=(self.desc_SHOW_IS_GRAPH_FILES))
+		self.gcode.register_command('CONSOLE_ECHO', self.cmd_CONSOLE_ECHO, desc=(self.desc_CONSOLE_ECHO))
 		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('PROCESS_GCODE_FILE', self.cmd_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
+		self.gcode.register_command('BEACON_APPLY_SCAN_COMPENSATION', self.cmd_BEACON_APPLY_SCAN_COMPENSATION, desc=(self.desc_BEACON_APPLY_SCAN_COMPENSATION))
+
+	desc_HELLO_RATOS = "RatOS mainsail welcome message"
+	def cmd_HELLO_RATOS(self, gcmd):
+		url = "https://os.ratrig.com/"
+		img = "../server/files/config/RatOS/Logo-white.png"
+		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:8px; color:white">Welcome to RatOS V2.1.x</p></b>'
+		_info = '\nClick image to open documentation.'
+		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="258px"></a>'
+		self.gcode.respond_raw(_title + _img + _info)
+
+	desc_CONSOLE_ECHO = "Multiline console output"
+	def cmd_CONSOLE_ECHO(self, gcmd):
+		title = gcmd.get('TITLE', '')
+		msg = gcmd.get('MSG', '')
+		type = gcmd.get('TYPE', '')
+
+		color = "white" 
+		opacity = 1.0
+		if type == 'info': color = "#38bdf8" 
+		if type == 'success': color = "#a3e635" 
+		if type == 'warning': color = "#fbbf24" 
+		if type == 'alert': color = "#f87171" 
+		if type == 'debug': color = "#38bdf8" 
+		if type == 'debug': opacity = 0.7 
+
+		_title = '<b><p style="font-weight-bold; margin:0; opacity:' + str(opacity) + '; color:' + color + '">' + title + '</p></b>'
+		_msg = '<p style="margin:0; opacity:' + str(opacity) + '; color:' + color + '">' + msg.replace("_N_","\n") + '</p>'
+
+		self.gcode.respond_raw(_title + _msg)
+
+	desc_SHOW_IS_GRAPH_FILES = "Shows the last generated IS graph in the console"
+	def cmd_SHOW_IS_GRAPH_FILES(self, gcmd):
+		title = gcmd.get('TITLE', '')
+		try:
+			counter = 0
+			new_is_graph_files = self.get_is_graph_files()
+			for file_path in new_is_graph_files:
+				if file_path not in self.old_is_graph_files:
+					file_name = file_path.replace("/home/pi/printer_data/config/input_shaper/", "")
+					url = file_path.replace("/home/pi/printer_data", "../server/files")
+					title = title + ': ' if title != '' else ''
+					_title = '<b><p style="font-weight-bold; margin:0; color:white">' + title + file_name + '</p></b>'
+					_link = 'Click image to download or right click for options.'
+					_img = '<a href="' + url + '" target="_blank" ><img src="' + url + '" width="100%"></a>'
+					self.gcode.respond_raw(_title + _link + _img)
+					counter += 1
+					if counter == 10:
+						break
+			self.old_is_graph_files = []
+		except Exception as exc:
+			self.debug_echo("SHOW_IS_GRAPH_FILES", "Something went wrong. " + str(exc))
+
+	desc_CACHE_IS_GRAPH_FILES = "Caches the current is graph files"
+	def cmd_CACHE_IS_GRAPH_FILES(self, gcmd):
+		self.old_is_graph_files = self.get_is_graph_files()
 
 	desc_RATOS_LOG = "G-code logging command "
 	def cmd_RATOS_LOG(self, gcmd):
@@ -69,6 +132,48 @@ class RatOS:
 				self.v_sd.cmd_SDCARD_PRINT_FILE(gcmd)
 			else:
 				raise self.printer.command_error("Could not process gcode file")
+
+	desc_BEACON_APPLY_SCAN_COMPENSATION = "Compensates magnetic inaccuracies for beacon scan meshes."
+	def cmd_BEACON_APPLY_SCAN_COMPENSATION(self, gcmd):
+		profile = gcmd.get('PROFILE', "Contact")
+		if not profile.strip():
+			raise gcmd.error("Value for parameter 'PROFILE' must be specified")
+		if profile not in self.pmgr.get_profiles():
+			raise self.printer.command_error("Profile " + str(profile) + " not found for Beacon scan compensation")
+		self.contact_mesh = self.pmgr.load_profile(profile)
+		if not self.contact_mesh:
+			raise self.printer.command_error("Could not load profile " + str(profile) + " for Beacon scan compensation")
+		self.compensate_beacon_scan(profile)
+
+	#####
+	# Beacon Scan Compensation
+	#####
+	def compensate_beacon_scan(self, profile):
+		systime = self.reactor.monotonic()
+		try:
+			if self.bed_mesh.z_mesh:
+				profile_name = self.bed_mesh.z_mesh.get_profile_name()
+				if profile_name != profile:
+					points = self.bed_mesh.get_status(systime)["profiles"][profile_name]["points"]
+					params = self.bed_mesh.z_mesh.get_mesh_params()
+					x_step = ((params["max_x"] - params["min_x"]) / (len(points[0]) - 1))
+					y_step = ((params["max_y"] - params["min_y"]) / (len(points) - 1))
+					new_points = []
+					for y in range(len(points)):
+						new_points.append([])
+						for x in range(len(points[0])):
+							x_pos = params["min_x"] + x * x_step
+							y_pos = params["min_y"] + y * y_step
+							z_val = points[y][x]
+							contact_z = self.contact_mesh.calc_z(x_pos, y_pos)
+							new_z = z_val - (z_val - contact_z)
+							new_points[y].append(new_z)
+					self.bed_mesh.z_mesh.build_mesh(new_points)
+					self.bed_mesh.save_profile(profile_name)
+					self.bed_mesh.set_mesh(self.bed_mesh.z_mesh)
+					self.gcode.run_script_from_command("CONSOLE_ECHO TYPE=debug TITLE='Beacon scan compensation' MSG='Mesh scan profile " + str(profile_name) + " compensated with contact profile " + str(profile) + "'")
+		except BedMesh.BedMeshError as e:
+			self.gcode.run_script_from_command("CONSOLE_ECHO TYPE=error TITLE='Beacon scan compensation error' MSG='" + str(e) + "'")
 
 	#####
 	# G-code post processor
@@ -429,6 +534,67 @@ class RatOS:
 
 	def debug_echo(self, prefix, msg):
 		self.gcode.run_script_from_command("DEBUG_ECHO PREFIX=" + str(prefix) + " MSG='" + str(msg) + "'")
+
+	def get_is_graph_files(self):
+		try:
+			folder_path = r"/home/pi/printer_data/config/input_shaper/"
+			file_type = r"*.png"
+			return glob.glob(os.path.join(folder_path, file_type))
+		except Exception as exc:
+			self.debug_echo("get_is_graph_files", "Something went wrong. " + str(exc))
+		return None
+
+#####
+# Bed Mesh Profile Manager
+#####
+class BedMeshProfileManager:
+    def __init__(self, config, bedmesh):
+        self.name = "bed_mesh"
+        self.printer = config.get_printer()
+        self.gcode = self.printer.lookup_object('gcode')
+        self.bedmesh = bedmesh
+        self.profiles = {}
+        self.incompatible_profiles = []
+        # Fetch stored profiles from Config
+        stored_profs = config.get_prefix_sections(self.name)
+        stored_profs = [s for s in stored_profs
+                        if s.get_name() != self.name]
+        for profile in stored_profs:
+            name = profile.get_name().split(' ', 1)[1]
+            version = profile.getint('version', 0)
+            if version != BedMesh.PROFILE_VERSION:
+                logging.info(
+                    "bed_mesh: Profile [%s] not compatible with this version\n"
+                    "of bed_mesh.  Profile Version: %d Current Version: %d "
+                    % (name, version, BedMesh.PROFILE_VERSION))
+                self.incompatible_profiles.append(name)
+                continue
+            self.profiles[name] = {}
+            zvals = profile.getlists('points', seps=(',', '\n'), parser=float)
+            self.profiles[name]['points'] = zvals
+            self.profiles[name]['mesh_params'] = params = \
+                collections.OrderedDict()
+            for key, t in BedMesh.PROFILE_OPTIONS.items():
+                if t is int:
+                    params[key] = profile.getint(key)
+                elif t is float:
+                    params[key] = profile.getfloat(key)
+                elif t is str:
+                    params[key] = profile.get(key)
+    def get_profiles(self):
+        return self.profiles
+    def load_profile(self, prof_name):
+        profile = self.profiles.get(prof_name, None)
+        if profile is None:
+            return None
+        probed_matrix = profile['points']
+        mesh_params = profile['mesh_params']
+        z_mesh = BedMesh.ZMesh(mesh_params, prof_name)
+        try:
+            z_mesh.build_mesh(probed_matrix)
+        except BedMesh.BedMeshError as e:
+            raise self.gcode.error(str(e))
+        return z_mesh
 
 #####
 # Loader

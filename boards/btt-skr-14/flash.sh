@@ -8,7 +8,9 @@ fi
 pushd /home/pi/klipper || exit
 service klipper stop
 
-if su -c "./scripts/flash-sdcard.sh /dev/btt-skr-14 generic-lpc1768" pi -eq 0; then
+su -c "./scripts/flash-sdcard.sh /dev/btt-skr-14 generic-lpc1768" pi
+# shellcheck disable=SC2181
+if [ $? -eq 0 ]; then
     echo "Flashing successful!"
 else
     echo "Flashing failed :("
