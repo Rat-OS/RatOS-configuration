@@ -6,7 +6,7 @@
 	"name": "Kraken",
 	"manufacturer": "BIGTREETECH",
 	"id": "btt-kraken",
-	"firmwareBinaryName": "firmware-btt-octopus-max-ez.bin",
+	"firmwareBinaryName": "firmware-btt-kraken.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"flashInstructions": "Flashing only works if the SD card slot on the Octopus is empty.",
