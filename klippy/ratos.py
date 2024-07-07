@@ -5,6 +5,14 @@ from . import bed_mesh as BedMesh
 #####
 # RatOS
 #####
+
+def ratos_version():
+	"""
+	Get current version of RatOS distro.
+	"""
+	with open("/etc/ratos-release") as f:
+		return f.read().split()[1]
+		
 class RatOS:
 
 	#####
@@ -63,7 +71,7 @@ class RatOS:
 	def cmd_HELLO_RATOS(self, gcmd):
 		url = "https://os.ratrig.com/"
 		img = "../server/files/config/RatOS/Logo-white.png"
-		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:8px; color:white">Welcome to RatOS V2.1.x</p></b>'
+		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:8px; color:white">Welcome to RatOS '+ ratos_version() +'</p></b>'
 		_info = '\nClick image to open documentation.'
 		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="258px"></a>'
 		self.gcode.respond_raw(_title + _img + _info)
