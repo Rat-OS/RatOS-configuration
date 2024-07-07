@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -u -o pipefail
+set -e -u
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 ## the TEST_RESONANCES command seems to return before all data is completely
