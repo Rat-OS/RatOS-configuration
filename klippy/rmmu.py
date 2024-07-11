@@ -91,10 +91,16 @@ class RMMU:
 		if self.toolhead_sensor_endstop == None:
 			raise self.config.error(self.name + " pulley endstop not configured! Please configure the toolhead filament sensor endstop.")
 
+		# get hotend endstop
+		self.hotend_endstop = None
+		ppins = self.printer.lookup_object('pins')
+		if self.hotend_endstop_pin is not None:
+			mcu_endstop = ppins.setup_pin('endstop', self.hotend_endstop_pin)
+			self.hotend_endstop = mcu_endstop
+
 		# get additional endstops
 		self.parking_sensor_endstop = None
 		self.parking_t_sensor_endstop = []
-		ppins = self.printer.lookup_object('pins')
 		if self.parking_endstop_pin is not None:
 			# ptfe adapter endstop
 			mcu_endstop = ppins.setup_pin('endstop', self.parking_endstop_pin)
@@ -159,12 +165,17 @@ class RMMU:
 			self.reverse_bowden_length = 500
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
 		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
+		self.extruder_gears_to_hotend_sensor_distance = self.config.getfloat('extruder_gears_to_hotend_sensor_distance', 55.0)
 		self.has_ptfe_adapter = True if self.config.get('has_ptfe_adapter', "false").lower() == "true" else False 
 		self.make_extruder_test = True if self.config.get('make_extruder_test', "true").lower() == "true" else False 
 
 		# endstop pins
+		self.hotend_endstop_pin = None
 		self.parking_endstop_pin = None
 		self.parking_t_endstop_pin = []
+		if self.config.get('hotend_endstop_pin', None) is not None:
+			# hotend endstop pin
+			self.hotend_endstop_pin = self.config.get('hotend_endstop_pin')
 		if self.config.get('parking_endstop_pin', None) is not None:
 			# ptfe adapter endstop pins
 			self.parking_endstop_pin = self.config.get('parking_endstop_pin')
@@ -574,9 +585,52 @@ class RMMU:
 		# success
 		return True
 
+	def load_filament_from_toolhead_sensor_to_hotend_sensor(self, tool):
+		# echo
+		self.ratos_echo("Loading filament T" + str(tool) + " from toolhead sensor to hotend sensor...")
+
+		# get loading distances
+		hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
+		cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
+
+		# move filament to hotend sensor
+		self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
+		# check sensor
+		if not self.is_endstop_triggered(self.hotend_endstop):
+			self.ratos_echo("Could not find hotend filament sensor!")
+			return False
+
+		# move filament to cooling zone position
+		self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
+		# release idler
+		self.select_filament(-1)
+
+		# echo
+		self.ratos_echo("Filament T" + str(tool) + " loaded to cooling zone!")
+
+		# success
+		return True
+
 	def extruder_test(self, tool):
 		# echo
 		self.ratos_echo("Extruder test with filament T" + str(tool) + "...")
+
+		if self.hotend_endstop is not None:
+			if not self.load_filament_from_toolhead_sensor_to_hotend_sensor(tool):
+
+				# test failed, retract the filament a bit 
+				self.stepper_synced_move(-100, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
+				# release idler
+				self.select_filament(-1)
+
+				# return error
+				return False
+
+			# sucess
+			return True
 
 		# extruder test
 		for i in range(1, 5):
@@ -1230,6 +1284,8 @@ class RMMU:
 			for i in range(0, self.tool_count):
 				result += "Bowden sensor T" + str(i) + " triggered: " + str(self.is_sensor_triggered(self.bowdenfilament_sensors[i])) + "\n"
 		result += "\n" + self.name + " Endstops:\n"
+		if self.hotend_endstop != None:
+			result += "Hotend endstop triggered: " + str(self.is_endstop_triggered(self.hotend_endstop)) + "\n"
 		if self.toolhead_sensor_endstop != None:
 			result += "Toolhead endstop triggered: " + str(self.is_endstop_triggered(self.toolhead_sensor_endstop)) + "\n"
 		if self.parking_sensor_endstop != None:
@@ -1239,7 +1295,7 @@ class RMMU:
 				result += "Parking endstop T" + str(i) + " triggered: " + str(self.is_endstop_triggered(self.parking_t_sensor_endstop[i])) + "\n"
 		self.gcode.respond_raw(result)
 
-	#####
+	######
 	# Helper
 	#####
 	def get_loaded_filament(self):
