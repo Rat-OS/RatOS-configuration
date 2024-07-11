@@ -5,6 +5,7 @@
 # This file may be distributed under the terms of the GNU GPLv3 license.
 from math import fabs
 import re
+import time
 
 #####
 # RMMU Hub
@@ -19,6 +20,7 @@ class RMMU_Hub:
 		self.name = config.get_name()
 		self.gcode = self.printer.lookup_object('gcode')
 
+		self.Start_Time = None
 		self.rmmu = []
 		self.mapping = {}
 		self.mode = "multi"
@@ -62,6 +64,8 @@ class RMMU_Hub:
 	# Gcode commands
 	#####
 	def register_commands(self):
+		self.gcode.register_command('START_WATCH', self.cmd_START_WATCH, desc=(self.desc_START_WATCH))
+		self.gcode.register_command('STOP_WATCH', self.cmd_STOP_WATCH, desc=(self.desc_STOP_WATCH))
 		self.gcode.register_command('RMMU_HOME', self.cmd_RMMU_HOME, desc=(self.desc_RMMU_HOME))
 		self.gcode.register_command('RMMU_RESET', self.cmd_RMMU_RESET, desc=(self.desc_RMMU_RESET))
 		self.gcode.register_command('RMMU_CHANGE_FILAMENT', self.cmd_RMMU_CHANGE_FILAMENT, desc=(self.desc_RMMU_CHANGE_FILAMENT))
@@ -74,6 +78,15 @@ class RMMU_Hub:
 		self.gcode.register_command('RMMU_EJECT_FILAMENT', self.cmd_RMMU_EJECT_FILAMENT, desc=(self.desc_RMMU_EJECT_FILAMENT))
 		self.gcode.register_command('RMMU_FILAMENT_INSERT', self.cmd_RMMU_FILAMENT_INSERT, desc=(self.desc_RMMU_FILAMENT_INSERT))
 		self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
+
+	desc_START_WATCH = ""
+	def cmd_START_WATCH(self, param):
+		self.Start_Time = time.time()
+
+	desc_STOP_WATCH = ""
+	def cmd_STOP_WATCH(self, param):
+		Stop_Time = time.time()
+		self.ratos_echo("Filament swap time: " + str(round(Stop_Time - self.Start_Time, 2)) + " seconds")
 
 	desc_RMMU_HOME = "Homes the RMMU idler."
 	def cmd_RMMU_HOME(self, param):
