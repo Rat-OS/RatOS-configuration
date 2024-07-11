@@ -163,8 +163,9 @@ class RMMU:
 		self.reverse_bowden_length = self.get_setting(self.name.lower() + self.VARS_REVERSE_BOWDEN_LENGTH)
 		if (self.reverse_bowden_length == 0):
 			self.reverse_bowden_length = 500
+
 		self.toolhead_sensor_to_extruder_gears_distance = self.config.getfloat('toolhead_sensor_to_extruder_gears_distance', 10.0)
-		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 40.0)
+		self.extruder_gears_to_cooling_zone_distance = self.config.getfloat('extruder_gears_to_cooling_zone_distance', 55.0)
 		self.extruder_gears_to_hotend_sensor_distance = self.config.getfloat('extruder_gears_to_hotend_sensor_distance', 55.0)
 		self.has_ptfe_adapter = True if self.config.get('has_ptfe_adapter', "false").lower() == "true" else False 
 		self.make_extruder_test = True if self.config.get('make_extruder_test', "true").lower() == "true" else False 
@@ -602,7 +603,8 @@ class RMMU:
 			return False
 
 		# move filament to cooling zone position
-		self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+		if hotend_sensor_load_distance != cooling_zone_load_distance:
+			self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
 		# release idler
 		self.select_filament(-1)
@@ -1456,6 +1458,14 @@ class RMMU:
 		result = status['can_extrude'] 
 		return result
 	
+	def get_macro_variable(self, macro, variable):
+		self.gcode_macro = self.printer.lookup_object("gcode_macro " + macro, None)
+		if self.gcode_macro != None:
+			variables = self.gcode_macro.get_status(self.toolhead.get_last_move_time())
+			if variable in variables:
+				return variables[variable]
+		return None
+
 #####
 # Loader
 #####
