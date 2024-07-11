@@ -144,7 +144,7 @@ class RMMU_Hub:
 	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS bowden sensor runout detection."
 	def cmd_RMMU_FILAMENT_RUNOUT(self, param):
 		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.total_tool_count)
-		clogged = param.get_int('CLOGGED', "true")
+		clogged = param.get('CLOGGED').lower()
 		if tool >= self.rmmu[0].tool_count:
 			self.rmmu[1].on_filament_runout(tool - self.rmmu[0].tool_count, clogged)
 		else:
