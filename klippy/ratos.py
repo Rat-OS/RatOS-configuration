@@ -148,6 +148,36 @@ class RatOS:
 		self.compensate_beacon_scan(profile)
 
 	#####
+	# Beacon Scan Compensation
+	#####
+	def compensate_beacon_scan(self, profile):
+		systime = self.reactor.monotonic()
+		try:
+			if self.bed_mesh.z_mesh:
+				profile_name = self.bed_mesh.z_mesh.get_profile_name()
+				if profile_name != profile:
+					points = self.bed_mesh.get_status(systime)["profiles"][profile_name]["points"]
+					params = self.bed_mesh.z_mesh.get_mesh_params()
+					x_step = ((params["max_x"] - params["min_x"]) / (len(points[0]) - 1))
+					y_step = ((params["max_y"] - params["min_y"]) / (len(points) - 1))
+					new_points = []
+					for y in range(len(points)):
+						new_points.append([])
+						for x in range(len(points[0])):
+							x_pos = params["min_x"] + x * x_step
+							y_pos = params["min_y"] + y * y_step
+							z_val = points[y][x]
+							contact_z = self.contact_mesh.calc_z(x_pos, y_pos)
+							new_z = z_val - (z_val - contact_z)
+							new_points[y].append(new_z)
+					self.bed_mesh.z_mesh.build_mesh(new_points)
+					self.bed_mesh.save_profile(profile_name)
+					self.bed_mesh.set_mesh(self.bed_mesh.z_mesh)
+					self.gcode.run_script_from_command("CONSOLE_ECHO TYPE=debug TITLE='Beacon scan compensation' MSG='Mesh scan profile " + str(profile_name) + " compensated with contact profile " + str(profile) + "'")
+		except BedMesh.BedMeshError as e:
+			self.gcode.run_script_from_command("CONSOLE_ECHO TYPE=error TITLE='Beacon scan compensation error' MSG='" + str(e) + "'")
+
+	#####
 	# G-code post processor
 	#####
 	def process_gode_file(self, filename):
