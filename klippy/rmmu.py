@@ -592,19 +592,40 @@ class RMMU:
 
 		# get loading distances
 		hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
-		cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
+		# cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
+		hotend_sensor_to_cooling_zone_distance = 10
 
 		# move filament to hotend sensor
 		self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
-		# check sensor
 		if not self.is_endstop_triggered(self.hotend_endstop):
-			self.ratos_echo("Could not find hotend filament sensor!")
-			return False
+			for i in range(1, 5):
+				self.stepper_synced_move(10, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+				if self.is_endstop_triggered(self.hotend_endstop):
+					self.ratos_echo("Hotend sensor found!")
+					break
+			# check sensor
+			if not self.is_endstop_triggered(self.hotend_endstop):
+				self.ratos_echo("Hotend sensor not found!")
+				return False
+		else:
+			self.ratos_echo("Hotend sensor found!")
+
+		if self.is_endstop_triggered(self.hotend_endstop):
+			# exact positioning
+			for i in range(1, 10):
+				self.stepper_synced_move(-2, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+				if not self.is_endstop_triggered(self.hotend_endstop):
+					self.stepper_synced_move(1, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+					self.ratos_echo("Filament positioned at hotend sensor!")
+					break
 
 		# move filament to cooling zone position
-		if hotend_sensor_load_distance != cooling_zone_load_distance:
-			self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+		self.stepper_synced_move(hotend_sensor_to_cooling_zone_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
+		# # move filament to cooling zone position
+		# if hotend_sensor_load_distance != cooling_zone_load_distance:
+		# 	self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
 		# release idler
 		self.select_filament(-1)
