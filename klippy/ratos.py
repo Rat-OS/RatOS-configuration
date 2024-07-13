@@ -249,6 +249,40 @@ class RatOS:
 						accel = matches.group(1)
 						lines[line] = 'M204 S' + str(accel) + ' ; Changed by RatOS post processor: ' + lines[line].rstrip() + '\n'
 
+			# purge tower speed control
+			if start_print_line > 0:
+				if lines[line].rstrip().startswith("; CP EMPTY GRID START"):
+					_ON_EMPTY_GRID_START_line = line
+					for i in range(20):
+						if lines[line-i].rstrip().startswith(";TYPE:Wipe tower"):
+							_ON_EMPTY_GRID_START_line = line-i
+							break
+					lines[_ON_EMPTY_GRID_START_line] = lines[_ON_EMPTY_GRID_START_line].rstrip() + '\n' + '_ON_EMPTY_GRID_START' + '\n'
+				if lines[line].rstrip().startswith("; CP EMPTY GRID END"):
+					_ON_EMPTY_GRID_END_line = line
+					for i in range(20):
+						if lines[line+i].rstrip().startswith("; custom gcode end: tcr_rotated_gcode"):
+							_ON_EMPTY_GRID_END_line = line+i
+							break
+					lines[_ON_EMPTY_GRID_END_line] = lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n' + '_ON_EMPTY_GRID_END' + '\n'
+				if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
+					for i in range(5):
+						if lines[line+i].rstrip().startswith("G1"):
+							new_line = ""
+							split = lines[line+i].rstrip().replace("  ", " ").split(" ")
+							for s in range(len(split)):
+								if not split[s].lower().startswith("f"):
+									new_line += split[s] + " "
+							lines[line+i] = new_line + '\n'
+					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_WIPE' + '\n'
+				if lines[line].rstrip().startswith("; CP TOOLCHANGE END"):
+					speed_factor = 100
+					for i in range(10):
+						if lines[line-i].rstrip().startswith("M220 S"):
+							speed_factor = lines[line-i].rstrip().replace("M220 S", "")
+							break
+					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END SPEED_FACTOR=' + str(speed_factor) + '\n'
+
 			# count toolshifts
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
