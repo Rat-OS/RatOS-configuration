@@ -4,8 +4,6 @@
 #
 # This file may be distributed under the terms of the GNU GPLv3 license.
 from math import fabs
-import re
-from . import ratos
 
 #####
 # Helper class for G-Code commands
@@ -302,7 +300,7 @@ class RMMU:
 
 				# home filament
 				if not self.home_filament(i):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Homing filament", 
 						'MSG': 	"Could not home filament T" + str(i) + "!\nFilament homing stopped.", 
 						'TYPE': "alert"
@@ -319,7 +317,7 @@ class RMMU:
 				if self.parking_sensor_endstop != None:
 					if self.is_endstop_triggered(self.parking_sensor_endstop):
 						# self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
-						ratos.cmd_CONSOLE_ECHO({
+						self.console_echo({
 							'TITLE': "Homing filament", 
 							'MSG': 	"Parking filament sensor isssue detected!\nFilament homing stopped.", 
 							'TYPE': "alert"
@@ -333,7 +331,7 @@ class RMMU:
 				elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
 					if not self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
 						# self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
-						ratos.cmd_CONSOLE_ECHO({
+						self.console_echo({
 							'TITLE': "Homing filament", 
 							'MSG': 	"Parking filament sensor isssue detected!\nFilament homing stopped.", 
 							'TYPE': "alert"
@@ -347,7 +345,7 @@ class RMMU:
 				else:
 					if self.is_sensor_triggered(self.toolhead_filament_sensor):
 						# self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
-						ratos.cmd_CONSOLE_ECHO({
+						self.console_echo({
 							'TITLE': "Homing filament", 
 							'MSG': 	"Toolhead filament sensor isssue detected!\nFilament homing stopped.", 
 							'TYPE': "alert"
@@ -385,7 +383,11 @@ class RMMU:
 				return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(filament) + " homed!")
+		self.console_echo({
+			'TITLE': "Home filament", 
+			'MSG': 	"Filament T" + str(filament) + " homed!", 
+			'TYPE': "success"
+		})
 
 		# success
 		return True
@@ -433,7 +435,7 @@ class RMMU:
 				return False
 		else:
 			if not self.load_filament_from_reverse_bowden_to_toolhead_sensor(tool):
-				ratos.cmd_CONSOLE_ECHO({
+				self.console_echo({
 					'TITLE': "Load filament", 
 					'MSG': 	"Could not load filament T" + str(tool) + " into toolhead filament sensor!", 
 					'TYPE': "alert"
@@ -464,7 +466,11 @@ class RMMU:
 		self.set_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP, self.extruder_get_target_temperature())
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded.")
+		self.console_echo({
+			'TITLE': "Load filament", 
+			'MSG': 	"Filament T" + str(tool) + " loaded.", 
+			'TYPE': "success"
+		})
 
 		# success 
 		return True
@@ -486,7 +492,7 @@ class RMMU:
 
 		# check sensor and try to fix issues if needed
 		if not self.is_endstop_triggered(self.parking_sensor_endstop):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Load filament", 
 				'MSG': 	"Could not load filament T" + str(tool) + " into parking sensor!", 
 				'TYPE': "warning"
@@ -494,11 +500,15 @@ class RMMU:
 			try_count = 5
 			move_distance = 30
 			for i in range(1, try_count):
-				self.ratos_echo("Retry " + str(i) + " ...")
+				self.console_echo({
+					'TITLE': "Retry " + str(i) + " ...", 
+					'MSG': 	"", 
+					'TYPE': "warning"
+				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if self.is_endstop_triggered(self.parking_sensor_endstop):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Load filament", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
@@ -507,7 +517,7 @@ class RMMU:
 
 		# check sensor
 		if not self.is_endstop_triggered(self.parking_sensor_endstop):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Load filament", 
 				'MSG': 	"Could not load filament T" + str(tool) + " into parking sensor!", 
 				'TYPE': "alert"
@@ -515,7 +525,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded into parking sensor!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " loaded into parking sensor!")
 
 		# success
 		return True
@@ -537,7 +547,7 @@ class RMMU:
 
 		# check sensor and try to fix issues if needed
 		if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Load filament", 
 				'MSG': 	"Could not load filament T" + str(tool) + " into parking sensor!", 
 				'TYPE': "warning"
@@ -545,11 +555,15 @@ class RMMU:
 			try_count = 5
 			move_distance = 30
 			for i in range(1, try_count):
-				self.ratos_echo("Retry " + str(i) + " ...")
+				self.console_echo({
+					'TITLE': "Retry " + str(i) + " ...", 
+					'MSG': 	"", 
+					'TYPE': "warning"
+				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, -move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Load filament", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
@@ -558,7 +572,7 @@ class RMMU:
 
 		# check sensor
 		if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Load filament", 
 				'MSG': 	"Could not load filament T" + str(tool) + " into parking sensor!", 
 				'TYPE': "alert"
@@ -566,7 +580,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded into parking sensor!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " loaded into parking sensor!")
 
 		# success
 		return True
@@ -595,7 +609,7 @@ class RMMU:
 
 		# check sensor
 		if not self.is_endstop_triggered(self.toolhead_sensor_endstop):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Load filament", 
 				'MSG': 	"Could not load filament T" + str(tool) + " into parking sensor!", 
 				'TYPE': "alert"
@@ -603,7 +617,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded to toolhead sensor!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " loaded into toolhead sensor!")
 
 		# success
 		return True
@@ -626,7 +640,7 @@ class RMMU:
 
 		# check sensor
 		if not self.is_sensor_triggered(self.toolhead_filament_sensor):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Load filament", 
 				'MSG': 	"Could not find toolhead filament sensor!", 
 				'TYPE': "alert"
@@ -634,7 +648,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded into toolhead sensor!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " loaded into toolhead sensor!")
 
 		# success
 		return True
@@ -659,9 +673,9 @@ class RMMU:
 					break
 			# check sensor
 			if not self.is_endstop_triggered(self.hotend_endstop):
-				ratos.cmd_CONSOLE_ECHO({
+				self.console_echo({
 					'TITLE': "Load filament", 
-					'MSG': 	"Hotend sensor found!", 
+					'MSG': 	"Hotend sensor not found!", 
 					'TYPE': "warning"
 				})
 				return False
@@ -688,7 +702,7 @@ class RMMU:
 		self.select_filament(-1)
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded to cooling zone!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " loaded to cooling zone!")
 
 		# success
 		return True
@@ -804,7 +818,11 @@ class RMMU:
 		self.set_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP, -1)
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " unloaded!")
+		self.console_echo({
+			'TITLE': "Unload filament", 
+			'MSG': 	"Filament T" + str(tool) + " unloaded!", 
+			'TYPE': "success"
+		})
 
 		# success 
 		return True
@@ -836,7 +854,7 @@ class RMMU:
 
 		# check sensor and try to fix issues if needed
 		if self.is_endstop_triggered(endstop):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Retrying to unload filament T" + str(tool) + " to parking sensor...", 
 				'TYPE': "warning"
@@ -844,11 +862,15 @@ class RMMU:
 			try_count = 10
 			move_distance = 50
 			for i in range(1, try_count):
-				self.ratos_echo("Retry " + str(i) + " ...")
+				self.console_echo({
+					'TITLE': "Retry " + str(i) + " ...", 
+					'MSG': 	"", 
+					'TYPE': "warning"
+				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, -move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(endstop):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Unload filament", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
@@ -857,7 +879,7 @@ class RMMU:
 
 		# check sensor
 		if self.is_endstop_triggered(endstop):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " to parking sensor!", 
 				'TYPE': "alert"
@@ -865,7 +887,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " loaded into parking sensor!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " loaded into parking sensor!")
 
 		# success
 		return True
@@ -877,7 +899,7 @@ class RMMU:
 
 		# check sensor and try to fix issues if needed
 		if self.is_endstop_triggered(self.parking_sensor_endstop):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from parking sensor!", 
 				'TYPE': "warning"
@@ -885,13 +907,17 @@ class RMMU:
 			try_count = 5
 			move_distance = 50
 			for i in range(1, try_count):
-				self.ratos_echo("Retry " + str(i) + " ...")
+				self.console_echo({
+					'TITLE': "Retry " + str(i) + " ...", 
+					'MSG': 	"", 
+					'TYPE': "warning"
+				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, 10, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, -move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(self.parking_sensor_endstop):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Unload filament", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
@@ -900,7 +926,7 @@ class RMMU:
 
 		# check sensor
 		if self.is_endstop_triggered(self.parking_sensor_endstop):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from parking sensor!", 
 				'TYPE': "alert"
@@ -917,7 +943,7 @@ class RMMU:
 
 		# check sensor and try to fix issues if needed
 		if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from parking sensor!", 
 				'TYPE': "warning"
@@ -925,13 +951,17 @@ class RMMU:
 			try_count = 5
 			move_distance = 50
 			for i in range(1, try_count):
-				self.ratos_echo("Retry " + str(i) + " ...")
+				self.console_echo({
+					'TITLE': "Retry " + str(i) + " ...", 
+					'MSG': 	"", 
+					'TYPE': "warning"
+				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, -10, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Unload filament", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
@@ -940,7 +970,7 @@ class RMMU:
 
 		# check sensor
 		if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from parking sensor!", 
 				'TYPE': "alert"
@@ -959,7 +989,7 @@ class RMMU:
 
 		# check sensor
 		if self.is_sensor_triggered(self.toolhead_filament_sensor):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from cooling zone to reverse bowden!", 
 				'TYPE': "warning"
@@ -971,7 +1001,7 @@ class RMMU:
 				if not self.is_sensor_triggered(self.toolhead_filament_sensor):
 					self.ratos_echo("Toolhead filament sensor successfully cleaned!")
 					return True
-				ratos.cmd_CONSOLE_ECHO({
+				self.console_echo({
 					'TITLE': "Unload filament", 
 					'MSG': 	"Could not clean toolhead filament sensor!", 
 					'TYPE': "alert"
@@ -979,7 +1009,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " unloaded to reverse bowden!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " unloaded to reverse bowden!")
 
 		# success
 		return True
@@ -995,7 +1025,7 @@ class RMMU:
 
 		# check sensor
 		if self.is_sensor_triggered(self.toolhead_filament_sensor):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from toolhead sensor to reverse bowden!", 
 				'TYPE': "alert"
@@ -1003,7 +1033,7 @@ class RMMU:
 			return False
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " unloaded to reverse bowden!")
+		self.ratos_debug_echo("Filament T" + str(tool) + " unloaded to reverse bowden!")
 
 		# success
 		return True
@@ -1072,7 +1102,7 @@ class RMMU:
 
 			# check sensor
 			if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-				ratos.cmd_CONSOLE_ECHO({
+				self.console_echo({
 					'TITLE': "Eject filament", 
 					'MSG': 	"Could not eject filament T" + str(tool) + "! Parking sensor still triggered.", 
 					'TYPE': "alert"
@@ -1106,7 +1136,7 @@ class RMMU:
 			
 		# check parameter format
 		if "," not in parameter:
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Join Spools", 
 				'MSG': 	"Wrong parameter!", 
 				'TYPE': "alert"
@@ -1118,7 +1148,7 @@ class RMMU:
 
 		# check parameter
 		if len(new_spools) < 2 or len(new_spools) > self.tool_count:
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Join Spools", 
 				'MSG': 	"Wrong spool count!", 
 				'TYPE': "alert"
@@ -1131,7 +1161,7 @@ class RMMU:
 				for joined_spool in spool_join:
 					for new_spool in new_spools:
 						if joined_spool == new_spool:
-							ratos.cmd_CONSOLE_ECHO({
+							self.console_echo({
 								'TITLE': "Join Spools", 
 								'MSG': 	"Spool T" + str(new_spool) + " already joined with another one!", 
 								'TYPE': "alert"
@@ -1148,7 +1178,7 @@ class RMMU:
 						if spool == i:
 							counter += 1
 			if counter > 1:
-				ratos.cmd_CONSOLE_ECHO({
+				self.console_echo({
 					'TITLE': "Join Spools", 
 					'MSG': 	"Can not join spools because selected spools are part of the ongoing print!", 
 					'TYPE': "alert"
@@ -1179,7 +1209,7 @@ class RMMU:
 						self.stepper_synced_move(-100, 50, 200)
 						self.select_filament(-1)
 						if self.is_sensor_triggered(self.toolhead_filament_sensor):
-							ratos.cmd_CONSOLE_ECHO({
+							self.console_echo({
 								'TITLE': "Join Spools", 
 								'MSG': 	"Can not join spools! Toolhead sensor is still triggered after a unsuccessful filament loading.", 
 								'TYPE': "alert"
@@ -1234,7 +1264,7 @@ class RMMU:
 
 		# check parameter format
 		if "," not in parameter:
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Remap Toolhead", 
 				'MSG': 	"Wrong parameter!", 
 				'TYPE': "alert"
@@ -1246,7 +1276,7 @@ class RMMU:
 
 		# check parameter count
 		if len(new_toolhead_map) != 2:
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Remap Toolhead", 
 				'MSG': 	"Wrong toolhead count!", 
 				'TYPE': "alert"
@@ -1259,7 +1289,7 @@ class RMMU:
 				for toolhead in toolhead_map:
 					for new_toolhead in new_toolhead_map:
 						if toolhead == new_toolhead:
-							ratos.cmd_CONSOLE_ECHO({
+							self.console_echo({
 								'TITLE': "Remap Toolhead", 
 								'MSG': 	"Can not remap toolhead T" + str(new_toolhead) + "! Toolhead is already mapped.", 
 								'TYPE': "alert"
@@ -1462,6 +1492,25 @@ class RMMU:
 	######
 	# Helper
 	#####
+	def console_echo(self, gcmd):
+		title = gcmd.get('TITLE', '')
+		msg = gcmd.get('MSG', '')
+		type = gcmd.get('TYPE', '')
+
+		color = "white" 
+		opacity = 1.0
+		if type == 'info': color = "#38bdf8" 
+		if type == 'success': color = "#a3e635" 
+		if type == 'warning': color = "#fbbf24" 
+		if type == 'alert': color = "#f87171" 
+		if type == 'debug': color = "#38bdf8" 
+		if type == 'debug': opacity = 0.7 
+
+		_title = '<b><p style="font-weight-bold; margin:0; opacity:' + str(opacity) + '; color:' + color + '">' + title + '</p></b>'
+		_msg = '<p style="margin:0; opacity:' + str(opacity) + '; color:' + color + '">' + msg.replace("_N_","\n") + '</p>'
+
+		self.gcode.respond_raw(_title + _msg)
+
 	def get_loaded_filament(self):
 		if self.is_sensor_triggered(self.toolhead_filament_sensor):
 			return self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT)
@@ -1487,7 +1536,7 @@ class RMMU:
 
 	def calibrate_reverse_bowden_length(self):
 		if self.is_sensor_triggered(self.toolhead_filament_sensor):
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Calibrate bowden tube", 
 				'MSG': 	"No calibration possible! Filament in hotend detected.", 
 				'TYPE': "alert"
@@ -1495,7 +1544,7 @@ class RMMU:
 			return
 
 		if len(self.parking_t_sensor_endstop) != self.tool_count:
-			ratos.cmd_CONSOLE_ECHO({
+			self.console_echo({
 				'TITLE': "Calibrate bowden tube", 
 				'MSG': 	"No calibration possible! Parking Tx endstops not available.", 
 				'TYPE': "alert"
@@ -1504,7 +1553,7 @@ class RMMU:
 
 		for i in range(0, self.tool_count):
 			if not self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
-				ratos.cmd_CONSOLE_ECHO({
+				self.console_echo({
 					'TITLE': "Calibrate bowden tube", 
 					'MSG': 	"No calibration possible! Filament T" + str(i) + " is missing.", 
 					'TYPE': "alert"
@@ -1537,7 +1586,7 @@ class RMMU:
 				
 				# check Tx endstop
 				if self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Calibrate bowden tube", 
 						'MSG': 	"Can not calibrate reverse bowden length bc the filament could not be loaded into its parking sensor!", 
 						'TYPE': "alert"
@@ -1564,7 +1613,7 @@ class RMMU:
 
 				# check toolhead endstop
 				if not self.is_endstop_triggered(self.toolhead_sensor_endstop):
-					ratos.cmd_CONSOLE_ECHO({
+					self.console_echo({
 						'TITLE': "Calibrate bowden tube", 
 						'MSG': 	"Can not calibrate reverse bowden length bc the filament could not be loaded into the toolhead sensor!", 
 						'TYPE': "alert"
