@@ -266,11 +266,19 @@ class RMMU:
 	# Home
 	#####
 	def home(self):
-		self.ratos_echo("Homing RMMU...")
+		self.console_echo({
+			'TITLE': "Home RMMU", 
+			'MSG': 	"please wait...", 
+			'TYPE': "info"
+		})
 		self.reset()
 		self.home_idler()
 		self.is_homed = True
-		self.ratos_echo("Hello RMMU!")
+		self.console_echo({
+			'TITLE': "Hello RMMU!", 
+			'MSG': 	"", 
+			'TYPE': "success"
+		})
 
 	def home_idler(self):
 		self.rmmu_pulley.do_set_position(0.0)
@@ -360,7 +368,11 @@ class RMMU:
 
 	def home_filament(self, filament):
 		# echo
-		self.ratos_echo("Homing filament T" + str(filament) + "...")
+		self.console_echo({
+			'TITLE': "Home filament", 
+			'MSG': 	"Homing filament T" + str(filament) + "...", 
+			'TYPE': "info"
+		})
 
 		# select filament
 		self.select_filament(filament)
@@ -411,7 +423,11 @@ class RMMU:
 	#####
 	def load_filament(self, tool, is_copy_mirror="false"):
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + "...")
+		self.console_echo({
+			'TITLE': "Load filament", 
+			'MSG': 	"Loading filament T" + str(tool) + "...", 
+			'TYPE': "info"
+		})
 
 		# home if not homed yet
 		if not self.is_homed:
@@ -477,7 +493,7 @@ class RMMU:
 
 	def load_filament_from_parking_position_to_parking_sensor(self, tool):
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + " from parking position into parking sensor...")
+		self.ratos_debug_echo("Loading filament T" + str(tool) + " from parking position into parking sensor...")
 
 		# enable parking sensor endstop
 		self.set_pulley_endstop(self.parking_sensor_endstop)
@@ -532,7 +548,7 @@ class RMMU:
 
 	def load_filament_from_parking_position_to_tx_parking_sensor(self, tool):
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + " from parking position into parking sensor...")
+		self.ratos_debug_echo("Loading filament T" + str(tool) + " from parking position into parking sensor...")
 
 		# enable parking sensor endstop
 		self.set_pulley_endstop(self.parking_t_sensor_endstop[tool])
@@ -587,7 +603,7 @@ class RMMU:
 
 	def load_filament_from_parking_sensor_to_toolhead_sensor(self, tool):
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + " from parking sensor to toolhead sensor...")
+		self.ratos_debug_echo("Loading filament T" + str(tool) + " from parking sensor to toolhead sensor...")
 
 		# enable toolhead sensor endstop
 		self.set_pulley_endstop(self.toolhead_sensor_endstop)
@@ -624,7 +640,7 @@ class RMMU:
 
 	def load_filament_from_reverse_bowden_to_toolhead_sensor(self, tool):
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + " from reverse bowden into toolhead sensor...")
+		self.ratos_debug_echo("Loading filament T" + str(tool) + " from reverse bowden into toolhead sensor...")
 
 		# enable toolhead sensor endstop
 		self.set_pulley_endstop(self.toolhead_sensor_endstop)
@@ -655,7 +671,7 @@ class RMMU:
 
 	def load_filament_from_toolhead_sensor_to_hotend_sensor(self, tool):
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + " from toolhead sensor to hotend sensor...")
+		self.ratos_debug_echo("Loading filament T" + str(tool) + " from toolhead sensor to hotend sensor...")
 
 		# get loading distances
 		hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
@@ -669,7 +685,7 @@ class RMMU:
 			for i in range(1, 5):
 				self.stepper_synced_move(10, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 				if self.is_endstop_triggered(self.hotend_endstop):
-					self.ratos_echo("Hotend sensor found!")
+					self.ratos_debug_echo("Hotend sensor found!")
 					break
 			# check sensor
 			if not self.is_endstop_triggered(self.hotend_endstop):
@@ -680,7 +696,7 @@ class RMMU:
 				})
 				return False
 		else:
-			self.ratos_echo("Hotend sensor found!")
+			self.ratos_debug_echo("Hotend sensor found!")
 
 		if self.is_endstop_triggered(self.hotend_endstop):
 			# exact positioning
@@ -688,7 +704,7 @@ class RMMU:
 				self.stepper_synced_move(-2, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 				if not self.is_endstop_triggered(self.hotend_endstop):
 					self.stepper_synced_move(1, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-					self.ratos_echo("Filament positioned at hotend sensor!")
+					self.ratos_debug_echo("Filament positioned at hotend sensor!")
 					break
 
 		# move filament to cooling zone position
@@ -709,7 +725,7 @@ class RMMU:
 
 	def extruder_test(self, tool):
 		# echo
-		self.ratos_echo("Extruder test with filament T" + str(tool) + "...")
+		self.ratos_debug_echo("Extruder test with filament T" + str(tool) + "...")
 
 		if self.hotend_endstop is not None:
 			if not self.load_filament_from_toolhead_sensor_to_hotend_sensor(tool):
@@ -753,7 +769,7 @@ class RMMU:
 				self.select_filament(-1)
 
 				# echo
-				self.ratos_echo("Extruder test successful!")
+				self.ratos_debug_echo("Extruder test successful!")
 
 				# sucess
 				return True
@@ -769,7 +785,7 @@ class RMMU:
 
 	def push_and_pull_test(self, loading_speed, loading_accel):
 		# echo
-		self.ratos_echo("Push and pull test...")
+		self.ratos_debug_echo("Push and pull test...")
 
 		# try to move filament into cooling zone
 		self.stepper_synced_move(self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance, loading_speed, loading_accel)
@@ -785,7 +801,11 @@ class RMMU:
 	#####
 	def unload_filament(self, tool, is_gcode_toolchange, is_copy_mirror = False):
 		# echo
-		self.ratos_echo("Unloading filament T" + str(tool) + "...")
+		self.console_echo({
+			'TITLE': "Unload filament", 
+			'MSG': 	"Unloading filament T" + str(tool) + "...", 
+			'TYPE': "info"
+		})
 
 		# unload filament 
 		if is_gcode_toolchange:
@@ -829,7 +849,7 @@ class RMMU:
 
 	def unload_filament_from_reverse_bowden_to_parking_sensor(self, tool):
 		# echo
-		self.ratos_echo("Unloading filament T" + str(tool) + " from reverse bowden to parking sensor...")
+		self.ratos_debug_echo("Unloading filament T" + str(tool) + " from reverse bowden to parking sensor...")
 
 		# handle sensor setup
 		if self.parking_sensor_endstop != None:
@@ -982,7 +1002,7 @@ class RMMU:
 
 	def unload_filament_from_cooling_zone_to_reverse_bowden(self, tool):
 		# echo
-		self.ratos_echo("Unloading filament T" + str(tool) + " from cooling zone to reverse bowden...")
+		self.ratos_debug_echo("Unloading filament T" + str(tool) + " from cooling zone to reverse bowden...")
 
 		# unload filament from cooling zone to reverse bowden
 		self.stepper_synced_move(-(self.cooling_zone_unloading_distance), self.cooling_zone_unloading_speed, self.cooling_zone_unloading_accel)
@@ -995,11 +1015,19 @@ class RMMU:
 				'TYPE': "warning"
 			})
 			if self.filament_cleaning_distance > 0:
-				self.ratos_echo("Trying to clean the toolhead filament sensor...")
+				self.console_echo({
+					'TITLE': "Load filament", 
+					'MSG': 	"Trying to clean the toolhead filament sensor...", 
+					'TYPE': "info"
+				})
 				self.stepper_move(self.rmmu_pulley, self.filament_cleaning_distance, True, self.filament_homing_speed, self.filament_homing_accel)
 				self.stepper_move(self.rmmu_pulley, -(self.filament_cleaning_distance * 2), True, self.filament_homing_speed, self.filament_homing_accel)
 				if not self.is_sensor_triggered(self.toolhead_filament_sensor):
-					self.ratos_echo("Toolhead filament sensor successfully cleaned!")
+					self.console_echo({
+						'TITLE': "Load filament", 
+						'MSG': 	"Toolhead filament sensor successfully cleaned!", 
+						'TYPE': "success"
+					})
 					return True
 				self.console_echo({
 					'TITLE': "Unload filament", 
@@ -1016,7 +1044,7 @@ class RMMU:
 
 	def unload_filament_from_toolhead_sensor_to_reverse_bowden(self, tool):
 		# echo
-		self.ratos_echo("Unloading filament T" + str(tool) + " from toolhead sensor to reverse bowden...")
+		self.ratos_debug_echo("Unloading filament T" + str(tool) + " from toolhead sensor to reverse bowden...")
 
 		# unload filament to reverse bowden
 		self.select_filament(tool)
@@ -1071,7 +1099,11 @@ class RMMU:
 
 	def eject_filament(self, tool):
 		# echo
-		self.ratos_echo("Ejecting filament T" + str(tool) + "...")
+		self.console_echo({
+			'TITLE': "Eject filament", 
+			'MSG': 	"Ejecting filament T" + str(tool) + "...", 
+			'TYPE': "info"
+		})
 
 		# select filament
 		self.select_filament(tool)
@@ -1079,13 +1111,21 @@ class RMMU:
 		if len(self.bowdenfilament_sensors) == self.tool_count:
 			# check filament runout sensor
 			if not self.is_sensor_triggered(self.bowdenfilament_sensors[tool]):
-				self.ratos_echo("Filament T" + str(tool) + " already ejected!")
+				self.console_echo({
+					'TITLE': "Eject filament", 
+					'MSG': 	"Filament T" + str(tool) + " already ejected!", 
+					'TYPE': "warning"
+				})
 				return
 
 		if len(self.parking_t_sensor_endstop) == self.tool_count:
 			# check if filament is loaded
 			if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-				self.ratos_echo("Filament T" + str(tool) + " already ejected!")
+				self.console_echo({
+					'TITLE': "Eject filament", 
+					'MSG': 	"Filament T" + str(tool) + " already ejected!", 
+					'TYPE': "warning"
+				})
 				return
 
 			# enable parking sensor endstop
@@ -1119,7 +1159,11 @@ class RMMU:
 		self.stepper_move(self.rmmu_pulley, -(self.reverse_bowden_length * 1.5), True, self.filament_homing_speed, self.filament_homing_accel)
 
 		# echo
-		self.ratos_echo("Filament T" + str(tool) + " ejected!")
+		self.console_echo({
+			'TITLE': "Eject filament", 
+			'MSG': 	"Filament T" + str(tool) + " ejected!", 
+			'TYPE': "success"
+		})
 
 	#####
 	# Join filament 
@@ -1204,7 +1248,11 @@ class RMMU:
 							self.spool_mapping.append({tool: spool})
 						return True
 					else:
-						self.ratos_echo("Can not join spool T" + str(spool) + "!")
+						self.console_echo({
+							'TITLE': "Join spool", 
+							'MSG': 	"Can not join spool T" + str(spool) + "!", 
+							'TYPE': "warning"
+						})
 						self.select_filament(tool)
 						self.stepper_synced_move(-100, 50, 200)
 						self.select_filament(-1)
@@ -1216,7 +1264,11 @@ class RMMU:
 							})
 							return False
 				else:
-					self.ratos_echo("Spool " + str(spool) + " not available!")
+					self.console_echo({
+						'TITLE': "Join spool", 
+						'MSG': 	"Spool " + str(spool) + " not available!", 
+						'TYPE': "warning"
+					})
 		return False
 
 	def get_remapped_spool(self, tool):
@@ -1253,7 +1305,11 @@ class RMMU:
 
 		# check for ongoing print
 		if self.start_print_param != None:
-			self.ratos_echo("Toolhead remapping is not supported during a print!")
+			self.console_echo({
+				'TITLE': "Remap Toolhead", 
+				'MSG': 	"Toolhead remapping is not supported during a print!", 
+				'TYPE': "warning"
+			})
 			return
 
 		# reset mapping
@@ -1338,19 +1394,35 @@ class RMMU:
 	def on_filament_insert(self, tool):
 		# check if insert actions are allowed
 		if len(self.parking_t_sensor_endstop) != self.tool_count:
-			self.ratos_echo("No automatic filament insert actions available without Tx parking sensors!")
+			self.console_echo({
+				'TITLE': "Filament insert", 
+				'MSG': 	"No automatic filament insert actions available without Tx parking sensors!", 
+				'TYPE': "warning"
+			})
 			return
 
 		# sanity check before insert action
 		if self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			self.ratos_echo("Parking sensor T" + str(tool) + " triggered! Can not perform insert action.")
+			self.console_echo({
+				'TITLE': "Filament insert", 
+				'MSG': 	"Parking sensor T" + str(tool) + " triggered! Can not perform insert action.", 
+				'TYPE': "warning"
+			})
 			return
 		if self.is_sensor_triggered(self.toolhead_filament_sensor) and self.start_print_param != None:
-			self.ratos_echo("Toolhead Filament sensor triggered! Can not perform insert action.")
+			self.console_echo({
+				'TITLE': "Filament insert", 
+				'MSG': 	"Toolhead Filament sensor triggered! Can not perform insert action.", 
+				'TYPE': "warning"
+			})
 			return
 
 		# echo
-		self.ratos_echo("Loading filament T" + str(tool) + " into RMMU device...")
+		self.console_echo({
+			'TITLE': "Load filament", 
+			'MSG': 	"Loading filament T" + str(tool) + " into RMMU device...", 
+			'TYPE': "info"
+		})
 
 		# home if needed
 		if not self.is_homed:
@@ -1372,7 +1444,11 @@ class RMMU:
 
 		# check sensor
 		if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
-			self.ratos_echo("Could not load filament T" + str(tool) + " into the RMMU device! Please load it manually.")
+			self.console_echo({
+				'TITLE': "Filament insert", 
+				'MSG': 	"Could not load filament T" + str(tool) + " into the RMMU device! Please load it manually.", 
+				'TYPE': "alert"
+			})
 			self.select_filament(-1)
 			return
 
@@ -1405,7 +1481,11 @@ class RMMU:
 		self.select_filament(-1)
 
 		# success
-		self.ratos_echo("Filament T" + str(tool) + " loaded!")
+		self.console_echo({
+			'TITLE': "Filament insert", 
+			'MSG': 	"Filament T" + str(tool) + " loaded!", 
+			'TYPE': "success"
+		})
 
 	def on_filament_runout(self, tool, clogged):
 		# set runout detection
@@ -1421,7 +1501,11 @@ class RMMU:
 			loaded_filament = self.get_loaded_filament()
 			if not self.unload_filament(loaded_filament, False):
 				# echo
-				self.ratos_echo("Can not eject filament because it couldnt be unloaded!")
+				self.console_echo({
+					'TITLE': "Filament runout", 
+					'MSG': 	"Can not eject filament because it couldnt be unloaded!", 
+					'TYPE': "alert"
+				})
 
 				# release idler
 				self.select_filament(-1)
@@ -1442,7 +1526,11 @@ class RMMU:
 								return
 
 			# echo
-			self.ratos_echo("Load new filament T" + str(tool) + " into the hotend and resume the print!")
+			self.console_echo({
+				'TITLE': "Filament runout", 
+				'MSG': 	"Load new filament T" + str(tool) + " into the hotend and resume the print!", 
+				'TYPE': "success"
+			})
 
 	#####
 	# Endstop handling
@@ -1561,7 +1649,11 @@ class RMMU:
 				return
 
 		# echo
-		self.ratos_echo("Calibrating, please wait...")
+		self.console_echo({
+			'TITLE': "Calibrating bowden tube", 
+			'MSG': 	"Calibrating, please wait...", 
+			'TYPE': "info"
+		})
 
 		# home if needed
 		if not self.is_homed:
@@ -1608,7 +1700,11 @@ class RMMU:
 					if self.is_endstop_triggered(self.toolhead_sensor_endstop):
 						# get reverse bowden length
 						calibrated_reverse_bowden_length.append(m * step_distance)
-						self.ratos_echo("Reverse bowden length T" + str(i) + " = " + str(calibrated_reverse_bowden_length[i]) + "mm")
+						self.console_echo({
+							'TITLE': "Calibrate bowden tube", 
+							'MSG': 	"Reverse bowden length T" + str(i) + " = " + str(calibrated_reverse_bowden_length[i]) + "mm", 
+							'TYPE': "success"
+						})
 						break
 
 				# check toolhead endstop
@@ -1637,11 +1733,15 @@ class RMMU:
 			for i in range(self.tool_count):
 				result += calibrated_reverse_bowden_length[i]
 			result = result / self.tool_count
-			self.ratos_echo("Average reverse bowden length = " + str(result) + "mm")
 
 			# save reverse bowden length
 			self.set_setting(self.name.lower() + self.VARS_REVERSE_BOWDEN_LENGTH, result)
-			self.ratos_echo("Setting has been saved and activated!")
+
+			self.console_echo({
+				'TITLE': "Calibrate bowden tube", 
+				'MSG': 	"Average reverse bowden length = " + str(result) + "mm\nSetting has been saved and activated!", 
+				'TYPE': "success"
+			})
 
 	def ratos_echo(self, msg):
 		self.gcode.run_script_from_command("RATOS_ECHO PREFIX='" + str(self.name) + "' MSG='" + str(msg) + "'")
