@@ -17,6 +17,7 @@ class RatOS:
 		self.gcode = self.printer.lookup_object('gcode')
 		self.reactor = self.printer.get_reactor()
 
+		self.run_gcode_at_layer = []
 		self.old_is_graph_files = []
 		self.contact_mesh = None
 		self.pmgr = BedMeshProfileManager(self.config, self)
@@ -69,7 +70,7 @@ class RatOS:
 		_info = '\nClick image to open documentation.'
 		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="258px"></a>'
 		self.gcode.respond_raw(_title + _img + _info)
-		
+
 	desc_CONSOLE_ECHO = "Multiline console output"
 	def cmd_CONSOLE_ECHO(self, gcmd):
 		title = gcmd.get('TITLE', '')
@@ -181,15 +182,13 @@ class RatOS:
 	# G-code post processor
 	#####
 	def process_gode_file(self, filename):
-		echo_prefix = "POST_PROCESSOR"
-
 		path = self.get_gcode_file_path(filename)
 		lines = self.get_gcode_file_lines(path)
 
 		if self.gcode_already_processed(path):
 			return True
 
-		self.ratos_echo(echo_prefix, "processing...")
+		self.gcode.respond_raw("reading gcode file...")
 
 		slicer = self.get_slicer_info(lines)
 
@@ -211,6 +210,7 @@ class RatOS:
 		pause_counter = 0
 		extruder_temps = []
 		extruder_temps_line = 0
+		layer_2 = False
 		for line in range(len(lines)):
 			# give the cpu some time
 			pause_counter += 1
@@ -234,6 +234,7 @@ class RatOS:
 			if start_print_line > 0 and extruder_temps_line == 0:
 				if slicer["Name"] == "SuperSlicer" or slicer["Name"] == "OrcaSlicer":
 					if lines[line].rstrip().startswith("_ON_LAYER_CHANGE LAYER=2"):
+						layer_2 = True
 						extruder_temps_line = line
 						pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
 						matches = re.search(pattern, lines[start_print_line].rstrip())
@@ -250,21 +251,29 @@ class RatOS:
 						lines[line] = 'M204 S' + str(accel) + ' ; Changed by RatOS post processor: ' + lines[line].rstrip() + '\n'
 
 			# purge tower speed control
-			if start_print_line > 0:
+			if start_print_line > 0 and layer_2:
 				if lines[line].rstrip().startswith("; CP EMPTY GRID START"):
 					_ON_EMPTY_GRID_START_line = line
 					for i in range(20):
 						if lines[line-i].rstrip().startswith(";TYPE:Wipe tower"):
 							_ON_EMPTY_GRID_START_line = line-i
 							break
-					lines[_ON_EMPTY_GRID_START_line] = lines[_ON_EMPTY_GRID_START_line].rstrip() + '\n' + '_ON_EMPTY_GRID_START' + '\n'
+					for i in range(5):
+						if lines[_ON_EMPTY_GRID_START_line+i].rstrip().startswith("G1"):
+							new_line = ""
+							split = lines[_ON_EMPTY_GRID_START_line+i].rstrip().replace("  ", " ").split(" ")
+							for s in range(len(split)):
+								if not split[s].lower().startswith("f"):
+									new_line += split[s] + " "
+							lines[_ON_EMPTY_GRID_START_line+i] = new_line + '\n'
+					lines[_ON_EMPTY_GRID_START_line] = lines[_ON_EMPTY_GRID_START_line].rstrip() + '\n' + '_ON_EMPTY_GRID_START\n'
 				if lines[line].rstrip().startswith("; CP EMPTY GRID END"):
 					_ON_EMPTY_GRID_END_line = line
 					for i in range(20):
 						if lines[line+i].rstrip().startswith("; custom gcode end: tcr_rotated_gcode"):
 							_ON_EMPTY_GRID_END_line = line+i
 							break
-					lines[_ON_EMPTY_GRID_END_line] = lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n' + '_ON_EMPTY_GRID_END' + '\n'
+					lines[_ON_EMPTY_GRID_END_line] = lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n' + '_ON_EMPTY_GRID_END\n'
 				if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
 					for i in range(5):
 						if lines[line+i].rstrip().startswith("G1"):
@@ -274,14 +283,9 @@ class RatOS:
 								if not split[s].lower().startswith("f"):
 									new_line += split[s] + " "
 							lines[line+i] = new_line + '\n'
-					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_WIPE' + '\n'
+					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_WIPE\n'
 				if lines[line].rstrip().startswith("; CP TOOLCHANGE END"):
-					speed_factor = 100
-					for i in range(10):
-						if lines[line-i].rstrip().startswith("M220 S"):
-							speed_factor = lines[line-i].rstrip().replace("M220 S", "")
-							break
-					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END SPEED_FACTOR=' + str(speed_factor) + '\n'
+					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END\n'
 
 			# count toolshifts
 			if start_print_line > 0:
@@ -332,7 +336,11 @@ class RatOS:
 								if x > first_x:
 									first_x = x
 							except Exception as exc:
-								self.ratos_echo(echo_prefix, "Can not get first x coordinate. " + str(exc))
+								self.cmd_CONSOLE_ECHO({
+									'TITLE': "RatOS Multi Material Print", 
+									'MSG': 	"Can not get first x coordinate.\n" + str(exc), 
+									'TYPE': "warning"
+								})
 								return False
 						if split[s].lower().startswith("y"):
 							try:
@@ -340,7 +348,11 @@ class RatOS:
 								if y > first_y:
 									first_y = y
 							except Exception as exc:
-								self.ratos_echo(echo_prefix, "Can not get first y coordinate. " + str(exc))
+								self.cmd_CONSOLE_ECHO({
+									'TITLE': "RatOS Multi Material Print", 
+									'MSG': 	"Can not get first y coordinate.\n" + str(exc), 
+									'TYPE': "warning"
+								})
 								return False
 
 			# get x boundaries 
@@ -356,7 +368,11 @@ class RatOS:
 								if x > max_x:
 									max_x = x
 							except Exception as exc:
-								self.ratos_echo(echo_prefix, "Can not get x boundaries . " + str(exc))
+								self.cmd_CONSOLE_ECHO({
+									'TITLE': "RatOS Multi Material Print", 
+									'MSG': 	"Can not get x boundaries.\n" + str(exc), 
+									'TYPE': "warning"
+								})
 								return False
 
 			# toolshift processing
@@ -507,20 +523,24 @@ class RatOS:
 							lines[extruder_temps_line + i] = '; Removed by RatOS post processor: ' + lines[extruder_temps_line + i].rstrip() + '\n'
 							break
 
-			# console output 
-			self.ratos_echo(echo_prefix, "USED TOOLS: " + ','.join(used_tools))
+			# console output
+			_msg = "USED TOOLS: " + ','.join(used_tools)
 			if toolshift_count > 0:
-				self.ratos_echo(echo_prefix, "TOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1))
+				_msg += "\nTOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1)
 			if filament_count > 0:
-				self.ratos_echo(echo_prefix, "FILAMENT CHANGES: " + str(0 if filament_count == 0 else filament_count - 1))
-			self.ratos_echo(echo_prefix, "SLICER: " + slicer["Name"] + " " + slicer["Version"])
+				_msg += "\nFILAMENT CHANGES: " + str(0 if filament_count == 0 else filament_count - 1)
+			_msg += "\nSLICER: " + slicer["Name"] + " " + slicer["Version"]
+			self.cmd_CONSOLE_ECHO({
+				'TITLE': "RatOS Multi Material Print", 
+				'MSG': 	_msg, 
+				'TYPE': "info"
+			})
 
 			# save file if it has changed 
 			if file_has_changed:
 				lines.append("; processed by RatOS\n")
 				self.save_gcode_file(path, lines)
 
-		self.ratos_echo(echo_prefix, "Done!")
 		return True
 
 	def gcode_already_processed(self, path):
