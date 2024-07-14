@@ -476,7 +476,9 @@ class RMMU_Hub:
 
 		# load filament
 		if not rmmu.load_filament(rmmu_filament, copy_mirror):
-			rmmu.on_loading_error(rmmu_filament)
+			if not rmmu.load_filament(rmmu_filament, copy_mirror):
+				if not rmmu.load_filament(rmmu_filament, copy_mirror):
+					rmmu.on_loading_error(rmmu_filament)
 
 		# disable toolhead filament sensor
 		rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
