@@ -234,7 +234,6 @@ class RatOS:
 			if start_print_line > 0 and extruder_temps_line == 0:
 				if slicer["Name"] == "SuperSlicer" or slicer["Name"] == "OrcaSlicer":
 					if lines[line].rstrip().startswith("_ON_LAYER_CHANGE LAYER=2"):
-						layer_2 = True
 						extruder_temps_line = line
 						pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
 						matches = re.search(pattern, lines[start_print_line].rstrip())
@@ -251,166 +250,171 @@ class RatOS:
 						lines[line] = 'M204 S' + str(accel) + ' ; Changed by RatOS post processor: ' + lines[line].rstrip() + '\n'
 
 			# purge tower speed control
-			if start_print_line > 0 and layer_2:
+			if start_print_line > 0:
 
-				if lines[line].rstrip().startswith("; CP EMPTY GRID START"):
-					# get empty grid coordinates
-					empty_grid_min_x = 1000
-					empty_grid_max_x = 0
-					empty_grid_min_y = 1000
-					empty_grid_max_y = 0
-					for i in range(200):
-						if lines[line+i].rstrip().startswith("; CP EMPTY GRID END"):
-							break
-						if lines[line+i].rstrip().startswith("G1"):
-							split = lines[line+i].rstrip().replace("  ", " ").split(" ")
-							for s in range(len(split)):
-								if split[s].lower().startswith("x"):
-									try:
-										x = float(split[s].lower().replace("x", ""))
-										if x < empty_grid_min_x:
-											empty_grid_min_x = x
-										if x > empty_grid_max_x:
-											empty_grid_max_x = x
-									except Exception as exc:
-										self.cmd_CONSOLE_ECHO({
-											'TITLE': "RatOS Multi Material Print", 
-											'MSG': 	"Can not get empty grid x boundaries.\n" + str(exc), 
-											'TYPE': "warning"
-										})
-										return False
-								if split[s].lower().startswith("y"):
-									try:
-										y = float(split[s].lower().replace("y", ""))
-										if y < empty_grid_min_y:
-											empty_grid_min_y = y
-										if y > empty_grid_max_y:
-											empty_grid_max_y = y
-									except Exception as exc:
-										self.cmd_CONSOLE_ECHO({
-											'TITLE': "RatOS Multi Material Print", 
-											'MSG': 	"Can not get empty grid y boundaries.\n" + str(exc), 
-											'TYPE': "warning"
-										})
-										return False
+				if not layer_2:
+					if lines[line].rstrip().startswith("_ON_LAYER_CHANGE LAYER=2"):
+						layer_2 = True
 
-					# get empty grid start line
-					_ON_EMPTY_GRID_START_line = line
-					for i in range(20):
-						if lines[line-i].rstrip().startswith(";TYPE:Wipe tower"):
-							_ON_EMPTY_GRID_START_line = line-i
-							break
+				if layer_2:
+					if lines[line].rstrip().startswith("; CP EMPTY GRID START"):
+						# get empty grid coordinates
+						empty_grid_min_x = 1000
+						empty_grid_max_x = 0
+						empty_grid_min_y = 1000
+						empty_grid_max_y = 0
+						for i in range(200):
+							if lines[line+i].rstrip().startswith("; CP EMPTY GRID END"):
+								break
+							if lines[line+i].rstrip().startswith("G1"):
+								split = lines[line+i].rstrip().replace("  ", " ").split(" ")
+								for s in range(len(split)):
+									if split[s].lower().startswith("x"):
+										try:
+											x = float(split[s].lower().replace("x", ""))
+											if x < empty_grid_min_x:
+												empty_grid_min_x = x
+											if x > empty_grid_max_x:
+												empty_grid_max_x = x
+										except Exception as exc:
+											self.cmd_CONSOLE_ECHO({
+												'TITLE': "RatOS Multi Material Print", 
+												'MSG': 	"Can not get empty grid x boundaries.\n" + str(exc), 
+												'TYPE': "warning"
+											})
+											return False
+									if split[s].lower().startswith("y"):
+										try:
+											y = float(split[s].lower().replace("y", ""))
+											if y < empty_grid_min_y:
+												empty_grid_min_y = y
+											if y > empty_grid_max_y:
+												empty_grid_max_y = y
+										except Exception as exc:
+											self.cmd_CONSOLE_ECHO({
+												'TITLE': "RatOS Multi Material Print", 
+												'MSG': 	"Can not get empty grid y boundaries.\n" + str(exc), 
+												'TYPE': "warning"
+											})
+											return False
 
-					# remove empty grid feedrate parameter
-					for i in range(5):
-						if lines[_ON_EMPTY_GRID_START_line+i].rstrip().startswith("G1"):
-							new_line = ""
-							split = lines[_ON_EMPTY_GRID_START_line+i].rstrip().replace("  ", " ").split(" ")
-							for s in range(len(split)):
-								if not split[s].lower().startswith("f"):
-									new_line += split[s] + " "
-							lines[_ON_EMPTY_GRID_START_line+i] = new_line + '\n'
+						# get empty grid start line
+						_ON_EMPTY_GRID_START_line = line
+						for i in range(20):
+							if lines[line-i].rstrip().startswith(";TYPE:Wipe tower"):
+								_ON_EMPTY_GRID_START_line = line-i
+								break
 
-					# add empty grid start gcode command
-					lines[_ON_EMPTY_GRID_START_line] = lines[_ON_EMPTY_GRID_START_line].rstrip() + '\n' + '_ON_EMPTY_GRID_START\n'
+						# remove empty grid feedrate parameter
+						for i in range(5):
+							if lines[_ON_EMPTY_GRID_START_line+i].rstrip().startswith("G1"):
+								new_line = ""
+								split = lines[_ON_EMPTY_GRID_START_line+i].rstrip().replace("  ", " ").split(" ")
+								for s in range(len(split)):
+									if not split[s].lower().startswith("f"):
+										new_line += split[s] + " "
+								lines[_ON_EMPTY_GRID_START_line+i] = new_line + '\n'
 
-				if lines[line].rstrip().startswith("; CP EMPTY GRID END"):
-					# get empty grid end line
-					_ON_EMPTY_GRID_END_line = line
-					for i in range(20):
-						if lines[line+i].rstrip().startswith("; custom gcode end: tcr_rotated_gcode"):
-							_ON_EMPTY_GRID_END_line = line+i
-							break
+						# add empty grid start gcode command
+						lines[_ON_EMPTY_GRID_START_line] = lines[_ON_EMPTY_GRID_START_line].rstrip() + '\n' + '_ON_EMPTY_GRID_START\n'
 
-					# add empty grid end gcode command
-					lines[_ON_EMPTY_GRID_END_line] = '_ON_EMPTY_GRID_END MIN_X=' + str(empty_grid_min_x) + ' MAX_X=' + str(empty_grid_max_x) + ' MIN_Y=' + str(empty_grid_min_y) + ' MAX_Y=' + str(empty_grid_max_y) + '\n' + lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n'
+					if lines[line].rstrip().startswith("; CP EMPTY GRID END"):
+						# get empty grid end line
+						_ON_EMPTY_GRID_END_line = line
+						for i in range(20):
+							if lines[line+i].rstrip().startswith("; custom gcode end: tcr_rotated_gcode"):
+								_ON_EMPTY_GRID_END_line = line+i
+								break
 
-					# add set tool speed gcode command
-					for i in range(100):
-						if lines[_ON_EMPTY_GRID_END_line+i].rstrip().startswith("; custom gcode: feature_gcode"):
-							lines[_ON_EMPTY_GRID_END_line+i] += 'SET_TOOL_SPEED\n'
-							break
+						# add empty grid end gcode command
+						lines[_ON_EMPTY_GRID_END_line] = '_ON_EMPTY_GRID_END MIN_X=' + str(empty_grid_min_x) + ' MAX_X=' + str(empty_grid_max_x) + ' MIN_Y=' + str(empty_grid_min_y) + ' MAX_Y=' + str(empty_grid_max_y) + '\n' + lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n'
 
-				if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
-					# get toolchange wipe coordinates
-					wipe_min_x = 1000
-					wipe_max_x = 0
-					wipe_min_y = 1000
-					wipe_max_y = 0
-					for i in range(200):
-						if lines[line+i].rstrip().startswith("; CP TOOLCHANGE END"):
-							break
-						if lines[line+i].rstrip().startswith("G1"):
-							split = lines[line+i].rstrip().replace("  ", " ").split(" ")
-							for s in range(len(split)):
-								if split[s].lower().startswith("x"):
-									try:
-										x = float(split[s].lower().replace("x", ""))
-										if x < wipe_min_x:
-											wipe_min_x = x
-										if x > wipe_max_x:
-											wipe_max_x = x
-									except Exception as exc:
-										self.cmd_CONSOLE_ECHO({
-											'TITLE': "RatOS Multi Material Print", 
-											'MSG': 	"Can not get wipe x boundaries.\n" + str(exc), 
-											'TYPE': "warning"
-										})
-										return False
-								if split[s].lower().startswith("y"):
-									try:
-										y = float(split[s].lower().replace("y", ""))
-										if y < wipe_min_y:
-											wipe_min_y = y
-										if y > wipe_max_y:
-											wipe_max_y = y
-									except Exception as exc:
-										self.cmd_CONSOLE_ECHO({
-											'TITLE': "RatOS Multi Material Print", 
-											'MSG': 	"Can not get wipe y boundaries.\n" + str(exc), 
-											'TYPE': "warning"
-										})
-										return False
+						# add set tool speed gcode command
+						for i in range(100):
+							if lines[_ON_EMPTY_GRID_END_line+i].rstrip().startswith("; custom gcode: feature_gcode"):
+								lines[_ON_EMPTY_GRID_END_line+i] += 'SET_TOOL_SPEED\n'
+								break
 
-					# remove wipe feedrate parameter
-					for i in range(5):
-						if lines[line+i].rstrip().startswith("G1"):
-							new_line = ""
-							split = lines[line+i].rstrip().replace("  ", " ").split(" ")
-							for s in range(len(split)):
-								if not split[s].lower().startswith("f"):
-									new_line += split[s] + " "
-							lines[line+i] = new_line + '\n'
+					if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
+						# get toolchange wipe coordinates
+						wipe_min_x = 1000
+						wipe_max_x = 0
+						wipe_min_y = 1000
+						wipe_max_y = 0
+						for i in range(200):
+							if lines[line+i].rstrip().startswith("; CP TOOLCHANGE END"):
+								break
+							if lines[line+i].rstrip().startswith("G1"):
+								split = lines[line+i].rstrip().replace("  ", " ").split(" ")
+								for s in range(len(split)):
+									if split[s].lower().startswith("x"):
+										try:
+											x = float(split[s].lower().replace("x", ""))
+											if x < wipe_min_x:
+												wipe_min_x = x
+											if x > wipe_max_x:
+												wipe_max_x = x
+										except Exception as exc:
+											self.cmd_CONSOLE_ECHO({
+												'TITLE': "RatOS Multi Material Print", 
+												'MSG': 	"Can not get wipe x boundaries.\n" + str(exc), 
+												'TYPE': "warning"
+											})
+											return False
+									if split[s].lower().startswith("y"):
+										try:
+											y = float(split[s].lower().replace("y", ""))
+											if y < wipe_min_y:
+												wipe_min_y = y
+											if y > wipe_max_y:
+												wipe_max_y = y
+										except Exception as exc:
+											self.cmd_CONSOLE_ECHO({
+												'TITLE': "RatOS Multi Material Print", 
+												'MSG': 	"Can not get wipe y boundaries.\n" + str(exc), 
+												'TYPE': "warning"
+											})
+											return False
 
-					# add wipe start gcode command
-					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_WIPE MIN_X=' + str(wipe_min_x) + ' MAX_X=' + str(wipe_max_x) + ' MIN_Y=' + str(wipe_min_y) + ' MAX_Y=' + str(wipe_max_y) + '\n'
+						# remove wipe feedrate parameter
+						for i in range(5):
+							if lines[line+i].rstrip().startswith("G1"):
+								new_line = ""
+								split = lines[line+i].rstrip().replace("  ", " ").split(" ")
+								for s in range(len(split)):
+									if not split[s].lower().startswith("f"):
+										new_line += split[s] + " "
+								lines[line+i] = new_line + '\n'
 
-				if lines[line].rstrip().startswith("; CP TOOLCHANGE END"):
-					# add wipe end gcode command
-					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END\n'
+						# add wipe start gcode command
+						lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_WIPE MIN_X=' + str(wipe_min_x) + ' MAX_X=' + str(wipe_max_x) + ' MIN_Y=' + str(wipe_min_y) + ' MAX_Y=' + str(wipe_max_y) + '\n'
 
-					# add set tool speed gcode command
-					for i in range(100):
-						if lines[line+i].rstrip().startswith("; custom gcode: feature_gcode"):
-							lines[line+i] += 'SET_TOOL_SPEED\n'
-							break
+					if lines[line].rstrip().startswith("; CP TOOLCHANGE END"):
+						# add wipe end gcode command
+						lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END\n'
 
-				if lines[line].rstrip().startswith("; acceleration to travel"):
-					# set travel move speed factor
-					lines[line] = lines[line] + 'SET_TRAVEL_SPEED\n'
+						# add set tool speed gcode command
+						for i in range(100):
+							if lines[line+i].rstrip().startswith("; custom gcode: feature_gcode"):
+								lines[line+i] += 'SET_TOOL_SPEED\n'
+								break
 
-					# set tool speed gcode command
-					for i in range(20):
-						if lines[line+i].rstrip().startswith("; end travel"):
-							lines[line+i] = 'SET_TOOL_SPEED\n' + lines[line+i]
-							break
+					if lines[line].rstrip().startswith("; acceleration to travel"):
+						# set travel move speed factor
+						lines[line] = lines[line] + 'SET_TRAVEL_SPEED\n'
 
-				if lines[line].rstrip().startswith("; CP TOOLCHANGE START"):
-					# set travel move to wipe tower speed factor
-					for i in range(20):
-						if lines[line-i].rstrip().startswith("G1 E-"):
-							lines[line-i] = 'M220 S100\n' + lines[line-i]
-							break
+						# set tool speed gcode command
+						for i in range(20):
+							if lines[line+i].rstrip().startswith("; end travel"):
+								lines[line+i] = 'SET_TOOL_SPEED\n' + lines[line+i]
+								break
+
+					if lines[line].rstrip().startswith("; CP TOOLCHANGE START"):
+						# set travel move to wipe tower speed factor
+						for i in range(20):
+							if lines[line-i].rstrip().startswith("G1 E-"):
+								lines[line-i] = 'M220 S100\n' + lines[line-i]
+								break
 
 			# count toolshifts
 			if start_print_line > 0:
