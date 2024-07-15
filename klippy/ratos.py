@@ -301,8 +301,8 @@ class RatOS:
 						# get empty grid start line
 						_ON_EMPTY_GRID_START_line = line
 						for i in range(20):
-							if lines[line-i].rstrip().startswith(";TYPE:Wipe tower"):
-								_ON_EMPTY_GRID_START_line = line-i
+							if lines[line-3-i].rstrip().startswith(";"):
+								_ON_EMPTY_GRID_START_line = line-3-i
 								break
 
 						# remove empty grid feedrate parameter
@@ -321,19 +321,19 @@ class RatOS:
 					if lines[line].rstrip().startswith("; CP EMPTY GRID END"):
 						# get empty grid end line
 						_ON_EMPTY_GRID_END_line = line
-						for i in range(20):
-							if lines[line+i].rstrip().startswith("; custom gcode end: tcr_rotated_gcode"):
-								_ON_EMPTY_GRID_END_line = line+i
-								break
+						if slicer["Name"] == "SuperSlicer":
+							for i in range(50):
+								if lines[line+i].rstrip().startswith("; custom gcode end: tcr_rotated_gcode"):
+									_ON_EMPTY_GRID_END_line = line+i
+									break
+						if slicer["Name"] == "PrusaSlicer":
+							for i in range(50):
+								if lines[line+5+i].rstrip().startswith(";"):
+									_ON_EMPTY_GRID_END_line = line+5+i
+									break
 
 						# add empty grid end gcode command
 						lines[_ON_EMPTY_GRID_END_line] = '_ON_EMPTY_GRID_END MIN_X=' + str(empty_grid_min_x) + ' MAX_X=' + str(empty_grid_max_x) + ' MIN_Y=' + str(empty_grid_min_y) + ' MAX_Y=' + str(empty_grid_max_y) + '\n' + lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n'
-
-						# add set tool speed gcode command
-						for i in range(100):
-							if lines[_ON_EMPTY_GRID_END_line+i].rstrip().startswith("; custom gcode: feature_gcode"):
-								lines[_ON_EMPTY_GRID_END_line+i] += 'SET_TOOL_SPEED\n'
-								break
 
 					if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
 						# toolchange wipe
@@ -391,30 +391,39 @@ class RatOS:
 
 					if lines[line].rstrip().startswith("; CP TOOLCHANGE END"):
 						# add wipe end gcode command
-						lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END\n'
-
-						# add set tool speed gcode command
-						for i in range(100):
-							if lines[line+i].rstrip().startswith("; custom gcode: feature_gcode"):
-								lines[line+i] += 'SET_TOOL_SPEED\n'
-								break
-
-					if lines[line].rstrip().startswith("; acceleration to travel"):
-						# set travel move speed factor
-						lines[line] = lines[line] + 'SET_TRAVEL_SPEED\n'
-
-						# set tool speed gcode command
-						for i in range(20):
-							if lines[line+i].rstrip().startswith("; end travel"):
-								lines[line+i] = 'SET_TOOL_SPEED\n' + lines[line+i]
-								break
-
-					if lines[line].rstrip().startswith("; CP TOOLCHANGE START"):
-						# set travel move to wipe tower speed factor
-						for i in range(20):
-							if lines[line-i].rstrip().startswith("G1 E-"):
-								lines[line-i] = 'M220 S100\n' + lines[line-i]
-								break
+						_ON_CP_TOOLCHANGE_END_line = line
+						if slicer["Name"] == "SuperSlicer":
+							has_empty_grid = False
+							for i in range(50):
+								if lines[line+i].rstrip().startswith("; CP EMPTY GRID START"):
+									has_empty_grid = True
+									break
+							if not has_empty_grid:
+								for i in range(50):
+									if lines[line+i].rstrip().startswith("; custom gcode end: tcr_rotated_gcode"):
+										_ON_CP_TOOLCHANGE_END_line = line+i
+										break
+						if slicer["Name"] == "PrusaSlicer":
+							wipetower_is_next = False
+							has_empty_grid = False
+							for i in range(50):
+								if lines[line+i].rstrip().startswith("; CP EMPTY GRID START"):
+									has_empty_grid = True
+									break
+							if not has_empty_grid:
+								for i in range(50):
+									if lines[line+i].rstrip().startswith(";TYPE:Wipe tower"):
+										wipetower_is_next = True
+										for i2 in range(50):
+											if lines[line+2+i+i2].rstrip().startswith(";"):
+												_ON_CP_TOOLCHANGE_END_line = line+2+i+i2
+												break
+								if not wipetower_is_next:
+									for i in range(50):
+										if lines[line+2+i].rstrip().startswith(";"):
+											_ON_CP_TOOLCHANGE_END_line = line+2+i
+											break
+						lines[_ON_CP_TOOLCHANGE_END_line] = lines[_ON_CP_TOOLCHANGE_END_line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END\n'
 
 			# count toolshifts
 			if start_print_line > 0:
