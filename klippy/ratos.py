@@ -336,7 +336,7 @@ class RatOS:
 								break
 
 					if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
-						# get toolchange wipe coordinates
+						# toolchange wipe
 						wipe_min_x = 1000
 						wipe_max_x = 0
 						wipe_min_y = 1000
@@ -346,6 +346,8 @@ class RatOS:
 								break
 							if lines[line+i].rstrip().startswith("G1"):
 								split = lines[line+i].rstrip().replace("  ", " ").split(" ")
+
+								# get wipe boundaries
 								for s in range(len(split)):
 									if split[s].lower().startswith("x"):
 										try:
@@ -376,15 +378,13 @@ class RatOS:
 											})
 											return False
 
-						# remove wipe feedrate parameter
-						for i in range(5):
-							if lines[line+i].rstrip().startswith("G1"):
+								# remove wipe feedrate parameter
 								new_line = ""
-								split = lines[line+i].rstrip().replace("  ", " ").split(" ")
-								for s in range(len(split)):
-									if not split[s].lower().startswith("f"):
-										new_line += split[s] + " "
-								lines[line+i] = new_line + '\n'
+								if not lines[line+i].rstrip().startswith("G1 F"):
+									for s in range(len(split)):
+										if not split[s].lower().startswith("f"):
+											new_line += split[s] + " "
+									lines[line+i] = new_line + '\n'
 
 						# add wipe start gcode command
 						lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_WIPE MIN_X=' + str(wipe_min_x) + ' MAX_X=' + str(wipe_max_x) + ' MIN_Y=' + str(wipe_min_y) + ' MAX_Y=' + str(wipe_max_y) + '\n'
