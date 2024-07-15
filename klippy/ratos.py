@@ -405,6 +405,13 @@ class RatOS:
 							lines[line+i] = 'SET_TOOL_SPEED\n' + lines[line+i]
 							break
 
+				if lines[line].rstrip().startswith("; CP TOOLCHANGE START"):
+					# set travel move to wipe tower speed factor
+					for i in range(20):
+						if lines[line-i].rstrip().startswith("G1 E-"):
+							lines[line-i] = 'M220 S100\n' + lines[line-i]
+							break
+
 			# count toolshifts
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
