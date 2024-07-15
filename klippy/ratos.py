@@ -395,6 +395,16 @@ class RatOS:
 							lines[line+i] += 'SET_TOOL_SPEED\n'
 							break
 
+				if lines[line].rstrip().startswith("; acceleration to travel"):
+					# set travel move speed factor
+					lines[line] = lines[line] + 'SET_TRAVEL_SPEED\n'
+
+					# set tool speed gcode command
+					for i in range(20):
+						if lines[line+i].rstrip().startswith("; end travel"):
+							lines[line+i] = 'SET_TOOL_SPEED\n' + lines[line+i]
+							break
+
 			# count toolshifts
 			if start_print_line > 0:
 				if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
