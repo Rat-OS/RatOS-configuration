@@ -323,7 +323,13 @@ class RatOS:
 							break
 
 					# add empty grid end gcode command
-					lines[_ON_EMPTY_GRID_END_line] = lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n' + '_ON_EMPTY_GRID_END MIN_X=' + str(empty_grid_min_x) + ' MAX_X=' + str(empty_grid_max_x) + ' MIN_Y=' + str(empty_grid_min_y) + ' MAX_Y=' + str(empty_grid_max_y) + '\n'
+					lines[_ON_EMPTY_GRID_END_line] = '_ON_EMPTY_GRID_END MIN_X=' + str(empty_grid_min_x) + ' MAX_X=' + str(empty_grid_max_x) + ' MIN_Y=' + str(empty_grid_min_y) + ' MAX_Y=' + str(empty_grid_max_y) + '\n' + lines[_ON_EMPTY_GRID_END_line].rstrip() + '\n'
+
+					# add set tool speed gcode command
+					for i in range(100):
+						if lines[_ON_EMPTY_GRID_END_line+i].rstrip().startswith("; custom gcode: feature_gcode"):
+							lines[_ON_EMPTY_GRID_END_line+i] += 'SET_TOOL_SPEED\n'
+							break
 
 				if lines[line].rstrip().startswith("; CP TOOLCHANGE WIPE"):
 					# get toolchange wipe coordinates
@@ -382,6 +388,12 @@ class RatOS:
 				if lines[line].rstrip().startswith("; CP TOOLCHANGE END"):
 					# add wipe end gcode command
 					lines[line] = lines[line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END\n'
+
+					# add set tool speed gcode command
+					for i in range(100):
+						if lines[line+i].rstrip().startswith("; custom gcode: feature_gcode"):
+							lines[line+i] += 'SET_TOOL_SPEED\n'
+							break
 
 			# count toolshifts
 			if start_print_line > 0:

@@ -267,8 +267,8 @@ class RMMU:
 	#####
 	def home(self):
 		self.console_echo({
-			'TITLE': "Home RMMU", 
-			'MSG': 	"please wait...", 
+			'TITLE': "Homing RMMU...", 
+			'MSG': 	"", 
 			'TYPE': "info"
 		})
 		self.reset()
