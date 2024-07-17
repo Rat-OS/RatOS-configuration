@@ -162,43 +162,33 @@ class RMMU:
 		self.gcode.run_script_from_command('_LED_MOTORS_OFF')
 
 	def _toolhead_sensor_insert(self, eventtime):
-		self.ratos_debug_echo('_toolhead_sensor_insert')
-		# self.gcode.run_script_from_command("_ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0")
+		self.gcode.run_script_from_command("_ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0")
 
 	def _toolhead_sensor_runout(self, eventtime):
-		self.ratos_debug_echo('_toolhead_sensor_runout')
-		# self.gcode.run_script_from_command('_ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
+		self.gcode.run_script_from_command('_ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
 
 	def _t0_feeder_sensor_insert(self, eventtime):
-		self.ratos_debug_echo('_t0_feeder_sensor_insert')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=0')
 
 	def _t0_feeder_sensor_runout(self, eventtime):
-		self.ratos_debug_echo('_t0_feeder_sensor_runout')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
 
 	def _t1_feeder_sensor_insert(self, eventtime):
-		self.ratos_debug_echo('_t1_feeder_sensor_insert')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=1')
 
 	def _t1_feeder_sensor_runout(self, eventtime):
-		self.ratos_debug_echo('_t1_feeder_sensor_runout')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=1')
 
 	def _t2_feeder_sensor_insert(self, eventtime):
-		self.ratos_debug_echo('_t2_feeder_sensor_insert')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=2')
 
 	def _t2_feeder_sensor_runout(self, eventtime):
-		self.ratos_debug_echo('_t2_feeder_sensor_runout')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=2')
 
 	def _t3_feeder_sensor_insert(self, eventtime):
-		self.ratos_debug_echo('_t3_feeder_sensor_insert')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=3')
 
 	def _t3_feeder_sensor_runout(self, eventtime):
-		self.ratos_debug_echo('_t3_feeder_sensor_runout')
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=3')
 
 	#####
@@ -1944,9 +1934,13 @@ class RMMUSwitchSensor:
 			return
 		if self.sensor_enabled:
 			if self.filament_present:
+				self.min_event_systime = self.reactor.NEVER
 				self.reactor.register_callback(self.insert_callback)
+				self.min_event_systime = self.reactor.monotonic() + self.event_delay
 			else:
+				self.min_event_systime = self.reactor.NEVER
 				self.reactor.register_callback(self.runout_callback)
+				self.min_event_systime = self.reactor.monotonic() + self.event_delay
 
 #####
 # Loader
