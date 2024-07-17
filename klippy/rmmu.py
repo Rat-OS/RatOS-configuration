@@ -746,6 +746,10 @@ class RMMU:
 
 			# check sensor
 			if not self.is_endstop_triggered(self.hotend_endstop):
+				self.stepper_synced_move(5, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
+			# check sensor
+			if not self.is_endstop_triggered(self.hotend_endstop):
 				self.ratos_echo("Could not find hotend filament sensor!")
 				return False
 

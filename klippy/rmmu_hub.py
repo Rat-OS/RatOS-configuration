@@ -349,7 +349,7 @@ class RMMU_Hub:
 					rmmu.extruder_set_temperature(0, False)					
 
 				# disable toolhead filament sensor
-				rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
+				rmmu.toolhead_filament_sensor.enable(False)
 
 			# cool toolhead down to standby temp if needed to avoid oozing on the build plate after loading filaments
 			if needs_cool_down:
@@ -451,7 +451,7 @@ class RMMU_Hub:
 		self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(physical_toolhead) + ' X=' + str(x) + ' Y=' + str(y) + ' WIPE_ACCEL=' + str(self.wipe_accel) + ' COPY_MIRROR=' + str(copy_mirror))
 
 		# enable toolhead filament sensor
-		rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = True
+		rmmu.toolhead_filament_sensor.enable(True)
 
 		# check toolhead filament sensor
 		if rmmu.toolhead_filament_sensor.filament_present:
@@ -473,7 +473,7 @@ class RMMU_Hub:
 					rmmu.on_loading_error(rmmu_filament)
 
 		# disable toolhead filament sensor
-		rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = False
+		rmmu.toolhead_filament_sensor.enable(False)
 
 	#####
 	# Load Filament
