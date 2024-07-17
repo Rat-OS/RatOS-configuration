@@ -1903,6 +1903,7 @@ class RMMUSwitchSensor:
 		self.sensor_enabled = True
 		self.insert_callback = insert_callback
 		self.runout_callback = runout_callback
+		self.event_delay = 0.5
 		pin_desc = pin
 		if pin_desc.startswith("^") or pin_desc.startswith("~"):
 			pin_desc = pin_desc[1:].strip()
