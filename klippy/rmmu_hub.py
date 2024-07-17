@@ -50,14 +50,6 @@ class RMMU_Hub:
 			for tool in range(start_tool_count, self.total_tool_count):
 				self.mapping[str(tool)] = {"TOOLHEAD": rmmu[1].name.lower().replace("rmmu_t", ""), "FILAMENT": tool - start_tool_count}
 
-			# bowden filament sensors
-			rmmu[1].bowdenfilament_sensors = []
-			for i in range(start_tool_count, self.total_tool_count):
-				for filament_sensor in self.printer.lookup_objects('filament_switch_sensor'):
-					sensor_name = filament_sensor[1].runout_helper.name
-					if sensor_name == 'bowdenfilament_sensor_t' + str(i):
-						rmmu[1].bowdenfilament_sensors.append(filament_sensor[1])
-
 			start_tool_count = self.total_tool_count
 
 	#####
@@ -258,7 +250,7 @@ class RMMU_Hub:
 				initial_filament = int(self.mapping[str(rmmu.initial_filament)]["FILAMENT"])
 
 				# unload wrong filament if needed 
-				if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
+				if rmmu.toolhead_filament_sensor.filament_present:
 					if loaded_filament != initial_filament:
 						if loaded_filament_temp > rmmu.heater.min_extrude_temp and loaded_filament_temp < rmmu.heater.max_temp:
 							needs_cool_down = True
@@ -462,7 +454,7 @@ class RMMU_Hub:
 		rmmu.toolhead_filament_sensor.runout_helper.sensor_enabled = True
 
 		# check toolhead filament sensor
-		if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
+		if rmmu.toolhead_filament_sensor.filament_present:
 			# unload filament
 			loaded_filament = rmmu.get_setting(rmmu.name.lower() + rmmu.VARS_LOADED_FILAMENT)
 			if not rmmu.unload_filament(loaded_filament, True):
@@ -496,7 +488,7 @@ class RMMU_Hub:
 		rmmu = self.rmmu[physical_toolhead]
 
 		# check toolhead filament sensor
-		if rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
+		if rmmu.toolhead_filament_sensor.filament_present:
 			raise self.printer.command_error("Can not load filament! Another one is already loaded.")
 
 		# home if needed
@@ -521,7 +513,7 @@ class RMMU_Hub:
 		rmmu = self.rmmu[physical_toolhead]
 
 		# check toolhead filament sensor
-		if not rmmu.is_sensor_triggered(rmmu.toolhead_filament_sensor):
+		if not rmmu.toolhead_filament_sensor.filament_present:
 			raise self.printer.command_error("No filament loaded!")
 
 		# home if needed

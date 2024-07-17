@@ -23,10 +23,15 @@ class RMMUCommandHelper:
 	def register_commands(self, name):
 		# Register commands
 		gcode = self.printer.lookup_object('gcode')
+		gcode.register_mux_command('RMMU_SET_FILAMENT_SENSOR', 'RMMU', name, self.cmd_RMMU_SET_FILAMENT_SENSOR, desc=(self.desc_RMMU_SET_FILAMENT_SENSOR))
 		gcode.register_mux_command('RMMU_CALIBRATE_REVERSE_BOWDEN', 'RMMU', name, self.cmd_RMMU_CALIBRATE_REVERSE_BOWDEN, desc=(self.desc_RMMU_CALIBRATE_REVERSE_BOWDEN))
 		gcode.register_mux_command('RMMU_QUERY_SENSORS', 'RMMU', name, self.cmd_RMMU_QUERY_SENSORS, desc=(self.desc_RMMU_QUERY_SENSORS))
 		gcode.register_mux_command('RMMU_JOIN_SPOOLS', 'RMMU', name, self.cmd_RMMU_JOIN_SPOOLS, desc=(self.desc_RMMU_JOIN_SPOOLS))
 		gcode.register_mux_command('RMMU_REMAP_TOOLHEADS', 'RMMU', name, self.cmd_RMMU_REMAP_TOOLHEADS, desc=(self.desc_RMMU_REMAP_TOOLHEADS))
+
+	desc_RMMU_SET_FILAMENT_SENSOR = "Enables or disables a filament sensor."
+	def cmd_RMMU_SET_FILAMENT_SENSOR(self, param):
+		self.rmmu.set_filament_sensor(param)
 
 	desc_RMMU_QUERY_SENSORS = "Queries all available RMMU sensors and endstops."
 	def cmd_RMMU_QUERY_SENSORS(self, param):
@@ -90,6 +95,10 @@ class RMMU:
 		if self.toolhead_sensor_endstop == None:
 			raise self.config.error(self.name + " pulley endstop not configured! Please configure the toolhead filament sensor endstop.")
 
+		# get toolhead filament sensor
+		pin = self.config.getsection("manual_stepper " + self.rmmu_pulley_name).get("endstop_pin")
+		self.toolhead_filament_sensor = RMMUSwitchSensor(self.config, "toolhead_sensor", self._toolhead_sensor_insert, self._toolhead_sensor_runout, pin)
+
 		# get hotend endstop
 		self.hotend_endstop = None
 		ppins = self.printer.lookup_object('pins')
@@ -110,6 +119,14 @@ class RMMU:
 				if self.parking_t_endstop_pin[i] is not None:
 					mcu_endstop = ppins.setup_pin('endstop', self.parking_t_endstop_pin[i])
 					self.parking_t_sensor_endstop.append(mcu_endstop)
+
+		# get feeder sensors
+		self.feeder_sensor = []
+		if len(self.t_feeder_pin) == self.tool_count:
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t0_sensor", self._t0_feeder_sensor_insert, self._t0_feeder_sensor_runout, self.t_feeder_pin[0]))
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t1_sensor", self._t1_feeder_sensor_insert, self._t1_feeder_sensor_runout, self.t_feeder_pin[1]))
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t2_sensor", self._t2_feeder_sensor_insert, self._t2_feeder_sensor_runout, self.t_feeder_pin[2]))
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t3_sensor", self._t3_feeder_sensor_insert, self._t3_feeder_sensor_runout, self.t_feeder_pin[3]))
 
 		# register klipper handler
 		self.register_handler()
@@ -140,14 +157,49 @@ class RMMU:
 		if self.rmmu_pulley == None:
 			raise self.config.error(self.name + " pulley stepper not found!")
 
-		# get toolhead filament sensor
-		self.toolhead_filament_sensor = self.printer.lookup_object("filament_switch_sensor toolhead_filament_sensor_" + self.name.lower().replace("rmmu_", ""), None)
-		if self.toolhead_filament_sensor == None:
-			raise self.config.error(self.name + " toolhead filament sensor not found! Please configure the RatOS filament sensor.")
-
 	def _motor_off(self, print_time):
 		self.reset()
 		self.gcode.run_script_from_command('_LED_MOTORS_OFF')
+
+	def _toolhead_sensor_insert(self, eventtime):
+		self.ratos_debug_echo('_toolhead_sensor_insert')
+		# self.gcode.run_script_from_command("_ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0")
+
+	def _toolhead_sensor_runout(self, eventtime):
+		self.ratos_debug_echo('_toolhead_sensor_runout')
+		# self.gcode.run_script_from_command('_ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
+
+	def _t0_feeder_sensor_insert(self, eventtime):
+		self.ratos_debug_echo('_t0_feeder_sensor_insert')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=0')
+
+	def _t0_feeder_sensor_runout(self, eventtime):
+		self.ratos_debug_echo('_t0_feeder_sensor_runout')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
+
+	def _t1_feeder_sensor_insert(self, eventtime):
+		self.ratos_debug_echo('_t1_feeder_sensor_insert')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=1')
+
+	def _t1_feeder_sensor_runout(self, eventtime):
+		self.ratos_debug_echo('_t1_feeder_sensor_runout')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=1')
+
+	def _t2_feeder_sensor_insert(self, eventtime):
+		self.ratos_debug_echo('_t2_feeder_sensor_insert')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=2')
+
+	def _t2_feeder_sensor_runout(self, eventtime):
+		self.ratos_debug_echo('_t2_feeder_sensor_runout')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=2')
+
+	def _t3_feeder_sensor_insert(self, eventtime):
+		self.ratos_debug_echo('_t3_feeder_sensor_insert')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=3')
+
+	def _t3_feeder_sensor_runout(self, eventtime):
+		self.ratos_debug_echo('_t3_feeder_sensor_runout')
+		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=3')
 
 	#####
 	# Settings
@@ -173,6 +225,7 @@ class RMMU:
 		self.hotend_endstop_pin = None
 		self.parking_endstop_pin = None
 		self.parking_t_endstop_pin = []
+		self.t_feeder_pin = []
 		if self.config.get('hotend_endstop_pin', None) is not None:
 			# hotend endstop pin
 			self.hotend_endstop_pin = self.config.get('hotend_endstop_pin')
@@ -184,6 +237,13 @@ class RMMU:
 			for i in range(0, self.tool_count):
 				if self.config.get('parking_t' + str(i) + '_endstop_pin', None) is not None:
 					self.parking_t_endstop_pin.append(self.config.get('parking_t' + str(i) + '_endstop_pin'))
+
+		# feeder pins
+		if self.config.get('feeder_t0_pin', None) is not None:
+			# Tx feeder pins
+			for i in range(0, self.tool_count):
+				if self.config.get('feeder_t' + str(i) + '_pin', None) is not None:
+					self.t_feeder_pin.append(self.config.get('feeder_t' + str(i) + '_pin'))
 
 		# idler config
 		self.idler_positions = [102,76,50,24]
@@ -212,7 +272,6 @@ class RMMU:
 		self.cooling_zone_unloading_pause = self.config.getfloat('cooling_zone_unloading_pause', 1000.0)
 		self.cooling_zone_unloading_distance = self.config.getfloat('cooling_zone_unloading_distance', 130.0)
 
-
 	def set_setting(self, variable, value):
 		self.gcode.run_script_from_command("SAVE_VARIABLE VARIABLE=%s VALUE=%s" % (variable, value))
 
@@ -230,7 +289,8 @@ class RMMU:
 		  'initial_filament': self.initial_filament,
 		  'needs_initial_purging': self.needs_initial_purging,
 		  'loaded_filament': self.get_loaded_filament(),
-		  'loaded_filament_temp': self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP)}
+		  'loaded_filament_temp': self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP),
+		  'toolhead_filament_sensor': self.toolhead_filament_sensor.get_status(eventtime),}
 
 	def reset(self):
 		# default values
@@ -291,7 +351,7 @@ class RMMU:
 
 	def home_filaments(self, tool):
 		# check for filament in hotend
-		if self.is_sensor_triggered(self.toolhead_filament_sensor):
+		if self.toolhead_filament_sensor.filament_present:
 			raise self.printer.command_error("Can not home filaments! Filament in hotend detected.")
 
 		# # update frontend
@@ -352,7 +412,7 @@ class RMMU:
 
 				# check toolhead sensor
 				else:
-					if self.is_sensor_triggered(self.toolhead_filament_sensor):
+					if self.toolhead_filament_sensor.filament_present:
 						# self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
 						self.console_echo({
 							'TITLE': "Homing filament", 
@@ -370,8 +430,8 @@ class RMMU:
 	def home_filament(self, filament):
 		# echo
 		self.console_echo({
-			'TITLE': "Home filament", 
-			'MSG': 	"Homing filament T" + str(filament) + "...", 
+			'TITLE': "Homing filament T" + str(filament) + "...", 
+			'MSG': 	"", 
 			'TYPE': "info"
 		})
 
@@ -397,8 +457,8 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Home filament", 
-			'MSG': 	"Filament T" + str(filament) + " homed!", 
+			'TITLE': "Filament T" + str(filament) + " homed!", 
+			'MSG': 	"", 
 			'TYPE': "success"
 		})
 
@@ -649,14 +709,14 @@ class RMMU:
 		# load filament into toolhead sensor
 		step_distance = 100
 		max_step_count = int((self.reverse_bowden_length * 1.5) / step_distance)
-		if not self.is_sensor_triggered(self.toolhead_filament_sensor):
+		if not self.toolhead_filament_sensor.filament_present:
 			for i in range(max_step_count):
 				self.stepper_homing_move(self.rmmu_pulley, step_distance, self.filament_homing_speed, self.filament_homing_accel, 2)
-				if self.is_sensor_triggered(self.toolhead_filament_sensor):
+				if self.toolhead_filament_sensor.filament_present:
 					break
 
 		# check sensor
-		if not self.is_sensor_triggered(self.toolhead_filament_sensor):
+		if not self.toolhead_filament_sensor.filament_present:
 			self.console_echo({
 				'TITLE': "Load filament", 
 				'MSG': 	"Could not find toolhead filament sensor!", 
@@ -820,7 +880,7 @@ class RMMU:
 		self.stepper_synced_move(-(self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance / 2), loading_speed, loading_accel)
 
 		# return result
-		return self.is_sensor_triggered(self.toolhead_filament_sensor)
+		return self.toolhead_filament_sensor.filament_present
 
 	#####
 	# Unload Filament
@@ -1034,7 +1094,7 @@ class RMMU:
 		self.stepper_synced_move(-(self.cooling_zone_unloading_distance), self.cooling_zone_unloading_speed, self.cooling_zone_unloading_accel)
 
 		# check sensor
-		if self.is_sensor_triggered(self.toolhead_filament_sensor):
+		if self.toolhead_filament_sensor.filament_present:
 			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from cooling zone to reverse bowden!", 
@@ -1048,7 +1108,7 @@ class RMMU:
 				})
 				self.stepper_move(self.rmmu_pulley, self.filament_cleaning_distance, True, self.filament_homing_speed, self.filament_homing_accel)
 				self.stepper_move(self.rmmu_pulley, -(self.filament_cleaning_distance * 2), True, self.filament_homing_speed, self.filament_homing_accel)
-				if not self.is_sensor_triggered(self.toolhead_filament_sensor):
+				if not self.toolhead_filament_sensor.filament_present:
 					self.console_echo({
 						'TITLE': "Load filament", 
 						'MSG': 	"Toolhead filament sensor successfully cleaned!", 
@@ -1078,7 +1138,7 @@ class RMMU:
 		self.stepper_move(self.rmmu_pulley, -self.filament_homing_parking_distance, True, self.filament_homing_speed, self.filament_homing_accel)
 
 		# check sensor
-		if self.is_sensor_triggered(self.toolhead_filament_sensor):
+		if self.toolhead_filament_sensor.filament_present:
 			self.console_echo({
 				'TITLE': "Unload filament", 
 				'MSG': 	"Could not unload filament T" + str(tool) + " from toolhead sensor to reverse bowden!", 
@@ -1096,12 +1156,12 @@ class RMMU:
 	# Filament presence check
  	#####
 	def test_filament(self, filament):
-		if len(self.parking_t_sensor_endstop) == self.tool_count or len(self.bowdenfilament_sensors) == self.tool_count:
+		if len(self.parking_t_sensor_endstop) == self.tool_count or len(self.feeder_sensor) == self.tool_count:
 			if len(self.parking_t_sensor_endstop) == self.tool_count:
 				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[filament]):
 					return False
-			if len(self.bowdenfilament_sensors) == self.tool_count:
-				if not self.is_sensor_triggered(self.bowdenfilament_sensors[filament]):
+			if len(self.feeder_sensor) == self.tool_count:
+				if not self.feeder_sensor[filament].filament_present:
 					return False
 			return True
 		else:
@@ -1134,9 +1194,9 @@ class RMMU:
 		# select filament
 		self.select_filament(tool)
 
-		if len(self.bowdenfilament_sensors) == self.tool_count:
+		if len(self.feeder_sensor) == self.tool_count:
 			# check filament runout sensor
-			if not self.is_sensor_triggered(self.bowdenfilament_sensors[tool]):
+			if not self.feeder_sensor[tool].filament_present:
 				self.console_echo({
 					'TITLE': "Eject filament", 
 					'MSG': 	"Filament T" + str(tool) + " already ejected!", 
@@ -1282,7 +1342,7 @@ class RMMU:
 						self.select_filament(tool)
 						self.stepper_synced_move(-100, 50, 200)
 						self.select_filament(-1)
-						if self.is_sensor_triggered(self.toolhead_filament_sensor):
+						if self.toolhead_filament_sensor.filament_present:
 							self.console_echo({
 								'TITLE': "Join Spools", 
 								'MSG': 	"Can not join spools! Toolhead sensor is still triggered after a unsuccessful filament loading.", 
@@ -1435,7 +1495,7 @@ class RMMU:
 				'TYPE': "warning"
 			})
 			return
-		if self.is_sensor_triggered(self.toolhead_filament_sensor) and self.start_print_param != None:
+		if self.toolhead_filament_sensor.filament_present and self.start_print_param != None:
 			self.console_echo({
 				'TITLE': "Filament insert", 
 				'MSG': 	"Toolhead Filament sensor triggered! Can not perform insert action.", 
@@ -1585,12 +1645,14 @@ class RMMU:
 
 	def query_sensors(self):
 		self.gcode.respond_raw("querying " + self.name + " sensors...")
+
 		result = self.name + " Sensors:\n"
 		if self.toolhead_filament_sensor != None:
-			result += "Toolhead sensor triggered: " + str(self.is_sensor_triggered(self.toolhead_filament_sensor)) + "\n"
-		if len(self.bowdenfilament_sensors) == self.tool_count:
+			result += "Toolhead sensor triggered: " + str(self.toolhead_filament_sensor.filament_present) + "\n"
+		if len(self.feeder_sensor) == self.tool_count:
 			for i in range(0, self.tool_count):
-				result += "Bowden sensor T" + str(i) + " triggered: " + str(self.is_sensor_triggered(self.bowdenfilament_sensors[i])) + "\n"
+				result += "Feeder sensor T" + str(i) + " triggered: " + str(self.feeder_sensor[i].filament_present) + "\n"
+
 		result += "\n" + self.name + " Endstops:\n"
 		if self.hotend_endstop != None:
 			result += "Hotend endstop triggered: " + str(self.is_endstop_triggered(self.hotend_endstop)) + "\n"
@@ -1602,6 +1664,22 @@ class RMMU:
 			for i in range(0, self.tool_count):
 				result += "Parking endstop T" + str(i) + " triggered: " + str(self.is_endstop_triggered(self.parking_t_sensor_endstop[i])) + "\n"
 		self.gcode.respond_raw(result)
+
+	#####
+	# Filament sensor handling
+	#####
+	def set_filament_sensor(self, param):
+		# parameter
+		sensor = param.get('SENSOR', "").lower()
+		enable = param.get_int('ENABLE', None)
+
+		if sensor == "toolhead_filament_sensor":
+			self.toolhead_filament_sensor.enable(enable == 1)
+
+		if sensor == "feeder_sensor":
+			if len(self.feeder_sensor) > 0:
+				for sensor in self.feeder_sensor:
+					sensor.enable(enable == 1)
 
 	######
 	# Helper
@@ -1626,7 +1704,7 @@ class RMMU:
 		self.gcode.respond_raw(_title + _msg)
 
 	def get_loaded_filament(self):
-		if self.is_sensor_triggered(self.toolhead_filament_sensor):
+		if self.toolhead_filament_sensor.filament_present:
 			return self.get_setting(self.name.lower() + self.VARS_LOADED_FILAMENT)
 		return -1
 
@@ -1649,7 +1727,7 @@ class RMMU:
 		self.select_filament(-1)
 
 	def calibrate_reverse_bowden_length(self):
-		if self.is_sensor_triggered(self.toolhead_filament_sensor):
+		if self.toolhead_filament_sensor.filament_present:
 			self.console_echo({
 				'TITLE': "Calibrate bowden tube", 
 				'MSG': 	"No calibration possible! Filament in hotend detected.", 
@@ -1798,9 +1876,6 @@ class RMMU:
 	def is_endstop_triggered(self, endstop):
 		return bool(endstop.query_endstop(self.toolhead.get_last_move_time()))     
 
-	def is_sensor_triggered(self, sensor):
-		return bool(sensor.runout_helper.filament_present)     
-
 	def extruder_get_temperature(self):
 		return self.heater.get_status(self.toolhead.get_last_move_time())['temperature']
 
@@ -1822,6 +1897,47 @@ class RMMU:
 			if variable in variables:
 				return variables[variable]
 		return None
+
+class RMMUSwitchSensor:
+	def __init__(self, config, name, insert_callback, runout_callback, pin):
+		self.name = name
+		printer = config.get_printer()
+		self.reactor = printer.get_reactor()
+		self.min_event_systime = self.reactor.NEVER
+		self.filament_present = False
+		self.sensor_enabled = True
+		self.insert_callback = insert_callback
+		self.runout_callback = runout_callback
+		pin_desc = pin
+		if pin_desc.startswith("^") or pin_desc.startswith("~"):
+			pin_desc = pin_desc[1:].strip()
+		if pin_desc.startswith("!"):
+			pin_desc = pin_desc[1:].strip()
+		ppins = printer.lookup_object("pins")
+		ppins.allow_multi_use_pin(pin_desc)
+		buttons = printer.load_object(config, 'buttons')
+		buttons.register_buttons([pin], self._button_handler)
+
+	def enable(self, enable):
+		self.sensor_enabled = enable
+
+	def get_status(self, eventtime):
+		return {'name': self.name,
+		  'filament_present': self.filament_present}
+
+	def _button_handler(self, eventtime, state):
+		self.filament_present = bool(state)
+		eventtime = self.reactor.monotonic()
+		if eventtime < self.min_event_systime or not self.sensor_enabled:
+			# do not process during the initialization time, duplicates,
+			# during the event delay time, while an event is running, or
+			# when the sensor is disabled
+			return
+		if self.sensor_enabled:
+			if state:
+				self.reactor.register_callback(self.insert_callback)
+			else:
+				self.reactor.register_callback(self.runout_callback)
 
 #####
 # Loader
