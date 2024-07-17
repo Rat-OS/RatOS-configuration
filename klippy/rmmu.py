@@ -796,7 +796,7 @@ class RMMU:
 			self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
 			if not self.is_endstop_triggered(self.hotend_endstop):
-				for i in range(1, 5):
+				for i in range(1, 10):
 					self.stepper_synced_move(10, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 					if self.is_endstop_triggered(self.hotend_endstop):
 						self.ratos_debug_echo("Hotend sensor found!")
