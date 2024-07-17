@@ -212,6 +212,7 @@ class RMMU:
 		self.cooling_zone_unloading_pause = self.config.getfloat('cooling_zone_unloading_pause', 1000.0)
 		self.cooling_zone_unloading_distance = self.config.getfloat('cooling_zone_unloading_distance', 130.0)
 
+
 	def set_setting(self, variable, value):
 		self.gcode.run_script_from_command("SAVE_VARIABLE VARIABLE=%s VALUE=%s" % (variable, value))
 
@@ -673,55 +674,80 @@ class RMMU:
 		# echo
 		self.ratos_debug_echo("Loading filament T" + str(tool) + " from toolhead sensor to hotend sensor...")
 
-		# get loading distances
-		hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
-		# cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
-		hotend_sensor_to_cooling_zone_distance = 10
+		has_oozeguard = self.get_macro_variable("T0", "has_oozeguard")
 
-		# move filament to hotend sensor
-		self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+		if has_oozeguard:
+			# get loading distances
+			hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
+			cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
 
-		if not self.is_endstop_triggered(self.hotend_endstop):
-			for i in range(1, 5):
-				self.stepper_synced_move(10, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-				if self.is_endstop_triggered(self.hotend_endstop):
-					self.ratos_debug_echo("Hotend sensor found!")
-					break
+			# move filament to hotend sensor
+			self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
 			# check sensor
 			if not self.is_endstop_triggered(self.hotend_endstop):
-				self.console_echo({
-					'TITLE': "Load filament", 
-					'MSG': 	"Hotend sensor not found!", 
-					'TYPE': "warning"
-				})
+				self.ratos_echo("Could not find hotend filament sensor!")
 				return False
+
+			# move filament to cooling zone position
+			if hotend_sensor_load_distance != cooling_zone_load_distance:
+				self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
+			# release idler
+			self.select_filament(-1)
+
+			# echo
+			self.ratos_echo("Filament T" + str(tool) + " loaded to cooling zone!")
+
+			# success
+			return True	
+
 		else:
-			self.ratos_debug_echo("Hotend sensor found!")
+			# get loading distances
+			hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
+			# cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
+			hotend_sensor_to_cooling_zone_distance = 10
 
-		if self.is_endstop_triggered(self.hotend_endstop):
-			# exact positioning
-			for i in range(1, 10):
-				self.stepper_synced_move(-2, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+			# move filament to hotend sensor
+			self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+
+			if not self.is_endstop_triggered(self.hotend_endstop):
+				for i in range(1, 5):
+					self.stepper_synced_move(10, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+					if self.is_endstop_triggered(self.hotend_endstop):
+						self.ratos_debug_echo("Hotend sensor found!")
+						break
+				# check sensor
 				if not self.is_endstop_triggered(self.hotend_endstop):
-					self.stepper_synced_move(1, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-					self.ratos_debug_echo("Filament positioned at hotend sensor!")
-					break
+					self.console_echo({
+						'TITLE': "Load filament", 
+						'MSG': 	"Hotend sensor not found!", 
+						'TYPE': "warning"
+					})
+					return False
+			else:
+				self.ratos_debug_echo("Hotend sensor found!")
 
-		# move filament to cooling zone position
-		self.stepper_synced_move(hotend_sensor_to_cooling_zone_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+			if self.is_endstop_triggered(self.hotend_endstop):
+				# exact positioning
+				for i in range(1, 10):
+					self.stepper_synced_move(-2, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+					if not self.is_endstop_triggered(self.hotend_endstop):
+						self.stepper_synced_move(1, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+						self.ratos_debug_echo("Filament positioned at hotend sensor!")
+						break
 
-		# # move filament to cooling zone position
-		# if hotend_sensor_load_distance != cooling_zone_load_distance:
-		# 	self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+			# move filament to cooling zone position
+			self.stepper_synced_move(hotend_sensor_to_cooling_zone_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
-		# release idler
-		self.select_filament(-1)
+			# release idler
+			self.select_filament(-1)
 
-		# echo
-		self.ratos_debug_echo("Filament T" + str(tool) + " loaded to cooling zone!")
+			# echo
+			self.ratos_debug_echo("Filament T" + str(tool) + " loaded to cooling zone!")
 
-		# success
-		return True
+			# success
+			return True
 
 	def extruder_test(self, tool):
 		# echo
