@@ -734,7 +734,8 @@ class RMMU:
 		# echo
 		self.ratos_debug_echo("Loading filament T" + str(tool) + " from toolhead sensor to hotend sensor...")
 
-		has_oozeguard = self.get_macro_variable("T0", "has_oozeguard")
+		has_oozeguard = False
+		# has_oozeguard = self.get_macro_variable("T0", "has_oozeguard")
 
 		if has_oozeguard:
 			# get loading distances
@@ -1921,6 +1922,10 @@ class RMMUSwitchSensor:
 		ppins.allow_multi_use_pin(pin_desc)
 		buttons = printer.load_object(config, 'buttons')
 		buttons.register_buttons([pin], self._button_handler)
+		printer.register_event_handler("klippy:ready", self._handle_ready)
+
+	def _handle_ready(self):
+		self.min_event_systime = self.reactor.monotonic() + 2.
 
 	def enable(self, enable):
 		self.sensor_enabled = enable
@@ -1938,7 +1943,7 @@ class RMMUSwitchSensor:
 			# when the sensor is disabled
 			return
 		if self.sensor_enabled:
-			if state:
+			if self.filament_present:
 				self.reactor.register_callback(self.insert_callback)
 			else:
 				self.reactor.register_callback(self.runout_callback)
