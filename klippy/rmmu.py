@@ -148,6 +148,7 @@ class RMMU:
 		if self.name == "RMMU_T1":
 			self.extruder = self.printer.lookup_object('extruder1')
 		self.heater = self.extruder.get_heater()
+		self.dual_carriage = self.printer.lookup_object("dual_carriage", None)
 
 		# get stepper
 		self.rmmu_idler = self.printer.lookup_object("manual_stepper " + self.rmmu_idler_name, None)
@@ -168,25 +169,25 @@ class RMMU:
 		self.gcode.run_script_from_command('_ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
 
 	def _t0_feeder_sensor_insert(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=0')
+		self.on_filament_insert(0)
 
 	def _t0_feeder_sensor_runout(self, eventtime):
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
 
 	def _t1_feeder_sensor_insert(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=1')
+		self.on_filament_insert(1)
 
 	def _t1_feeder_sensor_runout(self, eventtime):
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=1')
 
 	def _t2_feeder_sensor_insert(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=2')
+		self.on_filament_insert(2)
 
 	def _t2_feeder_sensor_runout(self, eventtime):
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=2')
 
 	def _t3_feeder_sensor_insert(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_INSERT TOOLHEAD=3')
+		self.on_filament_insert(3)
 
 	def _t3_feeder_sensor_runout(self, eventtime):
 		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=3')
@@ -291,15 +292,21 @@ class RMMU:
 		self.initial_filament = -1
 		self.needs_initial_purging = False
 
-		# # update frontend
-		# loaded_filament = self.get_loaded_filament()
-		# for i in range(0, self.tool_count):
-		# 	if i == loaded_filament:
-		# 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
-		# 		self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "00FF00" + "\"\'")
-		# 	else:
-		# 		self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
-		# 		self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
+		# get frontend status colors
+		status_color_ok = self.get_macro_variable("RatOS", "status_color_ok")
+		status_color_error = self.get_macro_variable("RatOS", "status_color_error")
+		status_color_unknown = self.get_macro_variable("RatOS", "status_color_unknown")
+
+		# update frontend
+		if not self.dual_carriage:
+			loaded_filament = self.get_loaded_filament()
+			for i in range(0, self.tool_count):
+				if i == loaded_filament:
+					self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=True")
+					self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_ok + "\"\'")
+				else:
+					self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(i) + " VARIABLE=active VALUE=False")
+					self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_unknown + "\"\'")
 
 	#####
 	# End Print
@@ -344,10 +351,16 @@ class RMMU:
 		if self.toolhead_filament_sensor.filament_present:
 			raise self.printer.command_error("Can not home filaments! Filament in hotend detected.")
 
-		# # update frontend
-		# for i in range(0, self.tool_count):
-		# 	if tool == -1 or tool == i:
-		# 		self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FFFF00" + "\"\'")
+		# get frontend status colors
+		status_color_ok = self.get_macro_variable("RatOS", "status_color_ok")
+		status_color_error = self.get_macro_variable("RatOS", "status_color_error")
+		status_color_unknown = self.get_macro_variable("RatOS", "status_color_unknown")
+
+		# update frontend
+		if not self.dual_carriage:
+			for i in range(0, self.tool_count):
+				if tool == -1 or tool == i:
+					self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_unknown + "\"\'")
 
 		# home if needed
 		if not self.is_homed:
@@ -359,28 +372,30 @@ class RMMU:
 
 				# home filament
 				if not self.home_filament(i):
+					# update frontend
+					if not self.dual_carriage:
+						self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_error + "\"\'")
+					# console output
 					self.console_echo({
 						'TITLE': "Homing filament", 
 						'MSG': 	"Could not home filament T" + str(i) + "!\nFilament homing stopped.", 
 						'TYPE': "alert"
 					})
 					break
-				# if self.home_filament(i):
-				# 	self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "00FF00" + "\"\'")
-				# else:
-				# 	self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
-				# 	self.ratos_echo("Could not home filament T" + str(i) + "! Filament homing stopped.")
-				# 	break
 
 				# check parking sensor
 				if self.parking_sensor_endstop != None:
 					if self.is_endstop_triggered(self.parking_sensor_endstop):
-						# self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
+						# update frontend
+						if not self.dual_carriage:
+							self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_error + "\"\'")
+						# console output
 						self.console_echo({
 							'TITLE': "Homing filament", 
 							'MSG': 	"Parking filament sensor isssue detected!\nFilament homing stopped.", 
 							'TYPE': "alert"
 						})
+						# pull filament back
 						self.select_filament(i)
 						self.rmmu_pulley.do_set_position(0.0)
 						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
@@ -389,12 +404,16 @@ class RMMU:
 				# check Tx parking sensor
 				elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
 					if not self.is_endstop_triggered(self.parking_t_sensor_endstop[i]):
-						# self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
+						# update frontend
+						if not self.dual_carriage:
+							self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_error + "\"\'")
+						# console output
 						self.console_echo({
 							'TITLE': "Homing filament", 
 							'MSG': 	"Parking filament sensor isssue detected!\nFilament homing stopped.", 
 							'TYPE': "alert"
 						})
+						# pull filament back
 						self.select_filament(i)
 						self.rmmu_pulley.do_set_position(0.0)
 						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
@@ -403,16 +422,24 @@ class RMMU:
 				# check toolhead sensor
 				else:
 					if self.toolhead_filament_sensor.filament_present:
-						# self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + "FF0000" + "\"\'")
+						# update frontend
+						if not self.dual_carriage:
+							self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_error + "\"\'")
+						# console output
 						self.console_echo({
 							'TITLE': "Homing filament", 
 							'MSG': 	"Toolhead filament sensor isssue detected!\nFilament homing stopped.", 
 							'TYPE': "alert"
 						})
+						# pull filament back
 						self.select_filament(i)
 						self.rmmu_pulley.do_set_position(0.0)
 						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
 						break
+
+				# update frontend
+				if not self.dual_carriage:
+					self.gcode.run_script_from_command('SET_GCODE_VARIABLE MACRO=T' + str(i) + ' VARIABLE=color VALUE=\'"' + status_color_ok + "\"\'")
 
 		# release idler
 		self.select_filament(-1)
@@ -538,6 +565,8 @@ class RMMU:
 			'MSG': 	"Filament T" + str(tool) + " loaded.", 
 			'TYPE': "success"
 		})
+		if not self.dual_carriage:
+			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(tool) + " VARIABLE=active VALUE=True")
 
 		# success 
 		return True
@@ -924,6 +953,8 @@ class RMMU:
 			'MSG': 	"Filament T" + str(tool) + " unloaded!", 
 			'TYPE': "success"
 		})
+		if not self.dual_carriage:
+			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(tool) + " VARIABLE=active VALUE=False")
 
 		# success 
 		return True
@@ -1473,6 +1504,15 @@ class RMMU:
 		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR TOOLHEAD=" + str(tool))
 
 	def on_filament_insert(self, tool):
+
+		is_printing_gcode = self.get_macro_variable("START_PRINT", "is_printing_gcode")
+		if is_printing_gcode:
+			return
+
+		enable_insert_detection = self.get_macro_variable("T" + str(tool), "enable_insert_detection")
+		if not enable_insert_detection:
+			return
+
 		# check if insert actions are allowed
 		if len(self.parking_t_sensor_endstop) != self.tool_count:
 			self.console_echo({
