@@ -69,7 +69,7 @@ class RMMU_Hub:
 		self.gcode.register_command('RMMU_MOVE_FILAMENT', self.cmd_RMMU_MOVE_FILAMENT, desc=(self.desc_RMMU_MOVE_FILAMENT))
 		self.gcode.register_command('RMMU_EJECT_FILAMENT', self.cmd_RMMU_EJECT_FILAMENT, desc=(self.desc_RMMU_EJECT_FILAMENT))
 		self.gcode.register_command('RMMU_FILAMENT_INSERT', self.cmd_RMMU_FILAMENT_INSERT, desc=(self.desc_RMMU_FILAMENT_INSERT))
-		self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
+		# self.gcode.register_command('RMMU_FILAMENT_RUNOUT', self.cmd_RMMU_FILAMENT_RUNOUT, desc=(self.desc_RMMU_FILAMENT_RUNOUT))
 
 	desc_START_WATCH = ""
 	def cmd_START_WATCH(self, param):
@@ -146,14 +146,14 @@ class RMMU_Hub:
 		else:
 			self.rmmu[0].on_filament_insert(tool)
 
-	desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS bowden sensor runout detection."
-	def cmd_RMMU_FILAMENT_RUNOUT(self, param):
-		tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.total_tool_count)
-		clogged = param.get('CLOGGED').lower()
-		if tool >= self.rmmu[0].tool_count:
-			self.rmmu[1].on_filament_runout(tool - self.rmmu[0].tool_count, clogged)
-		else:
-			self.rmmu[0].on_filament_runout(tool, clogged)
+	# desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS bowden sensor runout detection."
+	# def cmd_RMMU_FILAMENT_RUNOUT(self, param):
+	# 	tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.total_tool_count)
+	# 	clogged = param.get('CLOGGED').lower()
+	# 	if tool >= self.rmmu[0].tool_count:
+	# 		self.rmmu[1].on_filament_runout(tool - self.rmmu[0].tool_count, clogged)
+	# 	else:
+	# 		self.rmmu[0].on_filament_runout(tool, clogged)
 
 	desc_RMMU_START_PRINT = "RMMU_START_PRINT gcode macro. Calls the RatOS START_PRINT macro if there are no errors."
 	def cmd_RMMU_START_PRINT(self, param):
@@ -178,7 +178,6 @@ class RMMU_Hub:
 	#####
 	def start_print(self, param):
 		# parameter
-		self.start_print_param = param
 		self.wipe_accel = param.get_int('WIPE_ACCEL', None, minval=0, maxval=100000)
 		self.extruder_temp = param.get('EXTRUDER_TEMP').lower().split(",")
 		self.extruder_temp = [float(item) for item in self.extruder_temp]
@@ -211,6 +210,13 @@ class RMMU_Hub:
 			for rmmu in self.rmmu:
 				if not rmmu.is_homed:
 					rmmu.home()
+
+		# # disable toolhead filament sensors
+		# for rmmu in self.rmmu:
+		# 	rmmu.toolhead_filament_sensor.enable(0)
+		# 	if len(rmmu.feeder_sensor) > 0:
+		# 		for sensor in rmmu.feeder_sensor:
+		# 			sensor.enable(0)
 
 		if not ((idex_mode == "copy" or idex_mode == "mirror") and len(logical_tools) == 1):
 
@@ -348,9 +354,6 @@ class RMMU_Hub:
 					# cool down extruder, dont wait for it
 					rmmu.extruder_set_temperature(0, False)					
 
-				# disable toolhead filament sensor
-				rmmu.toolhead_filament_sensor.enable(False)
-
 			# cool toolhead down to standby temp if needed to avoid oozing on the build plate after loading filaments
 			if needs_cool_down:
 				preheat_extruder_temp = float(self.get_macro_variable("RatOS", "preheat_extruder_temp"))
@@ -373,6 +376,17 @@ class RMMU_Hub:
 					self.gcode.run_script_from_command('_IDEX_COPY DANCE=0')
 				elif idex_mode == "mirror" and idex_mode != act_idex_mode:
 					self.gcode.run_script_from_command('_IDEX_MIRROR DANCE=0')
+
+		# # enable toolhead filament sensors
+		# for rmmu in self.rmmu:
+		# 	rmmu.toolhead_filament_sensor.enable(1)
+		# 	if len(rmmu.feeder_sensor) > 0:
+		# 		for sensor in rmmu.feeder_sensor:
+		# 			sensor.enable(1)
+
+		# set start_print_param
+		for rmmu in self.rmmu:
+			rmmu.start_print_param = param
 
 		# call RatOS start print gcode macro
 		self.gcode.run_script_from_command('START_PRINT ' + str(param.get_raw_command_parameters().strip()))
@@ -450,8 +464,12 @@ class RMMU_Hub:
 		# run before filament change gcode macro
 		self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_CHANGE TOOLHEAD=' + str(physical_toolhead) + ' X=' + str(x) + ' Y=' + str(y) + ' WIPE_ACCEL=' + str(self.wipe_accel) + ' COPY_MIRROR=' + str(copy_mirror))
 
-		# enable toolhead filament sensor
-		rmmu.toolhead_filament_sensor.enable(True)
+		# # disable toolhead filament sensors
+		# for rmmu in self.rmmu:
+		# 	rmmu.toolhead_filament_sensor.enable(0)
+		# 	if len(rmmu.feeder_sensor) > 0:
+		# 		for sensor in rmmu.feeder_sensor:
+		# 			sensor.enable(0)
 
 		# check toolhead filament sensor
 		if rmmu.toolhead_filament_sensor.filament_present:
@@ -472,8 +490,12 @@ class RMMU_Hub:
 				if not rmmu.load_filament(rmmu_filament, copy_mirror):
 					rmmu.on_loading_error(rmmu_filament)
 
-		# disable toolhead filament sensor
-		rmmu.toolhead_filament_sensor.enable(False)
+		# # enable toolhead filament sensors
+		# for rmmu in self.rmmu:
+		# 	rmmu.toolhead_filament_sensor.enable(1)
+		# 	if len(rmmu.feeder_sensor) > 0:
+		# 		for sensor in rmmu.feeder_sensor:
+		# 			sensor.enable(1)
 
 	#####
 	# Load Filament

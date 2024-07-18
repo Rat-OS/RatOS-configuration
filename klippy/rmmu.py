@@ -98,7 +98,7 @@ class RMMU:
 
 		# get toolhead filament sensor
 		pin = self.config.getsection("manual_stepper " + self.rmmu_pulley_name).get("endstop_pin")
-		self.toolhead_filament_sensor = RMMUSwitchSensor(self.config, "toolhead_sensor", self._toolhead_sensor_insert, self._toolhead_sensor_runout, pin)
+		self.toolhead_filament_sensor = RMMUSwitchSensor(self.config, "toolhead_sensor", self.on_toolhead_sensor_insert, self.on_toolhead_sensor_runout, pin)
 
 		# get hotend endstop
 		self.hotend_endstop = None
@@ -124,10 +124,10 @@ class RMMU:
 		# get feeder sensors
 		self.feeder_sensor = []
 		if len(self.t_feeder_pin) == self.tool_count:
-			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t0_sensor", self._t0_feeder_sensor_insert, self._t0_feeder_sensor_runout, self.t_feeder_pin[0]))
-			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t1_sensor", self._t1_feeder_sensor_insert, self._t1_feeder_sensor_runout, self.t_feeder_pin[1]))
-			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t2_sensor", self._t2_feeder_sensor_insert, self._t2_feeder_sensor_runout, self.t_feeder_pin[2]))
-			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t3_sensor", self._t3_feeder_sensor_insert, self._t3_feeder_sensor_runout, self.t_feeder_pin[3]))
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t0_sensor", self.on_t0_feeder_sensor_insert, self.on_t0_feeder_sensor_runout, self.t_feeder_pin[0]))
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t1_sensor", self.on_t1_feeder_sensor_insert, self.on_t1_feeder_sensor_runout, self.t_feeder_pin[1]))
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t2_sensor", self.on_t2_feeder_sensor_insert, self.on_t2_feeder_sensor_runout, self.t_feeder_pin[2]))
+			self.feeder_sensor.append(RMMUSwitchSensor(self.config, "feeder_t3_sensor", self.on_t3_feeder_sensor_insert, self.on_t3_feeder_sensor_runout, self.t_feeder_pin[3]))
 
 		# register klipper handler
 		self.register_handler()
@@ -162,36 +162,6 @@ class RMMU:
 	def _motor_off(self, print_time):
 		self.reset()
 		self.gcode.run_script_from_command('_LED_MOTORS_OFF')
-
-	def _toolhead_sensor_insert(self, eventtime):
-		self.gcode.run_script_from_command("_ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0")
-
-	def _toolhead_sensor_runout(self, eventtime):
-		self.gcode.run_script_from_command('_ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
-
-	def _t0_feeder_sensor_insert(self, eventtime):
-		self.on_filament_insert(0)
-
-	def _t0_feeder_sensor_runout(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
-
-	def _t1_feeder_sensor_insert(self, eventtime):
-		self.on_filament_insert(1)
-
-	def _t1_feeder_sensor_runout(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=1')
-
-	def _t2_feeder_sensor_insert(self, eventtime):
-		self.on_filament_insert(2)
-
-	def _t2_feeder_sensor_runout(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=2')
-
-	def _t3_feeder_sensor_insert(self, eventtime):
-		self.on_filament_insert(3)
-
-	def _t3_feeder_sensor_runout(self, eventtime):
-		self.gcode.run_script_from_command('_ON_BOWDEN_FILAMENT_SENSOR_RUNOUT TOOLHEAD=3')
 
 	#####
 	# Settings
@@ -237,6 +207,10 @@ class RMMU:
 				if self.config.get('feeder_t' + str(i) + '_pin', None) is not None:
 					self.t_feeder_pin.append(self.config.get('feeder_t' + str(i) + '_pin'))
 
+		# toolhead assignment
+		self.physical_toolhead = self.config.getint('physical_toolhead', 0)
+		self.logical_toolheads = self.config.getlist('logical_toolheads', [0,1,2,3])
+
 		# idler config
 		self.idler_positions = [102,76,50,24]
 		self.idler_speed = self.config.getfloat('idler_speed', 300.0)
@@ -276,6 +250,8 @@ class RMMU:
 	def get_status(self, eventtime):
 		return {'name': self.name,
 		  'tool_count': self.tool_count,
+		  'physical_toolhead': self.physical_toolhead,
+		  'logical_toolheads': self.logical_toolheads,
 		  'is_homed': self.is_homed,
 		  'in_use': self.in_use,
 		  'initial_filament': self.initial_filament,
@@ -825,7 +801,7 @@ class RMMU:
 		# get loading distances
 		hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
 		# cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
-		hotend_sensor_to_cooling_zone_distance = 10
+		hotend_sensor_to_cooling_zone_distance = 5
 
 		# move filament to hotend sensor
 		self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
@@ -1536,7 +1512,11 @@ class RMMU:
 		self.select_filament(-1)
 		self.gcode.run_script_from_command("_RMMU_ON_FILAMENT_LOADING_ERROR TOOLHEAD=" + str(tool))
 
-	def on_filament_insert(self, tool):
+	def on_filament_insert(self, sensor, tool):
+		self.ratos_debug_echo("on_filament_insert TOOL=" + str(tool))
+
+		# disable filament sensor
+		sensor.enable(False)
 
 		is_printing_gcode = self.get_macro_variable("START_PRINT", "is_printing_gcode")
 		if is_printing_gcode:
@@ -1634,6 +1614,9 @@ class RMMU:
 		# release idler
 		self.select_filament(-1)
 
+		# enable filament sensor
+		sensor.enable(True)
+
 		# success
 		self.console_echo({
 			'TITLE': "Filament insert", 
@@ -1641,48 +1624,65 @@ class RMMU:
 			'TYPE': "success"
 		})
 
-	def on_filament_runout(self, tool, clogged):
-		# set runout detection
-		self.runout_detected = True
+	def on_filament_runout(self, sensor, tool):
+		self.ratos_debug_echo("on_filament_runout TOOL=" + str(tool))
 
-		# run before runout macro
-		self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_RUNOUT TOOLHEAD=' + str(tool) + ' CLOGGED=' + str(clogged))
+		if not self.runout_detected:
 
-		# unload filament and eject it if no clog has been detected
-		if clogged != "true":
+			# disable filament sensor
+			sensor.enable(False)
+
+			# pause printer
+			if not self.pause_resume.is_paused:
+				self.gcode.run_script_from_command('PAUSE RUNOUT=True')
+
+			# visual feedback
+			if not self.pause_resume.is_paused:
+				self.gcode.run_script_from_command('_LED_FILAMENT_RUNOUT TOOLHEAD=' + str(tool))
+
+			# run before runout macro
+			self.gcode.run_script_from_command('_RMMU_BEFORE_FILAMENT_RUNOUT TOOLHEAD=' + str(tool))
 
 			# unload filament
-			loaded_filament = self.get_loaded_filament()
-			if not self.unload_filament(loaded_filament, False):
-				# echo
-				self.console_echo({
-					'TITLE': "Filament runout", 
-					'MSG': 	"Can not eject filament because it couldnt be unloaded!", 
-					'TYPE': "alert"
-				})
+			unload_after_runout = self.get_macro_variable("T" + str(tool), "unload_after_runout")
+			if unload_after_runout:
 
-				# release idler
-				self.select_filament(-1)
+				# loaded_filament = self.get_loaded_filament()
+				if not self.unload_filament(tool, False):
+					# echo
+					self.console_echo({
+						'TITLE': "Filament runout", 
+						'MSG': 	"Can not eject filament because it couldnt be unloaded!", 
+						'TYPE': "alert"
+					})
 
-				# stop
-				return
-			
-			# eject filament
-			self.eject_filaments(tool)
+					# release idler
+					self.select_filament(-1)
 
-			# check spool joining
-			if len(self.spool_joins) > 0:
-				for spool_join in self.spool_joins:
-					for joined_spool in spool_join:
-						if joined_spool == tool:
-							if self.join_spool(spool_join, tool):
-								self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
-								return
+					return
+				
+				# eject filament
+				self.eject_filaments(tool)
+
+				# check spool joining
+				if len(self.spool_joins) > 0:
+					for spool_join in self.spool_joins:
+						for joined_spool in spool_join:
+							if joined_spool == tool:
+								if self.join_spool(spool_join, tool):
+									self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
+									return
+
+			# enable filament sensor
+			sensor.enable(True)
+
+			# set runout detection
+			self.runout_detected = True
 
 			# echo
 			self.console_echo({
 				'TITLE': "Filament runout", 
-				'MSG': 	"Load new filament T" + str(tool) + " into the hotend and resume the print!", 
+				'MSG': 	"Load new filament T" + str(tool) + " and resume the print!", 
 				'TYPE': "success"
 			})
 
@@ -1748,6 +1748,40 @@ class RMMU:
 			if len(self.feeder_sensor) > 0:
 				for sensor in self.feeder_sensor:
 					sensor.enable(enable == 1)
+
+	def on_toolhead_sensor_insert(self, eventtime):
+		self.ratos_debug_echo("on_toolhead_sensor_insert")
+		return
+		self.gcode.run_script_from_command("_ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0")
+
+	def on_toolhead_sensor_runout(self, eventtime):
+		self.ratos_debug_echo("on_toolhead_sensor_insert")
+		return
+		self.gcode.run_script_from_command('_ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
+
+	def on_t0_feeder_sensor_insert(self, eventtime):
+		self.on_filament_insert(self.feeder_sensor[0], 0)
+
+	def on_t0_feeder_sensor_runout(self, eventtime):
+		self.on_filament_runout(self.feeder_sensor[0], 0)
+
+	def on_t1_feeder_sensor_insert(self, eventtime):
+		self.on_filament_insert(self.feeder_sensor[1], 1)
+
+	def on_t1_feeder_sensor_runout(self, eventtime):
+		self.on_filament_runout(self.feeder_sensor[1], 1)
+
+	def on_t2_feeder_sensor_insert(self, eventtime):
+		self.on_filament_insert(self.feeder_sensor[2], 2)
+
+	def on_t2_feeder_sensor_runout(self, eventtime):
+		self.on_filament_runout(self.feeder_sensor[2], 2)
+
+	def on_t3_feeder_sensor_insert(self, eventtime):
+		self.on_filament_insert(self.feeder_sensor[3], 3)
+
+	def on_t3_feeder_sensor_runout(self, eventtime):
+		self.on_filament_runout(self.feeder_sensor[3], 3)
 
 	######
 	# Helper
@@ -1977,7 +2011,6 @@ class RMMUSwitchSensor:
 		self.sensor_enabled = True
 		self.insert_callback = insert_callback
 		self.runout_callback = runout_callback
-		self.event_delay = 0.5
 		pin_desc = pin
 		if pin_desc.startswith("^") or pin_desc.startswith("~"):
 			pin_desc = pin_desc[1:].strip()
@@ -2007,15 +2040,10 @@ class RMMUSwitchSensor:
 			# during the event delay time, while an event is running, or
 			# when the sensor is disabled
 			return
-		if self.sensor_enabled:
-			if self.filament_present:
-				self.min_event_systime = self.reactor.NEVER
-				self.reactor.register_callback(self.insert_callback)
-				self.min_event_systime = self.reactor.monotonic() + self.event_delay
-			else:
-				self.min_event_systime = self.reactor.NEVER
-				self.reactor.register_callback(self.runout_callback)
-				self.min_event_systime = self.reactor.monotonic() + self.event_delay
+		if self.filament_present:
+			self.reactor.register_callback(self.insert_callback)
+		else:
+			self.reactor.register_callback(self.runout_callback)
 
 #####
 # Loader
