@@ -77,6 +77,7 @@ class RMMU:
 		self.spool_mapping = []
 		self.start_print_param = None
 		self.toolhead_mapping = []
+		self.last_loadeded_tool = -1
 
 		self.physical_toolhead = int(self.name.lower().replace("rmmu_t", ""))
 		self.rmmu_idler_name = "rmmu_idler_" + self.name.lower().replace("rmmu_", "")
@@ -499,6 +500,12 @@ class RMMU:
 	#####
 	# Load Filament
 	#####
+	LOAD_FILAMENT_SUCESS = 100
+	ERROR_PARKING_TO_PARKING_SENSOR = 101
+	ERROR_PARKING_TO_TOOLHEAD_SENSOR = 102
+	ERROR_BOWDEN_TO_TOOLHEAD_SENSOR = 103
+	ERROR_EXTRUDER_TEST = 104
+
 	def load_filament(self, tool, is_copy_mirror="false"):
 		# echo
 		self.console_echo({
@@ -507,6 +514,67 @@ class RMMU:
 			'TYPE': "info"
 		})
 
+		result = self._load_filament(tool, is_copy_mirror)
+
+		if result == self.ERROR_PARKING_TO_PARKING_SENSOR:
+			return False
+
+		elif result == self.ERROR_PARKING_TO_TOOLHEAD_SENSOR:
+			if self.last_loadeded_tool != -1:
+				self.console_echo({
+					'TITLE': "Load filament", 
+					'MSG': 	"Retracting" + str(self.last_loadeded_tool) + " from toolhead sensor...", 
+					'TYPE': "warning"
+				})
+				# select last filament
+				self.select_filament(self.last_loadeded_tool)
+				# retract filament
+				self.stepper_synced_move(-100, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+				# release idler
+				self.select_filament(-1)
+				# try again
+				result = self._load_filament(tool, is_copy_mirror)
+				# result
+				return result == self.LOAD_FILAMENT_SUCESS
+			return False
+
+		elif result == self.ERROR_BOWDEN_TO_TOOLHEAD_SENSOR:
+			if self.last_loadeded_tool != -1:
+				self.console_echo({
+					'TITLE': "Load filament", 
+					'MSG': 	"Retracting" + str(self.last_loadeded_tool) + " from toolhead sensor...", 
+					'TYPE': "warning"
+				})
+				# select last filament
+				self.select_filament(self.last_loadeded_tool)
+				# retract filament
+				self.stepper_synced_move(-100, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+				# release idler
+				self.select_filament(-1)
+				# try again
+				result = self._load_filament(tool, is_copy_mirror)
+				# result
+				return result == self.LOAD_FILAMENT_SUCESS
+			return False
+
+		elif result == self.ERROR_EXTRUDER_TEST:
+			return False
+
+		# echo
+		self.console_echo({
+			'TITLE': "Load filament", 
+			'MSG': 	"Filament T" + str(tool) + " loaded.", 
+			'TYPE': "success"
+		})
+		if not self.dual_carriage:
+			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(tool) + " VARIABLE=active VALUE=True")
+
+		self.last_loadeded_tool = tool
+
+		# success 
+		return True
+
+	def _load_filament(self, tool, is_copy_mirror):
 		# home if not homed yet
 		if not self.is_homed:
 			self.home()
@@ -521,12 +589,12 @@ class RMMU:
 		# load filament to toolhead sensor
 		if self.parking_sensor_endstop != None:
 			if not self.load_filament_from_parking_position_to_parking_sensor(tool):
-				return False
+				return self.ERROR_PARKING_TO_PARKING_SENSOR
 			if not self.load_filament_from_parking_sensor_to_toolhead_sensor(tool):
-				return False
+				return self.ERROR_PARKING_TO_TOOLHEAD_SENSOR
 		elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
 			if not self.load_filament_from_parking_sensor_to_toolhead_sensor(tool):
-				return False
+				return self.ERROR_PARKING_TO_TOOLHEAD_SENSOR
 		else:
 			if not self.load_filament_from_reverse_bowden_to_toolhead_sensor(tool):
 				self.console_echo({
@@ -534,12 +602,12 @@ class RMMU:
 					'MSG': 	"Could not load filament T" + str(tool) + " into toolhead filament sensor!", 
 					'TYPE': "alert"
 				})
-				return False
+				return self.ERROR_BOWDEN_TO_TOOLHEAD_SENSOR
 
 		# extruder test
 		if self.make_extruder_test:
 			if not self.extruder_test(tool):
-				return False
+				return self.ERROR_EXTRUDER_TEST
 		else:
 			# move filament into cooling zone
 			self.stepper_synced_move(self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
@@ -569,7 +637,7 @@ class RMMU:
 			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(tool) + " VARIABLE=active VALUE=True")
 
 		# success 
-		return True
+		return self.LOAD_FILAMENT_SUCESS
 
 	def load_filament_from_parking_position_to_parking_sensor(self, tool):
 		# echo
@@ -753,95 +821,59 @@ class RMMU:
 		# echo
 		self.ratos_debug_echo("Loading filament T" + str(tool) + " from toolhead sensor to hotend sensor...")
 
-		has_oozeguard = False
-		# has_oozeguard = self.get_macro_variable("T0", "has_oozeguard")
+		# get loading distances
+		hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
+		# cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
+		hotend_sensor_to_cooling_zone_distance = 10
 
-		if has_oozeguard:
-			# get loading distances
-			hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
-			cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
+		# move filament to hotend sensor
+		self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
-			# move filament to hotend sensor
-			self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-
+		if not self.is_endstop_triggered(self.hotend_endstop):
+			for i in range(1, 10):
+				self.stepper_synced_move(10, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+				if self.is_endstop_triggered(self.hotend_endstop):
+					break
 			# check sensor
 			if not self.is_endstop_triggered(self.hotend_endstop):
-				self.stepper_synced_move(5, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-
-			# check sensor
-			if not self.is_endstop_triggered(self.hotend_endstop):
-				self.ratos_echo("Could not find hotend filament sensor!")
+				self.console_echo({
+					'TITLE': "Load filament", 
+					'MSG': 	"Hotend sensor not found!", 
+					'TYPE': "warning"
+				})
 				return False
 
-			# move filament to cooling zone position
-			if hotend_sensor_load_distance != cooling_zone_load_distance:
-				self.stepper_synced_move(cooling_zone_load_distance - hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-
-			# release idler
-			self.select_filament(-1)
-
-			# echo
-			self.ratos_echo("Filament T" + str(tool) + " loaded to cooling zone!")
-
-			# success
-			return True	
-
-		else:
-			# get loading distances
-			hotend_sensor_load_distance = self.extruder_gears_to_hotend_sensor_distance + self.toolhead_sensor_to_extruder_gears_distance
-			# cooling_zone_load_distance = self.extruder_gears_to_cooling_zone_distance + self.toolhead_sensor_to_extruder_gears_distance
-			hotend_sensor_to_cooling_zone_distance = 10
-
-			# move filament to hotend sensor
-			self.stepper_synced_move(hotend_sensor_load_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-
-			if not self.is_endstop_triggered(self.hotend_endstop):
-				for i in range(1, 10):
-					self.stepper_synced_move(10, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-					if self.is_endstop_triggered(self.hotend_endstop):
-						self.ratos_debug_echo("Hotend sensor found!")
-						break
-				# check sensor
+		# exact positioning
+		if self.is_endstop_triggered(self.hotend_endstop):
+			for i in range(1, 10):
+				self.stepper_synced_move(-2, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 				if not self.is_endstop_triggered(self.hotend_endstop):
-					self.console_echo({
-						'TITLE': "Load filament", 
-						'MSG': 	"Hotend sensor not found!", 
-						'TYPE': "warning"
-					})
-					return False
-			else:
-				self.ratos_debug_echo("Hotend sensor found!")
+					self.stepper_synced_move(1, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+					self.ratos_debug_echo("Filament positioned at hotend sensor!")
+					break
 
-			if self.is_endstop_triggered(self.hotend_endstop):
-				# exact positioning
-				for i in range(1, 10):
-					self.stepper_synced_move(-2, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-					if not self.is_endstop_triggered(self.hotend_endstop):
-						self.stepper_synced_move(1, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
-						self.ratos_debug_echo("Filament positioned at hotend sensor!")
-						break
+		# move filament to cooling zone position
+		self.stepper_synced_move(hotend_sensor_to_cooling_zone_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
-			# move filament to cooling zone position
-			self.stepper_synced_move(hotend_sensor_to_cooling_zone_distance, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+		# release idler
+		self.select_filament(-1)
 
-			# release idler
-			self.select_filament(-1)
+		# echo
+		self.ratos_debug_echo("Filament T" + str(tool) + " loaded to cooling zone!")
 
-			# echo
-			self.ratos_debug_echo("Filament T" + str(tool) + " loaded to cooling zone!")
-
-			# success
-			return True
+		# success
+		return True
 
 	def extruder_test(self, tool):
 		# echo
 		self.ratos_debug_echo("Extruder test with filament T" + str(tool) + "...")
 
+		# extruder test with hotend sensor
 		if self.hotend_endstop is not None:
 			if not self.load_filament_from_toolhead_sensor_to_hotend_sensor(tool):
 
 				# test failed, retract the filament a bit 
-				self.stepper_synced_move(-100, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+				self.stepper_synced_move(-150, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
 				# release idler
 				self.select_filament(-1)
@@ -852,7 +884,7 @@ class RMMU:
 			# sucess
 			return True
 
-		# extruder test
+		# extruder test with push and pull test
 		for i in range(1, 5):
 			if not self.push_and_pull_test(self.cooling_zone_loading_speed / i, self.cooling_zone_loading_accel / i):
 
@@ -885,7 +917,7 @@ class RMMU:
 				return True
 
 		# test failed, retract the filament a bit 
-		self.stepper_synced_move(-100, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
+		self.stepper_synced_move(-150, self.cooling_zone_loading_speed, self.cooling_zone_loading_accel)
 
 		# release idler
 		self.select_filament(-1)
