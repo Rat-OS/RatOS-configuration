@@ -350,7 +350,12 @@ class RMMU:
 	def home_filaments(self, tool):
 		# check for filament in hotend
 		if self.toolhead_filament_sensor.filament_present:
-			raise self.printer.command_error("Can not home filaments! Filament in hotend detected.")
+			self.console_echo({
+				'TITLE': "Home filament", 
+				'MSG': 	"Filament in hotend detected. Can not home.", 
+				'TYPE': "warning"
+			})
+			return False
 
 		# get frontend status colors
 		status_color_ok = self.get_macro_variable("RatOS", "status_color_ok")
@@ -382,7 +387,8 @@ class RMMU:
 						'MSG': 	"Could not home filament T" + str(i) + "!\nFilament homing stopped.", 
 						'TYPE': "alert"
 					})
-					break
+					self.select_filament(-1)
+					return False
 
 				# check parking sensor
 				if self.parking_sensor_endstop != None:
@@ -400,7 +406,8 @@ class RMMU:
 						self.select_filament(i)
 						self.rmmu_pulley.do_set_position(0.0)
 						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
-						break
+						self.select_filament(-1)
+						return False
 
 				# check Tx parking sensor
 				elif self.has_ptfe_adapter and len(self.parking_t_sensor_endstop) == self.tool_count:
@@ -418,7 +425,8 @@ class RMMU:
 						self.select_filament(i)
 						self.rmmu_pulley.do_set_position(0.0)
 						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
-						break
+						self.select_filament(-1)
+						return False
 
 				# check toolhead sensor
 				else:
@@ -436,7 +444,8 @@ class RMMU:
 						self.select_filament(i)
 						self.rmmu_pulley.do_set_position(0.0)
 						self.stepper_move(self.rmmu_pulley, -100, True, 100, 500)
-						break
+						self.select_filament(-1)
+						return False
 
 				# update frontend
 				if not self.dual_carriage:
@@ -444,6 +453,8 @@ class RMMU:
 
 		# release idler
 		self.select_filament(-1)
+
+		return True
 
 	def home_filament(self, filament):
 		# echo
@@ -1889,7 +1900,8 @@ class RMMU:
 					return
 
 				# home filament
-				self.home_filaments(i)
+				if not self.home_filaments(i):
+					return False
 
 		# release filament
 		self.select_filament(-1)
