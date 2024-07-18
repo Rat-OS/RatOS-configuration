@@ -627,12 +627,7 @@ class RMMU:
 		self.set_setting(self.name.lower() + self.VARS_LOADED_FILAMENT, tool)
 		self.set_setting(self.name.lower() + self.VARS_LOADED_FILAMENT_TEMP, self.extruder_get_target_temperature())
 
-		# echo
-		self.console_echo({
-			'TITLE': "Load filament", 
-			'MSG': 	"Filament T" + str(tool) + " loaded.", 
-			'TYPE': "success"
-		})
+		# update frontend
 		if not self.dual_carriage:
 			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=T" + str(tool) + " VARIABLE=active VALUE=True")
 

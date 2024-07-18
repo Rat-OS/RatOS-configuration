@@ -662,17 +662,18 @@ class RatOS:
 							break
 
 			# console output
-			_msg = "USED TOOLS: " + ','.join(used_tools)
 			if toolshift_count > 0:
-				_msg += "\nTOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1)
-			if filament_count > 0:
-				_msg += "\nFILAMENT CHANGES: " + str(0 if filament_count == 0 else filament_count - 1)
-			_msg += "\nSLICER: " + slicer["Name"] + " " + slicer["Version"]
-			self.cmd_CONSOLE_ECHO({
-				'TITLE': "RatOS Multi Material Print", 
-				'MSG': 	_msg, 
-				'TYPE': "info"
-			})
+				_msg = "USED TOOLS: " + ','.join(used_tools)
+				if toolshift_count > 0:
+					_msg += "\nTOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1)
+				if filament_count > 0:
+					_msg += "\nFILAMENT CHANGES: " + str(0 if filament_count == 0 else filament_count - 1)
+				_msg += "\nSLICER: " + slicer["Name"] + " " + slicer["Version"]
+				self.cmd_CONSOLE_ECHO({
+					'TITLE': "RatOS Multi Material Print", 
+					'MSG': 	_msg, 
+					'TYPE': "info"
+				})
 
 			# save file if it has changed 
 			if file_has_changed:

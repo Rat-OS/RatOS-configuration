@@ -327,15 +327,15 @@ class RMMU_Hub:
 
 					# purge filament
 					toolchange_first_purge = self.get_macro_variable("RatOS", "toolchange_first_purge")
-					self.ratos_echo("toolchange_first_purge: " + str(toolchange_first_purge))
+					self.ratos_debug_echo("toolchange_first_purge: " + str(toolchange_first_purge))
 					if toolchange_first_purge != None and toolchange_first_purge > 0:
 						toolchange_first_purge_feedrate = self.get_macro_variable("RatOS", "toolchange_first_purge_feedrate")
 						loading_position = self.get_macro_variable("T" + str(physical_toolhead), "loading_position")
-						self.ratos_echo("physical_toolhead: " + str(physical_toolhead))
-						self.ratos_echo("toolchange_first_purge_feedrate: " + str(toolchange_first_purge_feedrate))
-						self.ratos_echo("loading_position: " + str(loading_position))
+						self.ratos_debug_echo("physical_toolhead: " + str(physical_toolhead))
+						self.ratos_debug_echo("toolchange_first_purge_feedrate: " + str(toolchange_first_purge_feedrate))
+						self.ratos_debug_echo("loading_position: " + str(loading_position))
 						if loading_position != None:
-							self.ratos_echo("Initial puring...")
+							self.ratos_debug_echo("Initial puring...")
 							self.gcode.run_script_from_command('_PURGE_FILAMENT	TOOLHEAD=' + str(physical_toolhead) + ' E=' + str(toolchange_first_purge) + ' F=' + str(toolchange_first_purge_feedrate))
 							self.gcode.run_script_from_command('_CLEANING_MOVE TOOLHEAD=' + str(physical_toolhead))
 
