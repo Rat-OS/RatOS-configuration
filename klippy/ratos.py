@@ -249,7 +249,7 @@ class RatOS:
 						accel = matches.group(1)
 						lines[line] = 'M204 S' + str(accel) + ' ; Changed by RatOS post processor: ' + lines[line].rstrip() + '\n'
 
-			# purge tower speed control
+			# purge tower control
 			if start_print_line > 0:
 
 				if not layer_2:
@@ -424,6 +424,9 @@ class RatOS:
 											_ON_CP_TOOLCHANGE_END_line = line+2+i
 											break
 						lines[_ON_CP_TOOLCHANGE_END_line] = lines[_ON_CP_TOOLCHANGE_END_line].rstrip() + '\n' + '_ON_CP_TOOLCHANGE_END\n'
+
+				if lines[line].rstrip() == "SET_PRESSURE_ADVANCE ADVANCE=0":
+					lines[line] = '; Removed by RatOS post processor: ' + lines[line] + '\n'
 
 			# count toolshifts
 			if start_print_line > 0:
@@ -662,7 +665,7 @@ class RatOS:
 							break
 
 			# console output
-			if toolshift_count > 0:
+			if len(used_tools) > 1:
 				_msg = "USED TOOLS: " + ','.join(used_tools)
 				if toolshift_count > 0:
 					_msg += "\nTOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1)
