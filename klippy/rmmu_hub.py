@@ -146,15 +146,6 @@ class RMMU_Hub:
 		else:
 			self.rmmu[0].on_filament_insert(tool)
 
-	# desc_RMMU_FILAMENT_RUNOUT = "Called from the RatOS bowden sensor runout detection."
-	# def cmd_RMMU_FILAMENT_RUNOUT(self, param):
-	# 	tool = param.get_int('TOOLHEAD', None, minval=-1, maxval=self.total_tool_count)
-	# 	clogged = param.get('CLOGGED').lower()
-	# 	if tool >= self.rmmu[0].tool_count:
-	# 		self.rmmu[1].on_filament_runout(tool - self.rmmu[0].tool_count, clogged)
-	# 	else:
-	# 		self.rmmu[0].on_filament_runout(tool, clogged)
-
 	desc_RMMU_START_PRINT = "RMMU_START_PRINT gcode macro. Calls the RatOS START_PRINT macro if there are no errors."
 	def cmd_RMMU_START_PRINT(self, param):
 		self.start_print(param)
@@ -210,13 +201,6 @@ class RMMU_Hub:
 			for rmmu in self.rmmu:
 				if not rmmu.is_homed:
 					rmmu.home()
-
-		# # disable toolhead filament sensors
-		# for rmmu in self.rmmu:
-		# 	rmmu.toolhead_filament_sensor.enable(0)
-		# 	if len(rmmu.feeder_sensor) > 0:
-		# 		for sensor in rmmu.feeder_sensor:
-		# 			sensor.enable(0)
 
 		if not ((idex_mode == "copy" or idex_mode == "mirror") and len(logical_tools) == 1):
 
@@ -376,13 +360,6 @@ class RMMU_Hub:
 					self.gcode.run_script_from_command('_IDEX_COPY DANCE=0')
 				elif idex_mode == "mirror" and idex_mode != act_idex_mode:
 					self.gcode.run_script_from_command('_IDEX_MIRROR DANCE=0')
-
-		# # enable toolhead filament sensors
-		# for rmmu in self.rmmu:
-		# 	rmmu.toolhead_filament_sensor.enable(1)
-		# 	if len(rmmu.feeder_sensor) > 0:
-		# 		for sensor in rmmu.feeder_sensor:
-		# 			sensor.enable(1)
 
 		# set start_print_param
 		for rmmu in self.rmmu:
