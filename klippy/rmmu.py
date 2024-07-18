@@ -608,11 +608,6 @@ class RMMU:
 				return self.ERROR_PARKING_TO_TOOLHEAD_SENSOR
 		else:
 			if not self.load_filament_from_reverse_bowden_to_toolhead_sensor(tool):
-				self.console_echo({
-					'TITLE': "Load filament", 
-					'MSG': 	"Could not load filament T" + str(tool) + " into toolhead filament sensor!", 
-					'TYPE': "alert"
-				})
 				return self.ERROR_BOWDEN_TO_TOOLHEAD_SENSOR
 
 		# extruder test
@@ -812,7 +807,7 @@ class RMMU:
 		if not self.toolhead_filament_sensor.filament_present:
 			self.console_echo({
 				'TITLE': "Load filament", 
-				'MSG': 	"Could not find toolhead filament sensor!", 
+				'MSG': 	"Could not load filament T" + str(tool) + " into toolhead filament sensor!", 
 				'TYPE': "alert"
 			})
 			return False
