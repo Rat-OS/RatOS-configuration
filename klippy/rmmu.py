@@ -1655,6 +1655,10 @@ class RMMU:
 	def on_filament_runout(self, sensor, tool):
 		self.ratos_debug_echo("on_filament_runout TOOL=" + str(tool))
 
+		is_printing_gcode = self.get_macro_variable("START_PRINT", "is_printing_gcode")
+		if not is_printing_gcode:
+			return
+
 		if not self.runout_detected:
 
 			# set runout detection
