@@ -1,4 +1,4 @@
-# Support for controlling the RMMU multi material device under RatOS
+ # Support for controlling the RMMU multi material device under RatOS
 #
 # Copyright (C) 2024 Helge Magnus Keck <helgekeck@hotmail.com>
 #
@@ -1571,7 +1571,7 @@ class RMMU:
 		# echo
 		self.console_echo({
 			'TITLE': "", 
-			'MSG': 	"Filament T" + str(tool) + " inserted into RMMU device.", 
+			'MSG': 	"Filament T" + str(tool) + " inserted into MMU device.", 
 			'TYPE': "info"
 		})
 
@@ -1669,8 +1669,8 @@ class RMMU:
 
 			if enable_insert_detection and resume_after_insert:
 				self.console_echo({
-					'TITLE': "Filament T" + str(tool) + " runout detected!", 
-					'MSG': 	"", 
+					'TITLE': "", 
+					'MSG': 	"Filament T" + str(tool) + " runout detected!", 
 					'TYPE': "warning"
 				})
 
