@@ -17,5 +17,5 @@ NEWUPPER=$(find /tmp -name "raw_data_axis*_belt-tension-upper.csv" -printf '%T@ 
 NEWLOWER=$(find /tmp -name "raw_data_axis*_belt-tension-lower.csv" -printf '%T@ %p\n' 2> /dev/null | sort -n | tail -1 | cut -f2- -d" ")
 
 ~/klipper/scripts/graph_accelerometer.py \
-    -c "$NEWUPPER" "$NEWLOWER" \
+    -c "$NEWLOWER" "$NEWUPPER" \
     -o "${outdir}/belt-tension-resonances-$( date +'%Y-%m-%d-%H%M%S' ).png"
