@@ -302,16 +302,16 @@ class RMMU:
 	#####
 	def home(self):
 		self.console_echo({
-			'TITLE': "Homing RMMU...", 
-			'MSG': 	"", 
+			'TITLE': "", 
+			'MSG': 	"Homing RMMU...", 
 			'TYPE': "info"
 		})
 		self.reset()
 		self.home_idler()
 		self.is_homed = True
 		self.console_echo({
-			'TITLE': "Hello RMMU!", 
-			'MSG': 	"", 
+			'TITLE': "", 
+			'MSG': 	"Hello RMMU!", 
 			'TYPE': "success"
 		})
 
@@ -435,8 +435,8 @@ class RMMU:
 	def home_filament(self, filament):
 		# echo
 		self.console_echo({
-			'TITLE': "Homing filament T" + str(filament) + "...", 
-			'MSG': 	"", 
+			'TITLE': "", 
+			'MSG': 	"Homing filament T" + str(filament) + "...", 
 			'TYPE': "info"
 		})
 
@@ -462,8 +462,8 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Filament T" + str(filament) + " homed!", 
-			'MSG': 	"", 
+			'TITLE': "", 
+			'MSG': 	"Filament T" + str(filament) + " homed!", 
 			'TYPE': "success"
 		})
 
@@ -496,7 +496,7 @@ class RMMU:
 	def load_filament(self, tool, is_copy_mirror="false"):
 		# echo
 		self.console_echo({
-			'TITLE': "Load filament", 
+			'TITLE': "", 
 			'MSG': 	"Loading filament T" + str(tool) + "...", 
 			'TYPE': "info"
 		})
@@ -509,7 +509,7 @@ class RMMU:
 		elif result == self.ERROR_PARKING_TO_TOOLHEAD_SENSOR:
 			if self.last_loadeded_tool != -1:
 				self.console_echo({
-					'TITLE': "Load filament", 
+					'TITLE': "", 
 					'MSG': 	"Retracting T" + str(self.last_loadeded_tool) + " from toolhead sensor...", 
 					'TYPE': "warning"
 				})
@@ -528,7 +528,7 @@ class RMMU:
 		elif result == self.ERROR_BOWDEN_TO_TOOLHEAD_SENSOR:
 			if self.last_loadeded_tool != -1:
 				self.console_echo({
-					'TITLE': "Load filament", 
+					'TITLE': "", 
 					'MSG': 	"Retracting" + str(self.last_loadeded_tool) + " from toolhead sensor...", 
 					'TYPE': "warning"
 				})
@@ -549,7 +549,7 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Load filament", 
+			'TITLE': "", 
 			'MSG': 	"Filament T" + str(tool) + " loaded.", 
 			'TYPE': "success"
 		})
@@ -642,15 +642,15 @@ class RMMU:
 			move_distance = 30
 			for i in range(1, try_count):
 				self.console_echo({
-					'TITLE': "Retry " + str(i) + " ...", 
-					'MSG': 	"", 
+					'TITLE': "", 
+					'MSG': 	"Retry " + str(i) + " ...", 
 					'TYPE': "warning"
 				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if self.is_endstop_triggered(self.parking_sensor_endstop):
 					self.console_echo({
-						'TITLE': "Load filament", 
+						'TITLE': "", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
 					})
@@ -697,15 +697,15 @@ class RMMU:
 			move_distance = 30
 			for i in range(1, try_count):
 				self.console_echo({
-					'TITLE': "Retry " + str(i) + " ...", 
-					'MSG': 	"", 
+					'TITLE': "", 
+					'MSG': 	"Retry " + str(i) + " ...", 
 					'TYPE': "warning"
 				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, -move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
 					self.console_echo({
-						'TITLE': "Load filament", 
+						'TITLE': "", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
 					})
@@ -921,7 +921,7 @@ class RMMU:
 	def unload_filament(self, tool, is_gcode_toolchange, is_copy_mirror = False):
 		# echo
 		self.console_echo({
-			'TITLE': "Unload filament", 
+			'TITLE': "", 
 			'MSG': 	"Unloading filament T" + str(tool) + "...", 
 			'TYPE': "info"
 		})
@@ -958,7 +958,7 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Unload filament", 
+			'TITLE': "", 
 			'MSG': 	"Filament T" + str(tool) + " unloaded!", 
 			'TYPE': "success"
 		})
@@ -996,7 +996,7 @@ class RMMU:
 		# check sensor and try to fix issues if needed
 		if self.is_endstop_triggered(endstop):
 			self.console_echo({
-				'TITLE': "Unload filament", 
+				'TITLE': "", 
 				'MSG': 	"Retrying to unload filament T" + str(tool) + " to parking sensor...", 
 				'TYPE': "warning"
 			})
@@ -1004,15 +1004,15 @@ class RMMU:
 			move_distance = 50
 			for i in range(1, try_count):
 				self.console_echo({
-					'TITLE': "Retry " + str(i) + " ...", 
-					'MSG': 	"", 
+					'TITLE': "", 
+					'MSG': 	"Retry " + str(i) + " ...", 
 					'TYPE': "warning"
 				})
 				self.rmmu_pulley.do_set_position(0.0)
 				self.stepper_move(self.rmmu_pulley, -move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(endstop):
 					self.console_echo({
-						'TITLE': "Unload filament", 
+						'TITLE': "", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
 					})
@@ -1049,8 +1049,8 @@ class RMMU:
 			move_distance = 50
 			for i in range(1, try_count):
 				self.console_echo({
-					'TITLE': "Retry " + str(i) + " ...", 
-					'MSG': 	"", 
+					'TITLE': "", 
+					'MSG': 	"Retry " + str(i) + " ...", 
 					'TYPE': "warning"
 				})
 				self.rmmu_pulley.do_set_position(0.0)
@@ -1059,7 +1059,7 @@ class RMMU:
 				self.stepper_move(self.rmmu_pulley, -move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(self.parking_sensor_endstop):
 					self.console_echo({
-						'TITLE': "Unload filament", 
+						'TITLE': "", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
 					})
@@ -1093,8 +1093,8 @@ class RMMU:
 			move_distance = 50
 			for i in range(1, try_count):
 				self.console_echo({
-					'TITLE': "Retry " + str(i) + " ...", 
-					'MSG': 	"", 
+					'TITLE': "", 
+					'MSG': 	"Retry " + str(i) + " ...", 
 					'TYPE': "warning"
 				})
 				self.rmmu_pulley.do_set_position(0.0)
@@ -1103,7 +1103,7 @@ class RMMU:
 				self.stepper_move(self.rmmu_pulley, move_distance, True, self.filament_homing_speed / i, self.filament_homing_accel / i)
 				if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
 					self.console_echo({
-						'TITLE': "Unload filament", 
+						'TITLE': "", 
 						'MSG': 	"problem solved!", 
 						'TYPE': "success"
 					})
@@ -1230,7 +1230,7 @@ class RMMU:
 	def eject_filament(self, tool):
 		# echo
 		self.console_echo({
-			'TITLE': "Eject filament", 
+			'TITLE': "", 
 			'MSG': 	"Ejecting filament T" + str(tool) + "...", 
 			'TYPE': "info"
 		})
@@ -1285,7 +1285,7 @@ class RMMU:
 
 			# echo
 			self.console_echo({
-				'TITLE': "Eject filament", 
+				'TITLE': "", 
 				'MSG': 	"Filament T" + str(tool) + " ejected.", 
 				'TYPE': "success"
 			})
@@ -1298,7 +1298,7 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Eject filament", 
+			'TITLE': "", 
 			'MSG': 	"Filament T" + str(tool) + " ejected.", 
 			'TYPE': "success"
 		})
@@ -1570,8 +1570,8 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Filament T" + str(tool) + " inserted into RMMU device.", 
-			'MSG': 	"", 
+			'TITLE': "", 
+			'MSG': 	"Filament T" + str(tool) + " inserted into RMMU device.", 
 			'TYPE': "info"
 		})
 
@@ -1630,8 +1630,8 @@ class RMMU:
 
 				# success
 				self.console_echo({
-					'TITLE': "Filament T" + str(tool) + " automatically loaded. Resuming print...", 
-					'MSG': 	"", 
+					'TITLE': "", 
+					'MSG': 	"Filament T" + str(tool) + " automatically loaded. Resuming print...", 
 					'TYPE': "info"
 				})
 
@@ -1647,7 +1647,7 @@ class RMMU:
 
 			# success
 			self.console_echo({
-				'TITLE': "Filament insert action", 
+				'TITLE': "", 
 				'MSG': 	"Filament T" + str(tool) + " loaded.", 
 				'TYPE': "success"
 			})
@@ -1719,7 +1719,7 @@ class RMMU:
 			if enable_insert_detection and resume_after_insert:
 				self.console_echo({
 					'TITLE': "Filament T" + str(tool) + " runout detected", 
-					'MSG': 	"---------------------------------------_N_Insert filament T" + str(tool) + " into the MMU device._N_Print will resume automatically._N_---------------------------------------", 
+					'MSG': 	"Insert filament T" + str(tool) + " into the MMU device._N_Print will resume automatically.", 
 					'TYPE': "warning"
 				})
 			else:
@@ -1895,7 +1895,7 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Calibrating bowden tube", 
+			'TITLE': "", 
 			'MSG': 	"Calibrating, please wait...", 
 			'TYPE': "info"
 		})
