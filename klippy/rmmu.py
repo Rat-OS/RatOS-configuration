@@ -1206,6 +1206,15 @@ class RMMU:
 	# Eject Filament
 	#####
 	def eject_filaments(self, tool):
+		# check for filament in hotend
+		if self.toolhead_filament_sensor.filament_present:
+			self.console_echo({
+				'TITLE': "Eject filament", 
+				'MSG': 	"Filament in hotend detected. Can not eject.", 
+				'TYPE': "warning"
+			})
+			return False
+
 		# home if needed
 		if not self.is_homed:
 			self.home()
