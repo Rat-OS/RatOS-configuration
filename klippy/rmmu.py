@@ -1234,7 +1234,7 @@ class RMMU:
 			if not self.feeder_sensor[tool].filament_present:
 				self.console_echo({
 					'TITLE': "Eject filament", 
-					'MSG': 	"Filament T" + str(tool) + " already ejected!", 
+					'MSG': 	"Filament T" + str(tool) + " already ejected.", 
 					'TYPE': "warning"
 				})
 				return
@@ -1244,7 +1244,7 @@ class RMMU:
 			if not self.is_endstop_triggered(self.parking_t_sensor_endstop[tool]):
 				self.console_echo({
 					'TITLE': "Eject filament", 
-					'MSG': 	"Filament T" + str(tool) + " already ejected!", 
+					'MSG': 	"Filament T" + str(tool) + " already ejected.", 
 					'TYPE': "warning"
 				})
 				return
@@ -1273,6 +1273,14 @@ class RMMU:
 			# eject filament from device
 			self.rmmu_pulley.do_set_position(0.0)
 			self.stepper_move(self.rmmu_pulley, -250, True, self.filament_homing_speed, self.filament_homing_accel)
+
+			# echo
+			self.console_echo({
+				'TITLE': "Eject filament", 
+				'MSG': 	"Filament T" + str(tool) + " ejected.", 
+				'TYPE': "success"
+			})
+
 			return
 
 		# eject filament
@@ -1282,7 +1290,7 @@ class RMMU:
 		# echo
 		self.console_echo({
 			'TITLE': "Eject filament", 
-			'MSG': 	"Filament T" + str(tool) + " ejected!", 
+			'MSG': 	"Filament T" + str(tool) + " ejected.", 
 			'TYPE': "success"
 		})
 
@@ -1515,15 +1523,15 @@ class RMMU:
 	def on_filament_insert(self, sensor, tool):
 		self.ratos_debug_echo("on_filament_insert TOOL=" + str(tool))
 
-		# disable filament sensor
-		sensor.enable(False)
-
 		is_printing_gcode = self.get_macro_variable("START_PRINT", "is_printing_gcode")
 		if is_printing_gcode:
 			return
 
 		enable_insert_detection = self.get_macro_variable("T" + str(tool), "enable_insert_detection")
 		if not enable_insert_detection:
+			return
+
+		if self.runout_detected and self.toolhead_filament_sensor.filament_present and self.start_print_param != None:
 			return
 
 		# check if insert actions are allowed
@@ -1553,8 +1561,8 @@ class RMMU:
 
 		# echo
 		self.console_echo({
-			'TITLE': "Load filament", 
-			'MSG': 	"Loading filament T" + str(tool) + " into RMMU device...", 
+			'TITLE': "Filament T" + str(tool) + " inserted into RMMU device.", 
+			'MSG': 	"", 
 			'TYPE': "info"
 		})
 
@@ -1605,32 +1613,53 @@ class RMMU:
 				if not self.load_filament(tool):
 					return
 
+				# reset runout detection
+				self.runout_detected = False
+
+				# release idler
+				self.select_filament(-1)
+
+				# success
+				self.console_echo({
+					'TITLE': "Filament T" + str(tool) + " automatically loaded. Resuming print...", 
+					'MSG': 	"", 
+					'TYPE': "info"
+				})
+
 				# run after filament insert macro
 				self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
 
-		# reset runout detection
-		self.runout_detected = False
+		else:
+			# reset runout detection
+			self.runout_detected = False
 
-		# release idler
-		self.select_filament(-1)
+			# release idler
+			self.select_filament(-1)
 
-		# enable filament sensor
-		sensor.enable(True)
-
-		# success
-		self.console_echo({
-			'TITLE': "Filament insert", 
-			'MSG': 	"Filament T" + str(tool) + " loaded!", 
-			'TYPE': "success"
-		})
+			# success
+			self.console_echo({
+				'TITLE': "Filament insert action", 
+				'MSG': 	"Filament T" + str(tool) + " loaded.", 
+				'TYPE': "success"
+			})
 
 	def on_filament_runout(self, sensor, tool):
 		self.ratos_debug_echo("on_filament_runout TOOL=" + str(tool))
 
 		if not self.runout_detected:
 
-			# disable filament sensor
-			sensor.enable(False)
+			# set runout detection
+			self.runout_detected = True
+
+			resume_after_insert = self.get_macro_variable("T" + str(tool), "resume_after_insert")
+			enable_insert_detection = self.get_macro_variable("T" + str(tool), "enable_insert_detection")
+
+			if enable_insert_detection and resume_after_insert:
+				self.console_echo({
+					'TITLE': "Filament T" + str(tool) + " runout detected!", 
+					'MSG': 	"", 
+					'TYPE': "warning"
+				})
 
 			# pause printer
 			if not self.pause_resume.is_paused:
@@ -1673,18 +1702,19 @@ class RMMU:
 									self.gcode.run_script_from_command('_RMMU_AFTER_FILAMENT_INSERT TOOLHEAD=' + str(tool))
 									return
 
-			# enable filament sensor
-			sensor.enable(True)
-
-			# set runout detection
-			self.runout_detected = True
-
 			# echo
-			self.console_echo({
-				'TITLE': "Filament runout", 
-				'MSG': 	"Load new filament T" + str(tool) + " and resume the print!", 
-				'TYPE': "success"
-			})
+			if enable_insert_detection and resume_after_insert:
+				self.console_echo({
+					'TITLE': "Filament T" + str(tool) + " runout detected", 
+					'MSG': 	"---------------------------------------_N_Insert filament T" + str(tool) + " into the MMU device._N_Print will resume automatically._N_---------------------------------------", 
+					'TYPE': "warning"
+				})
+			else:
+				self.console_echo({
+					'TITLE': "Filament T" + str(tool) + " runout detected!", 
+					'MSG': 	"Load new filament T" + str(tool) + " and resume the print.", 
+					'TYPE': "warning"
+				})
 
 	#####
 	# Endstop handling
@@ -1751,13 +1781,9 @@ class RMMU:
 
 	def on_toolhead_sensor_insert(self, eventtime):
 		self.ratos_debug_echo("on_toolhead_sensor_insert")
-		return
-		self.gcode.run_script_from_command("_ON_TOOLHEAD_FILAMENT_SENSOR_INSERT TOOLHEAD=0")
 
 	def on_toolhead_sensor_runout(self, eventtime):
 		self.ratos_debug_echo("on_toolhead_sensor_insert")
-		return
-		self.gcode.run_script_from_command('_ON_TOOLHEAD_FILAMENT_SENSOR_RUNOUT TOOLHEAD=0')
 
 	def on_t0_feeder_sensor_insert(self, eventtime):
 		self.on_filament_insert(self.feeder_sensor[0], 0)
@@ -2005,10 +2031,12 @@ class RMMUSwitchSensor:
 	def __init__(self, config, name, insert_callback, runout_callback, pin):
 		self.name = name
 		printer = config.get_printer()
+		self.gcode = printer.lookup_object('gcode')
 		self.reactor = printer.get_reactor()
 		self.min_event_systime = self.reactor.NEVER
 		self.filament_present = False
 		self.sensor_enabled = True
+		self.event_delay = 1.
 		self.insert_callback = insert_callback
 		self.runout_callback = runout_callback
 		pin_desc = pin
@@ -2027,6 +2055,7 @@ class RMMUSwitchSensor:
 
 	def enable(self, enable):
 		self.sensor_enabled = enable
+		# self.gcode.respond_raw(self.name + " enabled: " + str(self.sensor_enabled))
 
 	def get_status(self, eventtime):
 		return {'name': self.name,
@@ -2035,15 +2064,21 @@ class RMMUSwitchSensor:
 	def _button_handler(self, eventtime, state):
 		self.filament_present = bool(state)
 		eventtime = self.reactor.monotonic()
+		# self.gcode.respond_raw(self.name + " enabled: " + str(self.sensor_enabled) + " triggered: " + str(self.filament_present))
 		if eventtime < self.min_event_systime or not self.sensor_enabled:
 			# do not process during the initialization time, duplicates,
 			# during the event delay time, while an event is running, or
 			# when the sensor is disabled
 			return
+		self.min_event_systime = self.reactor.NEVER
 		if self.filament_present:
 			self.reactor.register_callback(self.insert_callback)
+			self.gcode.run_script_from_command("M400")
+			self.min_event_systime = self.reactor.monotonic() + self.event_delay
 		else:
 			self.reactor.register_callback(self.runout_callback)
+			self.gcode.run_script_from_command("M400")
+			self.min_event_systime = self.reactor.monotonic() + self.event_delay
 
 #####
 # Loader
