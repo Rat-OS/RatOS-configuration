@@ -1,4 +1,3 @@
-
 {
 	"$schema": "../board-definition.schema.json",
 	"boardImageFileName": "board.webp",
@@ -16,7 +15,7 @@
 	"driverVoltages": [24, 36, 48, 56],
 	"dfu": {
 		"flashDevice": "0483:df11",
-		"dfuBootImage": "dfubooting.png",
+		"dfuBootImage": "dfubooting.drawio.png",
 		"instructions": [
 			"Make sure the board is powered on",
 			"Press and hold the BOOT 0 button on the board.",
@@ -140,6 +139,6 @@
 			"sclk": "PC10",
 			"mosi": "PC12",
 			"miso": "PC11"
-		}	
+		}
 	}
 }
