@@ -1,7 +1,7 @@
 {
 	"$schema": "../board-definition.schema.json",
 	"manualFileName": "manual.pdf",
-	"wireDiagramFileName": "wiring.drawio.jpg",
+	"wireDiagramFileName": "wiring.drawio.png",
 	"isToolboard": true,
 	"name": "Nitehawk SB",
 	"manufacturer": "LDO",
@@ -16,7 +16,7 @@
 	},
 	"dfu": {
 		"flashDevice": "0483:df11",
-		"dfuBootImage": "dfubooting.webp",
+		"dfuBootImage": "dfubooting.png",
 		"instructions": [
 			"Connect the board via USB to the Raspberry Pi",
 			"Make sure the board is powered (you can use usb power by placing a jumper on the VBUS pins)",
