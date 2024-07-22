@@ -1,6 +1,5 @@
 {
 	"$schema": "../board-definition.schema.json",
-	"boardImageFileName": "board.webp",
 	"manualFileName": "manual.pdf",
 	"wireDiagramFileName": "wiring.drawio.jpg",
 	"isToolboard": true,
