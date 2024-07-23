@@ -530,7 +530,7 @@ class RMMU:
 			if self.last_loadeded_tool != -1:
 				self.console_echo({
 					'TITLE': "", 
-					'MSG': 	"Retracting" + str(self.last_loadeded_tool) + " from toolhead sensor...", 
+					'MSG': 	"Retracting T" + str(self.last_loadeded_tool) + " from toolhead sensor...", 
 					'TYPE': "warning"
 				})
 				# select last filament
