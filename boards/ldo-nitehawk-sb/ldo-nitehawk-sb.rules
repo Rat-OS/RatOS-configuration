@@ -1,0 +1,4 @@
+# LDO Nitehawk SB
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="614e",  ATTRS{idVendor}=="1d50", ATTRS{serial}=="ldo-nitehawk-sb", ACTION=="add", SYMLINK+="ldo-nitehawk-sb", RUN+="/home/pi/printer_data/config/RatOS/scripts/klipper-mcu-added.sh"
+
+ACTION=="remove", ENV{DEVLINKS}=="/dev/ldo-nitehawk-sb"
