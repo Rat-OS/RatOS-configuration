@@ -34,6 +34,21 @@ symlink_klippy_extensions()
 	fi
 }
 
+ensure_node_18()
+{
+	node -v | grep "^v18" > /dev/null
+	isinstalled=$?
+	if [ $isinstalled -eq 0 ]
+	then
+		echo "Node 18 already installed"
+	else
+		echo "Installing Node 18"
+		sed -i 's/node_16\.x/node_18\.x/g' /etc/apt/sources.list.d/nodesource.list
+		apt-get update
+		apt-get install -y nodejs
+	fi
+}
+
 symlink_moonraker_extensions()
 {
 	report_status "Symlinking moonraker extensions"
@@ -56,6 +71,7 @@ fix_klippy_env_ownership()
 
 # Run update symlinks
 update_symlinks
+ensure_node_18
 ensure_sudo_command_whitelisting
 ensure_service_permission
 fix_klippy_env_ownership
