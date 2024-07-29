@@ -1,5 +1,5 @@
 #!/bin/bash
-MCU=/dev/mellow-fly-sht-36
+MCU=/dev/mellow-fly-sht-36-v3
 if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
