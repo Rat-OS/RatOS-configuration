@@ -15,7 +15,6 @@
 		"extruder": "MELLOW-FLY-TMC2209"
 	},
 	"alternativePT1000Resistor": 1000,
-	},
 	"dfu": {
 		"flashDevice": "0483:df11",
 		"dfuBootImage": "dfubooting.webp",
