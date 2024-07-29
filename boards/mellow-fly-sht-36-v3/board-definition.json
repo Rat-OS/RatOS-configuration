@@ -16,7 +16,7 @@
 	},
 	"alternativePT1000Resistor": 1000,
 	"dfu": {
-		"flashDevice": "0483:df11",
+		"flashDevice": "0483:ef11",
 		"dfuBootImage": "dfubooting.webp",
 		"instructions": [
 			"Press and hold the BOOT button, then connect the USB to the host computer",
