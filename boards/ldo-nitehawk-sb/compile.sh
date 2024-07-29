@@ -14,6 +14,6 @@ then
     mkdir /home/pi/printer_data/config/firmware_binaries
     chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-ldo-nitehawk-sb.u2f
+cp -f /home/pi/klipper/out/klipper.u2f /home/pi/printer_data/config/firmware_binaries/firmware-ldo-nitehawk-sb.u2f
 chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-ldo-nitehawk-sb.u2f
 popd || exit
