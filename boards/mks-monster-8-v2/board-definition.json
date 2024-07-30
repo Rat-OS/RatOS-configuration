@@ -48,7 +48,7 @@
 		},
 		"MOTOR2": {
 			"title": "MOTOR 2",
-			"enable_pin": "PE0",
+			"enable_pin": "PE2",
 			"step_pin": "PE1",
 			"dir_pin": "PE0",
 			"uart_pin": "PB7",
