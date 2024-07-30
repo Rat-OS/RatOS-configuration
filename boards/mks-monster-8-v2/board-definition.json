@@ -1,0 +1,126 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"boardImageFileName": "board.webp",
+	"manualFileName": "manual.pdf",
+	"name": "Monster 8 V2",
+	"manufacturer": "MKS",
+	"id": "mks-monster-8-v2",
+	"firmwareBinaryName": "firmware-mks-monster-8-v2.bin",
+	"compileScript": "compile.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/btt/monster-8-v2",
+	"driverCount": 8,
+	"driverVoltages": [24],
+	"dfu": {
+		"flashDevice": "1d50:614e",
+		"dfuBootImage": "dfubooting.drawio.svg",
+		"instructions": [
+			"Press and hold the BOOT button, then connect the USB to the host computer or press reset button",
+			"Make sure the board is powered on"
+		],
+		"hasBoot0Jumper": false
+	},
+	"motorSlots": {
+		"MOTOR0": {
+			"title": "MOTOR 0",
+			"enable_pin": "PC15",
+			"step_pin": "PC14",
+			"dir_pin": "PC13",
+			"uart_pin": "PE6",
+			"cs_pin": "PE6",
+			"diag_pin": "PA14",
+			"endstop_pin": "PA14",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"MOTOR1": {
+			"title": "MOTOR 1",
+			"enable_pin": "PC15",
+			"step_pin": "PE5",
+			"dir_pin": "PE4",
+			"uart_pin": "PE3",
+			"cs_pin": "PE3",
+			"diag_pin": "PA15",
+			"endstop_pin": "PA15",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"MOTOR2": {
+			"title": "MOTOR 2",
+			"enable_pin": "PE0",
+			"step_pin": "PE1",
+			"dir_pin": "PE0",
+			"uart_pin": "PB7",
+			"cs_pin": "PB7",
+			"diag_pin": "PB13",
+			"endstop_pin": "PB13",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"MOTOR3": {
+			"title": "MOTOR 3",
+			"enable_pin": "PB6",
+			"step_pin": "PB5",
+			"dir_pin": "PB4",
+			"uart_pin": "PB3",
+			"cs_pin": "PB3",
+			"endstop_pin": "PA13",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"MOTOR4": {
+			"title": "MOTOR 4",
+			"enable_pin": "PD7",
+			"step_pin": "PD6",
+			"dir_pin": "PD5",
+			"uart_pin": "PD4",
+			"cs_pin": "PD4",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"MOTOR5": {
+			"title": "MOTOR 5",
+			"enable_pin": "PD3",
+			"step_pin": "PD2",
+			"dir_pin": "PD1",
+			"uart_pin": "PD0",
+			"cs_pin": "PD0",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"MOTOR6": {
+			"title": "MOTOR 6",
+			"enable_pin": "PC8",
+			"step_pin": "PC7",
+			"dir_pin": "PC6",
+			"uart_pin": "PD15",
+			"cs_pin": "PD15",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		},
+		"MOTOR7": {
+			"title": "MOTOR 7",
+			"enable_pin": "PD14",
+			"step_pin": "PD13",
+			"dir_pin": "PD12",
+			"uart_pin": "PD11",
+			"cs_pin": "PD11",
+			"spi_software_mosi_pin": "PE14",
+			"spi_software_miso_pin": "PE13",
+			"spi_software_sclk_pin": "PE12"
+		}
+	},
+	"stepperSPI": {
+		"software": {
+			"sclk": "PE12",
+			"mosi": "PE14",
+			"miso": "1PE13"
+		}
+	}
+}

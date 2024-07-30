@@ -1,0 +1,4 @@
+# MKS Monster 8 V2
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="614e",  ATTRS{idVendor}=="1d50", ATTRS{serial}=="mks-monster-8-v2", ACTION=="add", SYMLINK+="mks-monster-8-v2", RUN+="/home/pi/printer_data/config/RatOS/scripts/klipper-mcu-added.sh"
+
+ACTION=="remove", ENV{DEVLINKS}=="/dev/mks-monster-8-v2"
