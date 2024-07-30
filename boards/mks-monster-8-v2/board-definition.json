@@ -12,7 +12,7 @@
 	"driverVoltages": [24],
 	"dfu": {
 		"flashDevice": "1d50:614e",
-		"dfuBootImage": "dfubooting.drawio.svg",
+		"dfuBootImage": "dfubooting.png",
 		"instructions": [
 			"Press and hold the BOOT button, then connect the USB to the host computer or press reset button",
 			"Make sure the board is powered on"
