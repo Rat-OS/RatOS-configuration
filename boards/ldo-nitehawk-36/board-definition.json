@@ -10,7 +10,7 @@
 	"boardImageFileName": "board.webp",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
-	"documentationLink": "https://os.ratrig.com/docs/boards/btt/nitehawk-36",
+	"documentationLink": "https://os.ratrig.com/docs/boards/ldo/nitehawk-36",
 	"driverCount": 1,
 	"integratedDrivers": {
 		"extruder": "LDO-TMC2209"
