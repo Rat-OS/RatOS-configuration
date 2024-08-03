@@ -6,7 +6,7 @@
 	"name": "Nitehawk 36",
 	"manufacturer": "LDO",
 	"id": "ldo-nitehawk-36",
-	"firmwareBinaryName": "firmware-ldo-nitehawk-36.u2f",
+	"firmwareBinaryName": "firmware-ldo-nitehawk-36.bin",
 	"boardImageFileName": "board.webp",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
