@@ -15,6 +15,7 @@
 	"integratedDrivers": {
 		"extruder": "LDO-TMC2209"
 	},
+	"thermistorPullup": 2200,
 	"ADXL345SPI": {
 		"cs_pin": "gpio27",
 		"software": {
