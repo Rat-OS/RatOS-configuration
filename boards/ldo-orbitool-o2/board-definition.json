@@ -65,7 +65,7 @@
 			}
 		},
 		"heater_fan": {
-			"name": "toolhead_cooling_fan",
+			"name": "_toolhead_cooling_fan",
 			"comments": ["Use max_power: 0.5 for 12V, max_power: 1 for 24V (in printer.cfg)"],
 			"parameters": {
 				"max_power": 0.995,
