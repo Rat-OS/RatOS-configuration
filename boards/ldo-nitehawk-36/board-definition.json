@@ -13,7 +13,7 @@
 	"documentationLink": "https://os.ratrig.com/docs/boards/ldo/nitehawk-36",
 	"driverCount": 1,
 	"integratedDrivers": {
-		"extruder": "LDO-TMC2209"
+		"extruder": "LDO-NITEHAWK-TMC2209"
 	},
 	"thermistorPullup": 2200,
 	"ADXL345SPI": {
