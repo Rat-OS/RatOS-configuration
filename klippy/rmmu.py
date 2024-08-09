@@ -28,6 +28,12 @@ class RMMUCommandHelper:
 		gcode.register_mux_command('RMMU_QUERY_SENSORS', 'RMMU', name, self.cmd_RMMU_QUERY_SENSORS, desc=(self.desc_RMMU_QUERY_SENSORS))
 		gcode.register_mux_command('RMMU_JOIN_SPOOLS', 'RMMU', name, self.cmd_RMMU_JOIN_SPOOLS, desc=(self.desc_RMMU_JOIN_SPOOLS))
 		gcode.register_mux_command('RMMU_REMAP_TOOLHEADS', 'RMMU', name, self.cmd_RMMU_REMAP_TOOLHEADS, desc=(self.desc_RMMU_REMAP_TOOLHEADS))
+		gcode.register_mux_command('RMMU_SELECT_LANE', 'RMMU', name, self.cmd_RMMU_SELECT_LANE, desc=(self.desc_RMMU_SELECT_LANE))
+
+	desc_RMMU_SELECT_LANE = ""
+	def cmd_RMMU_SELECT_LANE(self, param):
+		lane = param.get_int('LANE', None)
+		self.rmmu.select_filament(lane)
 
 	desc_RMMU_SET_FILAMENT_SENSOR = "Enables or disables a filament sensor."
 	def cmd_RMMU_SET_FILAMENT_SENSOR(self, param):
@@ -213,9 +219,11 @@ class RMMU:
 		self.logical_toolheads = self.config.getlist('logical_toolheads', [0,1,2,3])
 
 		# idler config
-		self.idler_positions = [102,76,50,24]
+		# self.idler_positions = [102,76,50,24]
+		self.idler_positions = [27,53,79,105]
 		self.idler_speed = self.config.getfloat('idler_speed', 300.0)
 		self.idler_accel = self.config.getfloat('idler_accel', 3000.0)
+		self.idler_endstop_position = self.config.getfloat('idler_endstop_position', -1)
 		self.idler_home_position = self.config.getfloat('idler_home_position', 0)
 		self.idler_homing_speed = self.config.getfloat('idler_homing_speed', 40)
 		self.idler_homing_accel = self.config.getfloat('idler_homing_accel', 200)
@@ -321,7 +329,7 @@ class RMMU:
 		self.rmmu_idler.do_set_position(0.0)
 		self.stepper_move(self.rmmu_idler, 2, True, self.idler_homing_speed, self.idler_homing_accel)
 		self.stepper_homing_move(self.rmmu_idler, -300, self.idler_homing_speed, self.idler_homing_accel, 1)
-		self.rmmu_idler.do_set_position(-1.0)
+		self.rmmu_idler.do_set_position(self.idler_endstop_position)
 		self.stepper_move(self.rmmu_idler, self.idler_home_position, True, self.idler_homing_speed, self.idler_homing_accel)
 
 	def home_filaments(self, tool):
@@ -2109,3 +2117,6 @@ class RMMUSwitchSensor:
 #####
 def load_config_prefix(config):
 	return RMMU(config)
+
+
+# MANUAL_STEPPER STEPPER='manual_stepper rmmu_pulley_t0' MOVE=24 SPEED=100 ACCEL=100 SYNC=0
