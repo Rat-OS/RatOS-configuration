@@ -123,6 +123,8 @@ class RatOS:
 	desc_PROCESS_GCODE_FILE = "G-code post processor for IDEX and RMMU"
 	def cmd_PROCESS_GCODE_FILE(self, gcmd):
 		filename = gcmd.get('FILENAME', "")
+		if filename[0] == '/':
+			filename = filename[1:]
 		if (self.dual_carriage == None and self.rmmu_hub == None) or not self.enable_post_processing:
 			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=START_PRINT VARIABLE=first_x VALUE=" + str(-1))
 			self.gcode.run_script_from_command("SET_GCODE_VARIABLE MACRO=START_PRINT VARIABLE=first_y VALUE=" + str(-1))
