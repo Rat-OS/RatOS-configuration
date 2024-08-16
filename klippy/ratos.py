@@ -6,7 +6,6 @@ from . import bed_mesh as BedMesh
 # RatOS
 #####
 
-		
 class RatOS:
 
 	#####
