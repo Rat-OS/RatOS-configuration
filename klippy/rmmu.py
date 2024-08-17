@@ -2117,6 +2117,3 @@ class RMMUSwitchSensor:
 #####
 def load_config_prefix(config):
 	return RMMU(config)
-
-
-# MANUAL_STEPPER STEPPER='manual_stepper rmmu_pulley_t0' MOVE=24 SPEED=100 ACCEL=100 SYNC=0
