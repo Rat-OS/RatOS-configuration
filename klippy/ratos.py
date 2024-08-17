@@ -1,5 +1,5 @@
 import os, logging, re, glob
-import logging, collections, pathlib
+import logging, collections, pathlib, subprocess, util
 from . import bed_mesh as BedMesh
 
 #####
@@ -68,10 +68,12 @@ class RatOS:
 	def cmd_HELLO_RATOS(self, gcmd):
 		url = "https://os.ratrig.com/"
 		img = "../server/files/config/RatOS/Logo-white.png"
-		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:8px; color:white">Welcome to RatOS ' +  self.get_ratos_version() + '</p></b>'
+		ratos_version = self.get_ratos_version().split('-')
+		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:0px; color:white">Welcome to RatOS ' +  ratos_version[0] + '</p></b>'
+		_sub_title = '-'.join(ratos_version[1:])
 		_info = '\nClick image to open documentation.'
-		_img = '<a href="' + url + '" target="_blank" ><img src="' + img + '" width="258px"></a>'
-		self.gcode.respond_raw(_title + _img + _info)
+		_img = '\n<a href="' + url + '" target="_blank" ><img style="margin-top:6px;" src="' + img + '" width="258px"></a>'
+		self.gcode.respond_raw(_title + _sub_title + _img + _info)
 
 	desc_CONSOLE_ECHO = "Multiline console output"
 	def cmd_CONSOLE_ECHO(self, gcmd):
@@ -569,13 +571,28 @@ class RatOS:
 		return None
 	
 	def get_ratos_version(self):
+		version = '?'
+		path = pathlib.Path('/home/pi/printer_data/config/RatOS/.git')
+		gitdir = os.path.join(path, '..')
+		prog_desc = ('git', '-C', gitdir, 'describe', '--always',
+					'--tags', '--long', '--dirty')
+		prog_status = ('git', '-C', gitdir, 'status', '--porcelain', '--ignored')
 		try:
-			git_dir = pathlib.Path('/home/pi/printer_data/config/RatOS/.git')
-			with (git_dir / 'HEAD').open('r') as head:
-				return head.readline().split('/')[-1].strip()
+			process = subprocess.Popen(prog_desc, stdout=subprocess.PIPE,
+									stderr=subprocess.PIPE)
+			ver, err = process.communicate()
+			retcode = process.wait()
+			if retcode == 0:
+				version = str(ver.strip().decode())
+				process = subprocess.Popen(prog_status, stdout=subprocess.PIPE,
+										stderr=subprocess.PIPE)
+				retcode = process.wait()
+				return version
+			else:
+				self.debug_echo("get_ratos_version", ("Error getting git version: %s", err))
 		except Exception as exc:
-			self.debug_echo("get_ratos_version", "Something went wrong. " + str(exc))
-		return ""	
+			self.debug_echo("get_ratos_version", ("Exception on run: %s", exc))
+		return version
 
 #####
 # Bed Mesh Profile Manager
