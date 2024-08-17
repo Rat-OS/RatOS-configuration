@@ -1,5 +1,5 @@
 import os, logging, re, glob
-import logging, collections
+import logging, collections, pathlib
 from . import bed_mesh as BedMesh
 
 #####
@@ -569,16 +569,13 @@ class RatOS:
 		return None
 	
 	def get_ratos_version(self):
-	        """
-	        Get current version of RatOS distro.
-	        """
 		try:
-			with open("/etc/ratos-release") as f:
-				return f.read().split()[1]
+			git_dir = pathlib.Path('/home/pi/printer_data/config/RatOS/.git')
+			with (git_dir / 'HEAD').open('r') as head:
+				return head.readline().split('/')[-1].strip()
 		except Exception as exc:
 			self.debug_echo("get_ratos_version", "Something went wrong. " + str(exc))
-		return "v2.1"	
-             
+		return ""	
 
 #####
 # Bed Mesh Profile Manager
