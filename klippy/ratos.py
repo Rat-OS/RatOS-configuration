@@ -45,7 +45,6 @@ class RatOS:
 		self.rmmu_t1 = self.printer.lookup_object("rmmu RMMU_T1", None)
 		self.bed_mesh = self.printer.lookup_object('bed_mesh')
 
-
 	#####
 	# Settings
 	#####
