@@ -72,7 +72,7 @@ class RatOS:
 		img = "../server/files/config/RatOS/Logo-white.png"
 		ratos_version = self.get_ratos_version().split('-')
 		_title = '<b><p style="font-weight-bold; margin:0; margin-bottom:0px; color:white">Welcome to RatOS ' +  ratos_version[0] + '</p></b>'
-		_sub_title = '-'.join(ratos_version[1:])
+		_sub_title = '-'.join(ratos_version)
 		_info = '\nClick image to open documentation.'
 		_img = '\n<a href="' + url + '" target="_blank" ><img style="margin-top:6px;" src="' + img + '" width="258px"></a>'
 		self.gcode.respond_raw(_title + _sub_title + _img + _info)
