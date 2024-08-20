@@ -13,13 +13,6 @@
 	"driverVoltages": [24],
 	"hasMcuTempSensor": true,
 	"invertPinLogic": ["PA9"],
-	"outputPins": [
-		{
-			"name": "O2_RUN_LED",
-			"pin": "PB8",
-			"value": 1
-		}
-	],
 	"driverCount": 1,
 	"integratedDrivers": {
 		"extruder": "LDO-TMC2209"
@@ -70,6 +63,14 @@
 			"parameters": {
 				"max_power": 0.995,
 				"cycle_time": 0.0001
+			}
+		},
+		"output_pin": {
+			"name": "O2_RUN_LED",
+			"parameters": {
+				"pin": "PB8",
+				"shutdown_value": 0,
+				"value": 1
 			}
 		},
 		"temperature_sensor": {
