@@ -15,9 +15,9 @@
 	"invertPinLogic": ["PA9"],
 	"outputPins": [
 		{
-			"name": "hotend_power",
-			"pin": "PA10",
-			"value": 0
+			"name": "O2_RUN_LED",
+			"pin": "PB8",
+			"value": 1
 		}
 	],
 	"driverCount": 1,
