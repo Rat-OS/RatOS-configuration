@@ -12,7 +12,7 @@
 	"disableAutoFlash": true,
 	"driverVoltages": [24],
 	"hasMcuTempSensor": true,
-	"invertPinLogic": ["PA9", "PA4"],
+	"invertPinLogic": ["PA9"],
 	"outputPins": [
 		{
 			"name": "hotend_power",
