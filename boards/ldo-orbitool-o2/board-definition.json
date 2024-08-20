@@ -7,6 +7,7 @@
 	"firmwareBinaryName": "firmware-ldo-orbitool-o2.bin",
 	"boardImageFileName": "board.webp",
 	"compileScript": "compile.sh",
+	"thermistorPullup": 2200,
 	"flashScript": "flash.sh",
 	"documentationLink": "https://os.ratrig.com/docs/boards/ldo/orbitool-o2",
 	"disableAutoFlash": true,
