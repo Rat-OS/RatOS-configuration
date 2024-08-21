@@ -32,10 +32,8 @@
 	},
 	"LIS2DW": {
 		"cs_pin": "PA4",
-		"software": {
-			"sclk": "PA5",
-			"mosi": "PA7",
-			"miso": "PA6"
+		"hardware": {
+			"bus": "spi1"
 		}
 	},
 	"customSections": {
