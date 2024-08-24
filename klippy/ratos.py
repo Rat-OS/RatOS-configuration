@@ -203,8 +203,9 @@ class RatOS:
 
 		slicer = self.get_slicer_info(lines)
 
-		if slicer["Name"] != "PrusaSlicer" and slicer["Name"] != "SuperSlicer" and slicer["Name"] != "OrcaSlicer":
-			raise self.printer.command_error("Unsupported Slicer")
+		if (enable_post_processing):
+			if slicer["Name"] != "PrusaSlicer" and slicer["Name"] != "SuperSlicer" and slicer["Name"] != "OrcaSlicer":
+				raise self.printer.command_error("Unsupported Slicer")
 
 		min_x = 1000
 		max_x = 0
