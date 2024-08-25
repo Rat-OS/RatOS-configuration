@@ -1,10 +1,15 @@
 import os, logging, re, glob
-import logging, collections, pathlib, subprocess, util
+import logging, collections, pathlib, subprocess
 from . import bed_mesh as BedMesh
 
 #####
 # RatOS
 #####
+
+PRUSA_SLICER = "PrusaSlicer"
+SUPER_SLICER = "SuperSlicer"
+ORCA_SLICER = "OrcaSlicer"
+UNKNOWN_SLICER = "Unknown"
 
 class RatOS:
 
@@ -203,11 +208,11 @@ class RatOS:
 
 		slicer = self.get_slicer_info(lines)
 
-		if (not enable_post_processing and slicer["Name"] == "unknown"):
+		if (not enable_post_processing and slicer["Name"] == UNKNOWN_SLICER):
 			return True
 
 		if (enable_post_processing):
-			if slicer["Name"] != "PrusaSlicer" and slicer["Name"] != "SuperSlicer" and slicer["Name"] != "OrcaSlicer":
+			if slicer["Name"] != PRUSA_SLICER and slicer["Name"] != SUPER_SLICER and slicer["Name"] != ORCA_SLICER:
 				raise self.printer.command_error("Unsupported Slicer")
 
 		min_x = 1000
@@ -232,7 +237,7 @@ class RatOS:
 
 			# get slicer profile settings
 			if (enable_post_processing):
-				if slicer["Name"] == "PrusaSlicer":
+				if slicer["Name"] == PRUSA_SLICER:
 					if wipe_accel == 0:
 						if lines[line].rstrip().startswith("; wipe_tower_acceleration = "):
 							wipe_accel = int(lines[line].rstrip().replace("; wipe_tower_acceleration = ", ""))
@@ -246,7 +251,7 @@ class RatOS:
 			# fix superslicer and orcaslicer other layer temperature bug
 			if (enable_post_processing):
 				if start_print_line > 0 and extruder_temps_line == 0:
-					if slicer["Name"] == "SuperSlicer" or slicer["Name"] == "OrcaSlicer":
+					if slicer["Name"] == SUPER_SLICER or slicer["Name"] == ORCA_SLICER:
 						if lines[line].rstrip().startswith("_ON_LAYER_CHANGE LAYER=2"):
 							extruder_temps_line = line
 							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
@@ -256,7 +261,7 @@ class RatOS:
 
 			# fix orcaslicer set acceleration gcode command
 			if (enable_post_processing):
-				if start_print_line > 0 and slicer["Name"] == "OrcaSlicer":
+				if start_print_line > 0 and slicer["Name"] == ORCA_SLICER:
 					if lines[line].rstrip().startswith("SET_VELOCITY_LIMIT"):
 						pattern = r"ACCEL=(\d+)"
 						matches = re.search(pattern, lines[line].rstrip())
@@ -347,7 +352,7 @@ class RatOS:
 						zhop_line = 0
 						if tower_line == 0:
 							for i2 in range(20):
-								if slicer["Name"] == "PrusaSlicer" or slicer["Name"] == "SuperSlicer":
+								if slicer["Name"] == PRUSA_SLICER or slicer["Name"] == SUPER_SLICER:
 									if lines[line-i2].rstrip().startswith("; custom gcode: end_filament_gcode"):
 										if lines[line-i2-1].rstrip().startswith("G1 Z"):
 											split = lines[line-i2-1].rstrip().split(" ")
@@ -356,7 +361,7 @@ class RatOS:
 												if zhop > 0.0:
 													zhop_line = line-i2-1
 													break
-								elif slicer["Name"] == "OrcaSlicer":
+								elif slicer["Name"] == ORCA_SLICER:
 									if lines[line+i2].rstrip().startswith("G1 Z"):
 										split = lines[line+i2].rstrip().split(" ")
 										if split[1].startswith("Z"):
@@ -376,11 +381,11 @@ class RatOS:
 						retraction_line = 0
 						if tower_line == 0 and toolchange_line > 0:
 							for i2 in range(20):
-								if slicer["Name"] == "PrusaSlicer" or slicer["Name"] == "SuperSlicer":
+								if slicer["Name"] == PRUSA_SLICER or slicer["Name"] == SUPER_SLICER:
 									if lines[toolchange_line + i2].rstrip().startswith("G1 E-"):
 										retraction_line = toolchange_line + i2
 										break
-								elif slicer["Name"] == "OrcaSlicer":
+								elif slicer["Name"] == ORCA_SLICER:
 									if lines[toolchange_line - i2].rstrip().startswith("G1 E-"):
 										retraction_line = toolchange_line - i2
 										break
@@ -404,7 +409,7 @@ class RatOS:
 						move_z = ''
 						zdrop_line = 0
 						if tower_line == 0:
-							if slicer["Name"] == "PrusaSlicer" or slicer["Name"] == "SuperSlicer":
+							if slicer["Name"] == PRUSA_SLICER or slicer["Name"] == SUPER_SLICER:
 								if lines[move_line + 1].rstrip().startswith("G1 Z"):
 									zdrop_line = move_line + 1
 								elif lines[move_line + 2].rstrip().startswith("G1 Z"):
@@ -413,7 +418,7 @@ class RatOS:
 									split = lines[zdrop_line].rstrip().split(" ")
 									if split[1].startswith("Z"):
 										move_z = split[1].rstrip()
-							elif slicer["Name"] == "OrcaSlicer":
+							elif slicer["Name"] == ORCA_SLICER:
 								if zhop_line > 0:
 									for i in range(5):
 										if lines[zhop_line+i].rstrip().startswith("G1 Z"):
@@ -437,7 +442,7 @@ class RatOS:
 							file_has_changed = True
 							if zhop_line > 0:
 								lines[zhop_line] = '; Removed by RatOS post processor: ' + lines[zhop_line].rstrip() + '\n'
-								if slicer["Name"] == "OrcaSlicer":
+								if slicer["Name"] == ORCA_SLICER:
 									for i in range(5):
 										if lines[zhop_line+i].rstrip().startswith("G1 Z"):
 											lines[zhop_line+i] = '; Removed by RatOS post processor: ' + lines[zhop_line+i].rstrip() + '\n'
@@ -512,7 +517,7 @@ class RatOS:
 				if lines[1].rstrip().lower().startswith("; generated by"):
 					index = 1
 				else:
-					return {"Name": "unknown", "Version": "unknown"}
+					return {"Name": UNKNOWN_SLICER, "Version": ""}
 			line = lines[index].rstrip().replace("; generated by ", "")
 			split = line.split(" on ")[0]
 			return {"Name": split.split(" ")[0], "Version": split.split(" ")[1]}
