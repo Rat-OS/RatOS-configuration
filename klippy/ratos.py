@@ -6,10 +6,12 @@ from . import bed_mesh as BedMesh
 # RatOS
 #####
 
-PRUSA_SLICER = "PrusaSlicer"
-SUPER_SLICER = "SuperSlicer"
-ORCA_SLICER = "OrcaSlicer"
-UNKNOWN_SLICER = "Unknown"
+PRUSA_SLICER = "prusaslicer"
+SUPER_SLICER = "superslicer"
+ORCA_SLICER = "orcaslicer"
+UNKNOWN_SLICER = "unknown"
+
+REMOVED_BY_POST_PROCESSOR = "; Removed by RatOS post processor: "
 
 class RatOS:
 
@@ -207,12 +209,14 @@ class RatOS:
 			self.ratos_echo(echo_prefix, "reading gcode file...")
 
 		slicer = self.get_slicer_info(lines)
+		slicer_name = slicer["Name"]
+		slicer_version = slicer["Version"]
 
-		if (not enable_post_processing and slicer["Name"] == UNKNOWN_SLICER):
+		if (not enable_post_processing and slicer_name == UNKNOWN_SLICER):
 			return True
 
 		if (enable_post_processing):
-			if slicer["Name"] != PRUSA_SLICER and slicer["Name"] != SUPER_SLICER and slicer["Name"] != ORCA_SLICER:
+			if slicer_name != PRUSA_SLICER and slicer_name != SUPER_SLICER and slicer_name != ORCA_SLICER:
 				raise self.printer.command_error("Unsupported Slicer")
 
 		min_x = 1000
@@ -237,7 +241,7 @@ class RatOS:
 
 			# get slicer profile settings
 			if (enable_post_processing):
-				if slicer["Name"] == PRUSA_SLICER:
+				if slicer_name == PRUSA_SLICER:
 					if wipe_accel == 0:
 						if lines[line].rstrip().startswith("; wipe_tower_acceleration = "):
 							wipe_accel = int(lines[line].rstrip().replace("; wipe_tower_acceleration = ", ""))
@@ -251,7 +255,7 @@ class RatOS:
 			# fix superslicer and orcaslicer other layer temperature bug
 			if (enable_post_processing):
 				if start_print_line > 0 and extruder_temps_line == 0:
-					if slicer["Name"] == SUPER_SLICER or slicer["Name"] == ORCA_SLICER:
+					if slicer_name == SUPER_SLICER or slicer_name == ORCA_SLICER:
 						if lines[line].rstrip().startswith("_ON_LAYER_CHANGE LAYER=2"):
 							extruder_temps_line = line
 							pattern = r"EXTRUDER_OTHER_LAYER_TEMP=([\d,]+)"
@@ -261,7 +265,7 @@ class RatOS:
 
 			# fix orcaslicer set acceleration gcode command
 			if (enable_post_processing):
-				if start_print_line > 0 and slicer["Name"] == ORCA_SLICER:
+				if start_print_line > 0 and slicer_name == ORCA_SLICER:
 					if lines[line].rstrip().startswith("SET_VELOCITY_LIMIT"):
 						pattern = r"ACCEL=(\d+)"
 						matches = re.search(pattern, lines[line].rstrip())
@@ -274,7 +278,7 @@ class RatOS:
 				if start_print_line > 0:
 					if lines[line].rstrip().startswith("T") and lines[line].rstrip()[1:].isdigit():
 						if toolshift_count == 0:
-							lines[line] = '; Removed by RatOS post processor: ' + lines[line].rstrip() + '\n' # remove first toolchange
+							lines[line] = REMOVED_BY_POST_PROCESSOR + lines[line].rstrip() + '\n' # remove first toolchange
 						toolshift_count += 1
 
 			# get first tools usage in order
@@ -352,7 +356,7 @@ class RatOS:
 						zhop_line = 0
 						if tower_line == 0:
 							for i2 in range(20):
-								if slicer["Name"] == PRUSA_SLICER or slicer["Name"] == SUPER_SLICER:
+								if slicer_name == PRUSA_SLICER or slicer_name == SUPER_SLICER:
 									if lines[line-i2].rstrip().startswith("; custom gcode: end_filament_gcode"):
 										if lines[line-i2-1].rstrip().startswith("G1 Z"):
 											split = lines[line-i2-1].rstrip().split(" ")
@@ -361,7 +365,7 @@ class RatOS:
 												if zhop > 0.0:
 													zhop_line = line-i2-1
 													break
-								elif slicer["Name"] == ORCA_SLICER:
+								elif slicer_name == ORCA_SLICER:
 									if lines[line+i2].rstrip().startswith("G1 Z"):
 										split = lines[line+i2].rstrip().split(" ")
 										if split[1].startswith("Z"):
@@ -381,11 +385,11 @@ class RatOS:
 						retraction_line = 0
 						if tower_line == 0 and toolchange_line > 0:
 							for i2 in range(20):
-								if slicer["Name"] == PRUSA_SLICER or slicer["Name"] == SUPER_SLICER:
+								if slicer_name == PRUSA_SLICER or slicer_name == SUPER_SLICER:
 									if lines[toolchange_line + i2].rstrip().startswith("G1 E-"):
 										retraction_line = toolchange_line + i2
 										break
-								elif slicer["Name"] == ORCA_SLICER:
+								elif slicer_name == ORCA_SLICER:
 									if lines[toolchange_line - i2].rstrip().startswith("G1 E-"):
 										retraction_line = toolchange_line - i2
 										break
@@ -409,7 +413,7 @@ class RatOS:
 						move_z = ''
 						zdrop_line = 0
 						if tower_line == 0:
-							if slicer["Name"] == PRUSA_SLICER or slicer["Name"] == SUPER_SLICER:
+							if slicer_name == PRUSA_SLICER or slicer_name == SUPER_SLICER:
 								if lines[move_line + 1].rstrip().startswith("G1 Z"):
 									zdrop_line = move_line + 1
 								elif lines[move_line + 2].rstrip().startswith("G1 Z"):
@@ -418,7 +422,7 @@ class RatOS:
 									split = lines[zdrop_line].rstrip().split(" ")
 									if split[1].startswith("Z"):
 										move_z = split[1].rstrip()
-							elif slicer["Name"] == ORCA_SLICER:
+							elif slicer_name == ORCA_SLICER:
 								if zhop_line > 0:
 									for i in range(5):
 										if lines[zhop_line+i].rstrip().startswith("G1 Z"):
@@ -441,23 +445,23 @@ class RatOS:
 						if toolshift_count > 0 and toolchange_line > 0 and move_line > 0:
 							file_has_changed = True
 							if zhop_line > 0:
-								lines[zhop_line] = '; Removed by RatOS post processor: ' + lines[zhop_line].rstrip() + '\n'
-								if slicer["Name"] == ORCA_SLICER:
+								lines[zhop_line] = REMOVED_BY_POST_PROCESSOR + lines[zhop_line].rstrip() + '\n'
+								if slicer_name == ORCA_SLICER:
 									for i in range(5):
 										if lines[zhop_line+i].rstrip().startswith("G1 Z"):
-											lines[zhop_line+i] = '; Removed by RatOS post processor: ' + lines[zhop_line+i].rstrip() + '\n'
+											lines[zhop_line+i] = REMOVED_BY_POST_PROCESSOR + lines[zhop_line+i].rstrip() + '\n'
 											break
 							if zdrop_line > 0:
-								lines[zdrop_line] = '; Removed by RatOS post processor: ' + lines[zdrop_line].rstrip() + '\n'
+								lines[zdrop_line] = REMOVED_BY_POST_PROCESSOR + lines[zdrop_line].rstrip() + '\n'
 							if self.rmmu_hub == None:
 								new_toolchange_gcode = (lines[toolchange_line].rstrip() + ' ' + move_x + ' ' + move_y + ' ' + move_z).rstrip()
 							else:
 								new_toolchange_gcode = ('TOOL T=' + lines[toolchange_line].rstrip().replace("T", "") + ' ' + move_x.replace("X", "X=") + ' ' + move_y.replace("Y", "Y=") + ' ' + move_z.replace("Z", "Z=")).rstrip()
 							lines[toolchange_line] = new_toolchange_gcode + '\n'
-							lines[move_line] = '; Removed by RatOS post processor: ' + lines[move_line].rstrip().replace("  ", " ") + '\n'
+							lines[move_line] = REMOVED_BY_POST_PROCESSOR + lines[move_line].rstrip().replace("  ", " ") + '\n'
 							if retraction_line > 0 and extrusion_line > 0:
-								lines[retraction_line] = '; Removed by RatOS post processor: ' + lines[retraction_line].rstrip() + '\n'
-								lines[extrusion_line] = '; Removed by RatOS post processor: ' + lines[extrusion_line].rstrip() + '\n'
+								lines[retraction_line] = REMOVED_BY_POST_PROCESSOR + lines[retraction_line].rstrip() + '\n'
+								lines[extrusion_line] = REMOVED_BY_POST_PROCESSOR + lines[extrusion_line].rstrip() + '\n'
 
 		# add START_PRINT parameters 
 		if (enable_post_processing):
@@ -481,13 +485,13 @@ class RatOS:
 							lines[extruder_temps_line] = lines[extruder_temps_line] + "M104 S" + str(extruder_temps[int(tool)]) + " T" + str(tool) + "\n"
 						for i in range(10):
 							if lines[extruder_temps_line + i].rstrip().startswith("M104 S"):
-								lines[extruder_temps_line + i] = '; Removed by RatOS post processor: ' + lines[extruder_temps_line + i].rstrip() + '\n'
+								lines[extruder_temps_line + i] = REMOVED_BY_POST_PROCESSOR + lines[extruder_temps_line + i].rstrip() + '\n'
 								break
 
 				# console output 
 				self.ratos_echo(echo_prefix, "USED TOOLS: " + ','.join(used_tools))
 				self.ratos_echo(echo_prefix, "TOOLSHIFTS: " + str(0 if toolshift_count == 0 else toolshift_count - 1))
-				self.ratos_echo(echo_prefix, "SLICER: " + slicer["Name"] + " " + slicer["Version"])
+				self.ratos_echo(echo_prefix, "SLICER: " + slicer_name + " " + slicer_version)
 
 				# save file if it has changed 
 				if file_has_changed:
@@ -520,7 +524,7 @@ class RatOS:
 					return {"Name": UNKNOWN_SLICER, "Version": ""}
 			line = lines[index].rstrip().replace("; generated by ", "")
 			split = line.split(" on ")[0]
-			return {"Name": split.split(" ")[0], "Version": split.split(" ")[1]}
+			return {"Name": split.split(" ")[0].lower(), "Version": split.split(" ")[1]}
 		except:
 			raise self.printer.command_error("Can not get slicer version")
 
