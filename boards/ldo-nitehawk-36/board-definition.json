@@ -1,0 +1,27 @@
+{
+	"$schema": "../board-definition.schema.json",
+	"manualFileName": "manual.pdf",
+	"wireDiagramFileName": "wiring.drawio.svg",
+	"isToolboard": true,
+	"name": "Nitehawk 36",
+	"manufacturer": "LDO",
+	"id": "ldo-nitehawk-36",
+	"firmwareBinaryName": "firmware-ldo-nitehawk-36.bin",
+	"boardImageFileName": "board.webp",
+	"compileScript": "compile.sh",
+	"flashScript": "flash.sh",
+	"documentationLink": "https://os.ratrig.com/docs/boards/ldo/nitehawk-36",
+	"driverCount": 1,
+	"integratedDrivers": {
+		"extruder": "LDO-NITEHAWK-TMC2209"
+	},
+	"thermistorPullup": 2200,
+	"ADXL345SPI": {
+		"cs_pin": "gpio27",
+		"software": {
+			"sclk": "gpio18",
+			"mosi": "gpio20",
+			"miso": "gpio19"
+		}
+	}
+}
