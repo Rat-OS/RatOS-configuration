@@ -5,12 +5,12 @@
 	"wireDiagramFileName": "wiring.drawio.svg",
 	"name": "Mellow Super 8 Pro",
 	"manufacturer": "Mellow",
-	"id": "Mellow-super-8-pro-H723",
-	"firmwareBinaryName": "firmware-Mellow-super-8-pro-H723.bin",
+	"id": "mellow-super-8-pro-h723",
+	"firmwareBinaryName": "firmware-mellow-super-8-pro-h723.bin",
 	"compileScript": "compile.sh",
 	"flashScript": "flash.sh",
 	"flashInstructions": "Flashing only works if the SD card slot on the Mellow Super 8 Pro is empty.",
-	"documentationLink": "https://os.ratrig.com/docs/boards/btt/octopus-pro-h723-11",
+	"documentationLink": "https://os.ratrig.com/docs/boards/mellow/super-8-pro-h723",
 	"driverCount": 8,
 	"driverVoltages": [24, 36, 48, 56],
 	"dfu": {
@@ -131,7 +131,7 @@
 		}
 	},
 	"ADXL345SPI": {
-		"cs_pin": "PD0 OR PD1",
+		"cs_pin": "PD0",
 		"software": {
 			"sclk": "PD3",
 			"mosi": "PD5",
