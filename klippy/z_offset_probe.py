@@ -28,6 +28,7 @@ class ZOffsetProbe:
         self.multi_probe_pending = False
         self.last_state = False
         self.last_z_result = 0.
+        self.last_retries = 0
         self.gcode_move = self.printer.load_object(config, "gcode_move")
 
         # Infer Z position to move to during a probe
@@ -161,6 +162,7 @@ class ZOffsetProbe:
             self.multi_probe_begin()
         probexy = self.printer.lookup_object('toolhead').get_position()[:2]
         retries = 0
+        self.last_retries = 0
         positions = []
         while len(positions) < sample_count:
             # Probe position
@@ -179,6 +181,7 @@ class ZOffsetProbe:
                 self._move(probexy + [pos[2] + sample_retract_dist], lift_speed)
         if must_notify_multi_probe:
             self.multi_probe_end()
+        self.last_retries = retries
         # Calculate and return result
         if samples_result == 'median':
             return self._calc_median(positions)
@@ -198,6 +201,7 @@ class ZOffsetProbe:
     def get_status(self, eventtime):
         return {'name': self.name,
                 'last_query': self.last_state,
+                'last_retries': self.last_retries,
                 'last_z_result': self.last_z_result,
                 'x_offset': self.x_offset,
                 'y_offset': self.y_offset,
