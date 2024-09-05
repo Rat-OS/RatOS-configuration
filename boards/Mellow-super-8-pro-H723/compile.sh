@@ -5,7 +5,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-cp -f /home/pi/printer_data/config/RatOS/boards/Mellow-super-8-pro-H723/firmware.config /home/pi/klipper/.config
+cp -f /home/pi/printer_data/config/RatOS/boards/mellow-super-8-pro-h723/firmware.config /home/pi/klipper/.config
 pushd /home/pi/klipper || exit
 make olddefconfig
 make clean
@@ -16,7 +16,7 @@ then
     mkdir /home/pi/printer_data/config/firmware_binaries
     chown pi:pi /home/pi/printer_data/config/firmware_binaries
 fi
-cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-btt-octopus-pro-h723-11.bin
-chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-Mellow-super-8-pro-H723.bin
+cp -f /home/pi/klipper/out/klipper.bin /home/pi/printer_data/config/firmware_binaries/firmware-mellow-super-8-pro-h723.bin
+chown pi:pi /home/pi/printer_data/config/firmware_binaries/firmware-mellow-super-8-pro-h723.bin
 
 popd || exit
