@@ -1,5 +1,5 @@
 #!/bin/bash
-MCU=/dev/Mellow_super_8_pro_H723
+MCU=/dev/mellow-super-8-pro-h723
 if [ "$EUID" -ne 0 ]
   then echo "ERROR: Please run as root"
   exit
