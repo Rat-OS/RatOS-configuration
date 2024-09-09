@@ -126,6 +126,15 @@ register_resonance_generator()
     _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
 }
 
+register_vaoc_led()
+{
+    EXT_NAME="vaoc_led"
+    EXT_PATH=$(realpath "$SCRIPT_DIR"/../klippy)
+    EXT_FILE="vaoc_led.py"
+	# Don't error if extension is already registered
+    _register_klippy_extension $EXT_NAME "$EXT_PATH" $EXT_FILE "false"
+}
+
 register_z_offset_probe()
 {
     EXT_NAME="z_offset_probe_extension"
