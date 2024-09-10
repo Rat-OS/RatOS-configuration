@@ -26,8 +26,8 @@ class VaocNeoPixel:
         self.neopixel_update_cmd = self.neopixel_send_cmd = None
         # Build color map
         chain_count = config.getint('chain_count', 1, minval=1)
-        self.bit_max_time = config.getint('bit_max_time', BIT_MAX_TIME)
-        self.reset_min_time = config.getint('reset_min_time', RESET_MIN_TIME)
+        self.bit_max_time = config.getfloat('bit_max_time', BIT_MAX_TIME, above=0.)
+        self.reset_min_time = config.getfloat('reset_min_time', RESET_MIN_TIME, above=0.)
         color_order = config.getlist("color_order", ["GRB"])
         if len(color_order) == 1:
             color_order = [color_order[0]] * chain_count
