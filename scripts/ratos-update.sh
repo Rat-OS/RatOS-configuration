@@ -71,7 +71,7 @@ remove_old_postprocessor
 register_ratos
 register_resonance_generator
 register_ratos_kinematics
-register_vaoc_led
+unregister_vaoc_led
 symlink_extensions
 update_beacon_fw
 restart_configurator
