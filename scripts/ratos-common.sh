@@ -11,10 +11,12 @@ disable_modem_manager()
 	
 	if ! sudo systemctl is-enabled ModemManager.service &> /dev/null; then
 		report_status "Disabling ModemManager..."
-		sudo systemctl mask ModemManager.service
+		sudo systemctl disable ModemManager.service
 	else
-		report_status "Modem manager is already disabled, continuing..."
+		report_status "ModemManager is already disabled.."
 	fi
+	report_status "Masking ModemManager to ensure it won't start in the future..."
+	sudo systemctl mask ModemManager.service
 }
 
 update_beacon_fw()
