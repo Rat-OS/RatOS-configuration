@@ -157,6 +157,7 @@ class ZOffsetProbe:
         samples_retries = gcmd.get_int("SAMPLES_TOLERANCE_RETRIES",
                                        self.samples_retries, minval=0)
         samples_result = gcmd.get("SAMPLES_RESULT", self.samples_result)
+        samples_drop = gcmd.get_int("SAMPLES_DROP", 0, minval=0)
         must_notify_multi_probe = not self.multi_probe_pending
         if must_notify_multi_probe:
             self.multi_probe_begin()
@@ -167,6 +168,9 @@ class ZOffsetProbe:
         while len(positions) < sample_count:
             # Probe position
             pos = self._probe(speed)
+            if samples_drop > 0:
+                samples_drop -= 1
+                continue
             positions.append(pos)
             # Check samples tolerance
             z_positions = [p[2] for p in positions]
