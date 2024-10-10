@@ -168,9 +168,9 @@ class ZOffsetProbe:
         while len(positions) < sample_count:
             # Probe position
             pos = self._probe(speed)
-            if samples_drop > 0:
-                samples_drop -= 1
-                continue
+            # if samples_drop > 0:
+            #     samples_drop -= 1
+            #     continue
             positions.append(pos)
             # Check samples tolerance
             z_positions = [p[2] for p in positions]
