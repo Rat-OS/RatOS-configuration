@@ -170,6 +170,8 @@ class ZOffsetProbe:
             pos = self._probe(speed)
             if samples_drop > 0:
                 samples_drop -= 1
+                # Retract
+                self._move(probexy + [pos[2] + sample_retract_dist], lift_speed)
                 continue
             positions.append(pos)
             # Check samples tolerance
