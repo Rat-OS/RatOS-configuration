@@ -198,7 +198,16 @@ class RatOS:
 	def process_gode_file(self, filename, enable_post_processing):
 		echo_prefix = "POST_PROCESSOR"
 		try:
-			path = self.get_gcode_file_path(filename)
+			[path, size] = self.get_gcode_file_info(filename)
+			meminfo = dict((i.split()[0].rstrip(':'),int(i.split()[1])) for i in open('/proc/meminfo').readlines())
+			# check if file is too large for post processing, using a safety margin of 15%
+			mem_available = meminfo['MemAvailable'] * 1024 * 0.85
+			if (size > mem_available):
+				if (enable_post_processing):
+					raise self.printer.command_error("File is too large (file is %smb but only %smb of memory is available) for required IDEX post processing. A new post processor is coming soon without this limitation." % (size / 1024 / 1024, mem_available / 1024 / 1024))
+				else:
+					self.ratos_echo(echo_prefix, "File is too large for post processing (file is %smb but only %smb of memory is available), skipping.." % (size / 1024 / 1024, mem_available / 1024 / 1024))
+					return True
 			lines = self.get_gcode_file_lines(path)
 
 			if (enable_post_processing):
@@ -530,10 +539,10 @@ class RatOS:
 		except:
 			raise self.printer.command_error("Can not get slicer version")
 
-	def get_gcode_file_path(self, filename):
+	def get_gcode_file_info(self, filename):
 		files = self.v_sd.get_file_list(True)
 		flist = [f[0] for f in files]
-		files_by_lower = { filepath.lower(): filepath for filepath, fsize in files }
+		files_by_lower = { filepath.lower(): [filepath, fsize] for filepath, fsize in files }
 		filepath = filename
 		try:
 			if filepath not in flist:
