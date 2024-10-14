@@ -547,7 +547,7 @@ class RatOS:
 		try:
 			if filepath not in flist:
 				filepath = files_by_lower[filepath.lower()]
-			return os.path.join(self.sdcard_dirname, filepath)
+			return [os.path.join(self.sdcard_dirname, filepath[0]), filepath[1]]
 		except:
 			raise self.printer.command_error("Can not get path for file " + filename)
 
