@@ -70,17 +70,17 @@ class RatOS:
 		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('PROCESS_GCODE_FILE', self.cmd_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
 		self.gcode.register_command('BEACON_APPLY_SCAN_COMPENSATION', self.cmd_BEACON_APPLY_SCAN_COMPENSATION, desc=(self.desc_BEACON_APPLY_SCAN_COMPENSATION))
-		self.gcode.register_command('TEST_PROCESS_GCODE_FILE', self.cmd_TEST_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
+		self.gcode.register_command('TEST_PROCESS_GCODE_FILE', self.cmd_TEST_PROCESS_GCODE_FILE, desc=(self.desc_TEST_PROCESS_GCODE_FILE))
 
-    desc_TEST_PROCESS_GCODE_FILE = "Test the G-code post processor for IDEX and RMMU, onyl for debugging purposes"
-    def cmd_TEST_PROCESS_GCODE_FILE(self, gcmd):
-        dual_carriage = self.dual_carriage
-        self.dual_carriage = True
-        filename = gcmd.get('FILENAME', "")
-        if filename[0] == '/':
-            filename = filename[1:]
-        self.process_gode_file(filename, False)
-        self.dual_carriage = dual_carriage
+	desc_TEST_PROCESS_GCODE_FILE = "Test the G-code post processor for IDEX and RMMU, onyl for debugging purposes"
+	def cmd_TEST_PROCESS_GCODE_FILE(self, gcmd):
+		dual_carriage = self.dual_carriage
+		self.dual_carriage = True
+		filename = gcmd.get('FILENAME', "")
+		if filename[0] == '/':
+			filename = filename[1:]
+		self.process_gode_file(filename, False)
+		self.dual_carriage = dual_carriage
 
 	desc_HELLO_RATOS = "RatOS mainsail welcome message"
 	def cmd_HELLO_RATOS(self, gcmd):
