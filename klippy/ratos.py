@@ -70,6 +70,17 @@ class RatOS:
 		self.gcode.register_command('RATOS_LOG', self.cmd_RATOS_LOG, desc=(self.desc_RATOS_LOG))
 		self.gcode.register_command('PROCESS_GCODE_FILE', self.cmd_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
 		self.gcode.register_command('BEACON_APPLY_SCAN_COMPENSATION', self.cmd_BEACON_APPLY_SCAN_COMPENSATION, desc=(self.desc_BEACON_APPLY_SCAN_COMPENSATION))
+		self.gcode.register_command('TEST_PROCESS_GCODE_FILE', self.cmd_TEST_PROCESS_GCODE_FILE, desc=(self.desc_PROCESS_GCODE_FILE))
+
+    desc_TEST_PROCESS_GCODE_FILE = "Test the G-code post processor for IDEX and RMMU, onyl for debugging purposes"
+    def cmd_TEST_PROCESS_GCODE_FILE(self, gcmd):
+        dual_carriage = self.dual_carriage
+        self.dual_carriage = True
+        filename = gcmd.get('FILENAME', "")
+        if filename[0] == '/':
+            filename = filename[1:]
+        self.process_gode_file(filename, False)
+        self.dual_carriage = dual_carriage
 
 	desc_HELLO_RATOS = "RatOS mainsail welcome message"
 	def cmd_HELLO_RATOS(self, gcmd):
@@ -549,7 +560,7 @@ class RatOS:
 				filepath = files_by_lower[filepath.lower()]
 				return filepath
 			fullpath = os.path.join(self.sdcard_dirname, filepath);
-			return [fullpath, os.path.getsize(fullpath)] # return 1 as size for now
+			return [fullpath, os.path.getsize(fullpath)]
 		except:
 			raise self.printer.command_error("Can not get path for file " + filename)
 
@@ -624,53 +635,53 @@ class RatOS:
 # Bed Mesh Profile Manager
 #####
 class BedMeshProfileManager:
-    def __init__(self, config, bedmesh):
-        self.name = "bed_mesh"
-        self.printer = config.get_printer()
-        self.gcode = self.printer.lookup_object('gcode')
-        self.bedmesh = bedmesh
-        self.profiles = {}
-        self.incompatible_profiles = []
-        # Fetch stored profiles from Config
-        stored_profs = config.get_prefix_sections(self.name)
-        stored_profs = [s for s in stored_profs
-                        if s.get_name() != self.name]
-        for profile in stored_profs:
-            name = profile.get_name().split(' ', 1)[1]
-            version = profile.getint('version', 0)
-            if version != BedMesh.PROFILE_VERSION:
-                logging.info(
-                    "bed_mesh: Profile [%s] not compatible with this version\n"
-                    "of bed_mesh.  Profile Version: %d Current Version: %d "
-                    % (name, version, BedMesh.PROFILE_VERSION))
-                self.incompatible_profiles.append(name)
-                continue
-            self.profiles[name] = {}
-            zvals = profile.getlists('points', seps=(',', '\n'), parser=float)
-            self.profiles[name]['points'] = zvals
-            self.profiles[name]['mesh_params'] = params = \
-                collections.OrderedDict()
-            for key, t in BedMesh.PROFILE_OPTIONS.items():
-                if t is int:
-                    params[key] = profile.getint(key)
-                elif t is float:
-                    params[key] = profile.getfloat(key)
-                elif t is str:
-                    params[key] = profile.get(key)
-    def get_profiles(self):
-        return self.profiles
-    def load_profile(self, prof_name):
-        profile = self.profiles.get(prof_name, None)
-        if profile is None:
-            return None
-        probed_matrix = profile['points']
-        mesh_params = profile['mesh_params']
-        z_mesh = BedMesh.ZMesh(mesh_params, prof_name)
-        try:
-            z_mesh.build_mesh(probed_matrix)
-        except BedMesh.BedMeshError as e:
-            raise self.gcode.error(str(e))
-        return z_mesh
+	def __init__(self, config, bedmesh):
+		self.name = "bed_mesh"
+		self.printer = config.get_printer()
+		self.gcode = self.printer.lookup_object('gcode')
+		self.bedmesh = bedmesh
+		self.profiles = {}
+		self.incompatible_profiles = []
+		# Fetch stored profiles from Config
+		stored_profs = config.get_prefix_sections(self.name)
+		stored_profs = [s for s in stored_profs
+						if s.get_name() != self.name]
+		for profile in stored_profs:
+			name = profile.get_name().split(' ', 1)[1]
+			version = profile.getint('version', 0)
+			if version != BedMesh.PROFILE_VERSION:
+				logging.info(
+					"bed_mesh: Profile [%s] not compatible with this version\n"
+					"of bed_mesh.  Profile Version: %d Current Version: %d "
+					% (name, version, BedMesh.PROFILE_VERSION))
+				self.incompatible_profiles.append(name)
+				continue
+			self.profiles[name] = {}
+			zvals = profile.getlists('points', seps=(',', '\n'), parser=float)
+			self.profiles[name]['points'] = zvals
+			self.profiles[name]['mesh_params'] = params = \
+				collections.OrderedDict()
+			for key, t in BedMesh.PROFILE_OPTIONS.items():
+				if t is int:
+					params[key] = profile.getint(key)
+				elif t is float:
+					params[key] = profile.getfloat(key)
+				elif t is str:
+					params[key] = profile.get(key)
+	def get_profiles(self):
+		return self.profiles
+	def load_profile(self, prof_name):
+		profile = self.profiles.get(prof_name, None)
+		if profile is None:
+			return None
+		probed_matrix = profile['points']
+		mesh_params = profile['mesh_params']
+		z_mesh = BedMesh.ZMesh(mesh_params, prof_name)
+		try:
+			z_mesh.build_mesh(probed_matrix)
+		except BedMesh.BedMeshError as e:
+			raise self.gcode.error(str(e))
+		return z_mesh
 
 #####
 # Loader
