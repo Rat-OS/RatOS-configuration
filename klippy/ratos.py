@@ -79,7 +79,7 @@ class RatOS:
 		filename = gcmd.get('FILENAME', "")
 		if filename[0] == '/':
 			filename = filename[1:]
-		self.process_gode_file(filename, False)
+		self.process_gode_file(filename, True)
 		self.dual_carriage = dual_carriage
 
 	desc_HELLO_RATOS = "RatOS mainsail welcome message"
@@ -403,11 +403,14 @@ class RatOS:
 
 							# toolchange retraction
 							retraction_line = 0
+							retraction_z_hop_line = 0
 							if tower_line == 0 and toolchange_line > 0:
 								for i2 in range(20):
 									if slicer_name == PRUSA_SLICER or slicer_name == SUPER_SLICER:
 										if lines[toolchange_line + i2].rstrip().startswith("G1 E-"):
 											retraction_line = toolchange_line + i2
+											if lines[toolchange_line + i2 + 1].rstrip().startswith("G1 Z"):
+												retraction_z_hop_line = toolchange_line + i2 + 1
 											break
 									elif slicer_name == ORCA_SLICER:
 										if lines[toolchange_line - i2].rstrip().startswith("G1 E-"):
@@ -482,6 +485,8 @@ class RatOS:
 								if retraction_line > 0 and extrusion_line > 0:
 									lines[retraction_line] = REMOVED_BY_POST_PROCESSOR + lines[retraction_line].rstrip() + '\n'
 									lines[extrusion_line] = REMOVED_BY_POST_PROCESSOR + lines[extrusion_line].rstrip() + '\n'
+									if retraction_z_hop_line > 0:
+										lines[retraction_z_hop_line] = REMOVED_BY_POST_PROCESSOR + lines[retraction_z_hop_line].rstrip() + '\n'
 
 			# add START_PRINT parameters 
 			if (enable_post_processing):
