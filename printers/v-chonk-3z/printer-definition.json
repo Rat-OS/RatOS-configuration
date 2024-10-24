@@ -6,7 +6,7 @@
 	"releaseDate": "2024-02-23",
 	"documentationLink": "https://www.ratrig.com",
 	"image": "v-chonk.png",
-	"template": "v-chonk-printer.template.cfg",
+	"template": "v-chonk-3z-printer.template.cfg",
 	"driverCountRequired": 6,
 	"bedMargin": {
 		"x": [0, 0],
